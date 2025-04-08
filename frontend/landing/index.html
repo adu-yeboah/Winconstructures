@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prime Properties - Coming Soon</title>
+    <link rel="stylesheet" href=".//css/style.css">
+</head>
+<body>
+
+    <section class="hero">
+
+        <img src="./img/logo.jpg" alt="" class="image">
+        <div class="hero-content">
+            <h1>Winconstructures</h1>
+            <p class="tagline">Luxury Living Awaits</p>
+        </div>
+    </section>
+
+    <section class="about">
+        <h2>About Winconstructures</h2>
+        <p>We build, we sell, we design, real estate agency</p>
+    </section>
+
+    <section class="properties-teaser">
+        <h2>Property Sneak Peek</h2>
+        <div class="property-grid">
+            <div class="property-card">
+                <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c" alt="Modern Villa">
+                <div class="property-overlay">
+                    <h3>Modern Villa</h3>
+                    <p>Coming Soon</p>
+                </div>
+            </div>
+            <div class="property-card">
+                <img src="https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde" alt="City Apartment">
+                <div class="property-overlay">
+                    <h3>City Apartment</h3>
+                    <p>Coming Soon</p>
+                </div>
+            </div>
+            <div class="property-card">
+                <img src="https://images.unsplash.com/photo-1600566752355-35795bab4799" alt="Suburban House">
+                <div class="property-overlay">
+                    <h3>Suburban House</h3>
+                    <p>Coming Soon</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="signup">
+        <h2>Be the First to Know</h2>
+        <form id="signupForm" class="form-group">
+            <input type="email" id="email" placeholder="Enter your email" required>
+            <button type="submit">Notify Me</button>
+        </form>
+    </section>
+
+    <footer>
+        <div class="social">
+            <a href="#">Facebook</a>
+            <a href="#">Twitter</a>
+            <a href="#">Instagram</a>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            
+            if (email) {
+                alert('Thank you for signing up! We’ll notify you when we launch.');
+                this.reset();
+            }
+        });
+    </script>
+</body>
+</html>
