@@ -32,7 +32,7 @@ export const SearchBar = () => {
                 </button>
             </div>
 
-            <div className="bg-primary p-6 rounded-lg shadow-lg flex flex-row gap-3.5">
+            <div className="bg-white p-6 rounded-lg shadow-lg flex flex-row gap-3.5">
                 {/* Search Inputs */}
                 <select className="border border-tertiary rounded px-7 py-4 w-full md:w-auto text-tertiary">
                     <option>Property Type</option>

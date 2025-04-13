@@ -1,8 +1,8 @@
 import React from 'react';
 import { SearchBar } from './_components/searchBar';
-import Navbar from './_components/navbar';
 import Carousel from './_components/carousel';
 import ContactSection from './_components/ui/contactBanner';
+import WhyChooseSection from './_components/ui/whyChoose';
 
 const Home = () => {
     return (
@@ -10,7 +10,7 @@ const Home = () => {
         <div className="relative">
             {/* Background Image */}
             <div
-                className="absolute inset-0 bg-cover bg-center h-[110vh]"
+                className="absolute inset-0 bg-cover bg-center h-[100vh]"
                 style={{
                     backgroundImage: `url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80')`,
                 }}
@@ -18,8 +18,6 @@ const Home = () => {
                 <div className="absolute inset-0 bg-tertiary opacity-50"></div>
             </div>
 
-            {/* Navbar */}
-            <Navbar />
 
             {/* Main Content */}
             <section className="relative z-10 flex flex-col items-center justify-center min-h-screen text-center text-primary">
@@ -33,7 +31,11 @@ const Home = () => {
         </div>
         <Carousel />
         
-        {/* <ContactSection /> */}
+        <ContactSection />
+
+        <WhyChooseSection />
+
+        
         </>
 
 

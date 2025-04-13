@@ -13,7 +13,7 @@ const Navbar: FC<NavbarProps> = ({ variant = "main" }) => {
     const toggleServices = () => setIsServicesOpen((prev) => !prev);
 
     return (
-        <nav className="relative z-10 flex justify-between items-center p-4 bg-primary" aria-label="Main navigation">
+        <nav className="relative z-10 flex justify-between items-center p-4 shadow bg-white" aria-label="Main navigation">
             {/* Logo */}
             <div className="flex items-center">
                 <Link href="/" className="flex items-center ml-[100px]">
