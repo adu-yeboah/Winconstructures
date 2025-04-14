@@ -5,11 +5,12 @@ import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedin, FaYoutube, FaTiktok, F
 
 const Footer: React.FC = () => {
     return (
-        <footer className="relative bg-primary text-black py-12 ">
+        <footer className="relative bg-white text-black py-12 ">
 
             {/* Content */}
-            <div className="relative z-10 container mx-auto px-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="relative z-10 container mx-auto px-4 container">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    
                     {/* Column 1: Company Info */}
                     <div>
                         <div className="flex items-center mb-4">
@@ -53,58 +54,9 @@ const Footer: React.FC = () => {
                         </ul>
                     </div>
 
-                    {/* Column 3: Newest Listings */}
-                    <div>
-                        <h4 className="text-lg font-semibold mb-4 uppercase text-secondary">Newest Listings</h4>
-                        <ul className="space-y-4">
-                            <li className="flex items-center">
-                                <img
-                                    src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&h=100&q=80"
-                                    alt="Minimalist style flat"
-                                    className="w-16 h-12 object-cover rounded mr-3"
-                                />
-                                <div>
-                                    <p className="text-gray-400">Minimalist style flat</p>
-                                    <p className="text-black font-semibold">$800,000</p>
-                                </div>
-                            </li>
-                            <li className="flex items-center">
-                                <img
-                                    src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&h=100&q=80"
-                                    alt="Modern two bedroom apartment"
-                                    className="w-16 h-12 object-cover rounded mr-3"
-                                />
-                                <div>
-                                    <p className="text-gray-400">Modern two bedroom apartment</p>
-                                    <p className="text-black font-semibold">$1,500/month</p>
-                                </div>
-                            </li>
-                            <li className="flex items-center">
-                                <img
-                                    src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&h=100&q=80"
-                                    alt="Quint Timber Cottage"
-                                    className="w-16 h-12 object-cover rounded mr-3"
-                                />
-                                <div>
-                                    <p className="text-gray-400">Quint Timber Cottage</p>
-                                    <p className="text-black font-semibold">$500/month</p>
-                                </div>
-                            </li>
-                            <li className="flex items-center">
-                                <img
-                                    src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&h=100&q=80"
-                                    alt="Bright Office"
-                                    className="w-16 h-12 object-cover rounded mr-3"
-                                />
-                                <div>
-                                    <p className="text-gray-400">Bright Office</p>
-                                    <p className="text-black font-semibold">$1,000,000</p>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
+                   
 
-                    {/* Column 4: Social Media */}
+                    {/* Column 3 Social Media */}
                     <div>
                         <h4 className="text-lg font-semibold mb-4 uppercase text-secondary">Follow Our Social Media</h4>
                         <div className="flex space-x-4 mb-6">

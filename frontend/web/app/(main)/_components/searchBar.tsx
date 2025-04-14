@@ -11,22 +11,22 @@ export const SearchBar = () => {
             <div className="flex space-x-2">
                 <button
                     onClick={() => setFilter('All')}
-                    className={`px-7 py-4 rounded ${filter === 'All' ? 'bg-secondary text-primary' : 'bg-tertiary text-primary'
-                        } hover:bg-secondary hover:text-primary`}
+                    className={`px-7 py-4 rounded ${filter === 'All' ? 'bg-white text-black' : 'bg-tertiary text-white'
+                        } hover:text-secondary`}
                 >
                     All
                 </button>
                 <button
                     onClick={() => setFilter('For Sale')}
-                    className={`px-7 py-4 rounded ${filter === 'For Sale' ? 'bg-secondary text-primary' : 'bg-tertiary text-primary'
-                        } hover:bg-secondary hover:text-primary`}
+                    className={`px-7 py-4 rounded ${filter === 'For Sale' ? 'bg-white text-black' : 'bg-tertiary text-white'
+                        } hover:text-secondary`}
                 >
                     For Sale
                 </button>
                 <button
                     onClick={() => setFilter('For Rent')}
-                    className={`px-7 py-4 rounded ${filter === 'For Rent' ? 'bg-secondary text-primary' : 'bg-tertiary text-primary'
-                        } hover:bg-secondary hover:text-primary`}
+                    className={`px-7 py-4 rounded ${filter === 'For Rent' ? 'bg-white text-black' : 'bg-tertiary text-white'
+                        } hover:text-primary`}
                 >
                     For Rent
                 </button>
@@ -55,7 +55,7 @@ export const SearchBar = () => {
                 </select>
 
                 {/* Search Button */}
-                <button className="bg-secondary text-primary px-6 py-2 rounded hover:bg-tertiary cursor-pointer">
+                <button className="bg-secondary text-white px-6 py-2 rounded hover:bg-tertiary cursor-pointer">
                     Search
                 </button>
             </div>

@@ -18,7 +18,7 @@ const PropertyCard: FC<PropertyCardProps> = ({ property }) => {
   const navigate = useRouter()
   const handleNavigation = () => {
     navigate.push(`/properties/${property.id}`)
-  } 
+  }
 
   return (
     <div
@@ -32,11 +32,9 @@ const PropertyCard: FC<PropertyCardProps> = ({ property }) => {
           className="w-full h-64 object-cover"
         />
         <span className="absolute top-2 left-2 bg-secondary text-white text-xs font-semibold px-2 py-1 rounded">
-          FEATURED
-        </span>
-        <span className="absolute top-2 right-2 bg-tertiary text-primary text-xs font-semibold px-2 py-1 rounded">
           {status.toUpperCase()}
         </span>
+
       </div>
       <div className="p-4">
         <h3 className="text-lg font-semibold">{title}</h3>
