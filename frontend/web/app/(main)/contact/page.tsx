@@ -4,7 +4,7 @@ import { FaPhone, FaMobileAlt, FaFax, FaEnvelope, FaMapMarkerAlt } from 'react-i
 const ContactPage = () => {
     return (
         <div className="container mx-auto px-4 py-8 min-h-[60vh]">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 bg-white p-7 rounded-md items-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 bg-white p-7 rounded-md ">
                 {/* Form Section */}
                 <div>
                     <h2 className="text-2xl font-bold mb-6 text-secondary">Contact Us</h2>
@@ -62,7 +62,7 @@ const ContactPage = () => {
                 </div>
 
                 {/* Contact Info Section */}
-                <div className="flex flex-col justify-center ">
+                <div className="flex flex-col">
                     <h3 className="text-xl font-semibold mb-6 text-secondary">Contact Information</h3>
                     <ul className="space-y-8">
                         <li className="flex items-center gap-3">
