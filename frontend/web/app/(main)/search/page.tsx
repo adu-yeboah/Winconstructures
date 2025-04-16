@@ -8,7 +8,7 @@ function Page() {
     <div className="container mx-auto px-4 py-8 min-h-[60vh] flex flex-col lg:flex-row gap-6">
 
       <aside className="lg:w-1/4 w-full">
-        <div className="lg:fixed lg:top-20 lg:max-h-[calc(100vh-5rem)] lg:overflow-y-auto">
+        <div className="lg lg:top-20 lg:max-h-[calc(100vh-5rem)] lg:overflow-y-auto">
           <PropertySearchFilter />
         </div>
       </aside>

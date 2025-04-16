@@ -37,7 +37,7 @@ const Navbar: FC<NavbarProps> = ({ variant = "main" }) => {
                 </li>
 
                 {/* Clickable Services Dropdown */}
-                <li className="relative">
+                {/* <li className="relative">
                     <button
                         className="text-black hover:text-secondary flex items-center cursor-pointer"
                         aria-haspopup="true"
@@ -46,24 +46,13 @@ const Navbar: FC<NavbarProps> = ({ variant = "main" }) => {
                         role="menuitem"
                         onClick={toggleServices}
                     >
-                        Our Services <span className="ml-1">▼</span>
+                        Our Services 
                     </button>
                     <ul
-                        className={`absolute ${isServicesOpen ? "block" : "hidden"} bg-primary shadow-lg rounded w-48 top-full left-0 pt-2`}
+                        className={`absolute ${isServicesOpen ? "block" : "hidden"} bg-white shadow-lg rounded w-48 h-max top-full left-0 pt-2`}
                         role="menu"
                         aria-labelledby="services-menu"
                     >
-                        <li
-                            className="block px-4 py-2 text-black hover:bg-secondary hover:text-primary cursor-pointer"
-                        >
-                            <Link
-                                href="/services/residential"
-
-                                role="menuitem"
-                            >
-                                Residential
-                            </Link>
-                        </li>
                         <li className="block px-4 py-2 text-black hover:bg-secondary hover:text-primary cursor-pointer">
                             <Link
                                 href="/services/commercial"
@@ -72,11 +61,22 @@ const Navbar: FC<NavbarProps> = ({ variant = "main" }) => {
                                 Commercial
                             </Link>
                         </li>
+                        <li
+                            className="block px-4 py-2 text-black hover:bg-secondary hover:text-primary "
+                        >
+                            <Link
+                                href="/services/residential"
+                                role="menuitem"
+                            >
+                                Residential
+                            </Link>
+                        </li>
+                        
                     </ul>
-                </li>
+                </li> */}
 
                 <li>
-                    <Link href="/projects" className="text-black hover:text-secondary" role="menuitem">
+                    <Link href="/about" className="text-black hover:text-secondary" role="menuitem">
                         About
                     </Link>
                 </li>

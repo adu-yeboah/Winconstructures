@@ -1,9 +1,13 @@
 "use client"
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
 export const SearchBar = () => {
     const [filter, setFilter] = useState<'All' | 'For Sale' | 'For Rent'>('All');
-
+    const navigate = useRouter()
+    const handleSubmit = () => {
+        navigate.push("/search")
+    }
     return (
 
         <div className=" flex flex-col md:flex-col items-center space-y-4 md:space-y-0 md:space-x-4">
@@ -55,7 +59,9 @@ export const SearchBar = () => {
                 </select>
 
                 {/* Search Button */}
-                <button className="bg-secondary text-white px-6 py-2 rounded hover:bg-tertiary cursor-pointer">
+                <button
+                    onClick={handleSubmit}
+                    className="bg-secondary text-white px-6 py-2 rounded hover:bg-tertiary cursor-pointer">
                     Search
                 </button>
             </div>

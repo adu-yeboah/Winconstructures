@@ -4,7 +4,7 @@ import Footer from './_components/ui/footer';
 import Navbar from './_components/navbar';
 
 export const metadata: Metadata = {
-    title: 'Wisconstructurs',
+    title: 'Wisconstructures',
     description: 'dsrg',
 };
 

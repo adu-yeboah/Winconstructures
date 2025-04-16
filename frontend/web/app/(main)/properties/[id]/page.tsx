@@ -61,7 +61,7 @@ export default function PropertyDetail() {
             </Slider>
             {/* Pagination */}
             <div className="absolute bottom-4 left-4 bg-white text-gray-800 px-3 py-1 rounded text-sm">
-              1/{property.images.length}
+              {property.images.length}
             </div>
           </div>
 
@@ -120,7 +120,7 @@ export default function PropertyDetail() {
         </div>
 
         {/* Right Section: Contact Form */}
-        <div className="lg:w-1/3 w-full bg-white px-8 py-10 rounded-lg shadow-lg">
+        <div className="lg:w-1/3 w-full h-min bg-white px-8 py-10 rounded-lg shadow-lg">
           <h3 className="text-xl font-bold text-secondary py-3">Contact Us</h3>
           <form className="space-y-4">
             <div>
@@ -159,7 +159,7 @@ export default function PropertyDetail() {
           </form>
 
           {/* Contact Information */}
-          <div className="mt-6">
+          {/* <div className="mt-6">
             <h4 className="text-lg font-semibold mb-4">Contact Information</h4>
             <ul className="space-y-3 text-gray-600">
               <li className="flex items-center gap-3">
@@ -183,7 +183,9 @@ export default function PropertyDetail() {
                 <span>Address: 3015 Grand Ave, Coconut Grove, Merrick Way, FL 12345</span>
               </li>
             </ul>
-          </div>
+          </div> */}
+
+
         </div>
       </div>
     </div>
