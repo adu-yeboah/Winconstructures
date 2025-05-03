@@ -5,7 +5,7 @@ import Image from 'next/image';
 
 export default function Sidebar() {
     return (
-        <div className="w-40 fixed h-screen bg-white text-white flex flex-col px-2 py-4">
+        <div className="w-40 fixed top-0 h-screen bg-white text-white flex flex-col px-2 py-4">
 
             <div className="relative mx-auto flex justify-center mb-4">
                 <Image
@@ -22,7 +22,7 @@ export default function Sidebar() {
                 <ul className="space-y-2">
                     <li>
                         <Link
-                            href=""
+                            href="home"
                             className="flex items-center space-x-2 py-2 px-3 rounded-lg hover:bg-primary text-secondary hover:text-grey1 transition"
                         >
                             <Home className="w-5 h-5" />
