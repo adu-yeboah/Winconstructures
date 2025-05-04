@@ -2,6 +2,8 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { connectDB } from './config/db';
+import propertyRoute from "./routes/propertyRoute"
+import messageRoute from "./routes/messageRoutes"
 
 dotenv.config();
 
@@ -12,10 +14,14 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+
 // Routes
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Welcome to the Messages API' });
 });
+app.use("api/property", propertyRoute)
+app.use("api/message", messageRoute)
+
 
 
 const startServer = async () => {
