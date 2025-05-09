@@ -13,7 +13,7 @@ const columns = [
   {
     name: 'Image',
     selector: (row: Product) => row.image,
-    cell: (row: Product) => <img src={row.image} alt={row.name} className="w-12 h-12 object-cover" />,
+    cell: (row: Product) => <img src={row.image} alt={row.name} className="w-36 h-11 object-cover" />,
     width: '80px',
   },
   {
@@ -109,7 +109,7 @@ const Products: React.FC = () => {
   return (
     <div className="container m-auto px-4 py-8 min-h-screen w-full">
       <Head head='Properties' />
-      <div className=" rounded p-8 w-full ">
+      <div className=" rounded py-8 w-full ">
         <DataTable
           columns={columns}
           data={data}
