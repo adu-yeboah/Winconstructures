@@ -16,28 +16,28 @@ const ContactSection: React.FC = () => {
       </div>
 
       {/* Content */}
-      <div className=" @container relative z-10 container mx-auto px-4 py-12 flex flex-col md:flex-row justify-evenly">
+      <div className="container relative z-10 mx-auto px-4 py-12 flex flex-col md:flex-row justify-evenly">
         {/* Left Side - Text and Stats */}
         <div className="md:w-1/2 text-white mb-8 md:mb-0">
-          <h2 className="text-4xl font-bold mb-4">Connect with Us Today</h2>
-          <p className="text-lg mb-8 max-w-md">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Connect with Us Today</h2>
+          <p className="text-md sm:text-lg mb-8 max-w-md">
             Reach out to our team for any inquiries or assistance you may need. Whether you’re looking for your dream home, need guidance on the buying process, or have any other questions, we’re here to help. Let’s make your real estate journey seamless and enjoyable.
           </p>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-3xl font-bold">100+</p>
+              <p className="text-xl sm:text-3xl font-bold">100+</p>
               <p className="text-secondary">Happy clients</p>
             </div>
             <div>
-              <p className="text-3xl font-bold">50+</p>
+              <p className="text-xl sm:text-3xl font-bold">50+</p>
               <p className="text-secondary">5-star reviews</p>
             </div>
             <div>
-              <p className="text-3xl font-bold">200+</p>
+              <p className="text-xl sm:text-3xl font-bold">200+</p>
               <p className="text-secondary">Successful sales</p>
             </div>
             <div>
-              <p className="text-3xl font-bold">10+</p>
+              <p className="text-xl sm:text-3xl font-bold">10+</p>
               <p className="text-secondary">Years of experience</p>
             </div>
           </div>

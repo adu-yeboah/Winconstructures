@@ -69,7 +69,7 @@ export const useProperties = () => {
         try {
             const response = await apiClient.put<Property>(`property/${id}`, propertyData);
             setProperties((prev) =>
-                prev.map((prop) => (prop._id === id ? response.data : prop))
+                prev.map((prop) => (prop.id as unknown === id ? response.data : prop))
             );
             return response.data;
         } catch (err) {
@@ -87,7 +87,7 @@ export const useProperties = () => {
         setError(null);
         try {
             await apiClient.delete(`property/${id}`);
-            setProperties((prev) => prev.filter((prop) => prop._id !== id));
+            setProperties((prev) => prev.filter((prop) => prop.id as unknown !== id));
         } catch (err) {
             const error = err as AxiosError<ErrorResponse>;
             setError(error.response?.data.message || 'Failed to delete property');

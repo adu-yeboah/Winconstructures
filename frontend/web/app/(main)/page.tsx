@@ -7,7 +7,6 @@ import WhyChooseSection from './_components/ui/whyChoose';
 const Home = () => {
     return (
         <>
-        <div className="relative">
             {/* Background Image */}
             <div
                 className="absolute inset-0 bg-cover bg-center h-[100vh]"
@@ -20,25 +19,24 @@ const Home = () => {
 
 
             {/* Main Content */}
-            <section className="relative z-10 flex flex-col items-center justify-center min-h-screen text-center text-primary">
-                <h1 className="text-4xl md:text-5xl font-bold mb-4">Find Your Perfect Home</h1>
-                <p className="text-lg md:text-xl mb-8 max-w-2xl">
+            <section className="relative flex flex-col items-center justify-center min-h-[calc(100vh-80px)] text-center text-primary px-4">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">
+                    Find Your Perfect Home
+                </h1>
+                <p className="text-base sm:text-lg md:text-xl mb-8 max-w-xl md:max-w-2xl">
                     Discover a place you’ll love to call home – search through a wide range of properties tailored to your needs and preferences. Explore spaces perfect for living, working, or relaxing.
                 </p>
                 <SearchBar />
             </section>
 
-        </div>
-        <Carousel />
-        
-        <ContactSection />
 
-        <WhyChooseSection />
+            <Carousel />
 
-        
+            <ContactSection />
+
+            <WhyChooseSection />
+
         </>
-
-
 
     );
 };

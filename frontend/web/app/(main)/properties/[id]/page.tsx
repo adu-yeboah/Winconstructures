@@ -5,7 +5,6 @@ import Image from "next/image";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { FaPhone, FaMobileAlt, FaFax, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
 import { useParams } from 'next/navigation';
 
 
@@ -27,15 +26,15 @@ export default function PropertyDetail() {
   };
 
   return (
-    <div className="container mx-auto mt-10 px-4 py-8">
+    <div className="container mx-auto mt-10 px-2 sm:px-4 py-8">
       <div className="flex flex-col lg:flex-row justify-between gap-8">
         {/* Left Section: Property Details */}
         <div className="lg:w-2/3 w-full">
           {/* Title and Status */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
-            <div className="flex gap-4 items-center">
-              <h1 className="text-secondary text-2xl md:text-3xl font-bold">{property.title}</h1>
-              <span className="px-6 py-1.5 rounded bg-tertiary text-white">
+            <div className="flex gap-4 items-center sm:flex-row">
+              <h1 className="text-secondary text-xl md:text-3xl font-bold">{property.title}</h1>
+              <span className="sm:px-6 sm:py-1.5 rounded sm:bg-tertiary text-tertiary sm:text-white">
                 {property.status.toUpperCase()}
               </span>
             </div>

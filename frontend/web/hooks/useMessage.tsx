@@ -65,7 +65,7 @@ export const useMessages = () => {
         try {
             const response = await apiClient.put<Message>(`message/${id}`, messageData);
             setMessages((prev) =>
-                prev.map((prop) => (prop._id === id ? response.data : prop))
+                prev.map((prop) => (prop.id as unknown as string === id ? response.data : prop))
             );
             return response.data;
         } catch (err) {
@@ -83,7 +83,7 @@ export const useMessages = () => {
         setError(null);
         try {
             await apiClient.delete(`property/${id}`);
-            setMessages((prev) => prev.filter((prop) => prop._id !== id));
+            setMessages((prev) => prev.filter((prop) => prop.id as unknown !== id));
         } catch (err) {
             const error = err as AxiosError<ErrorResponse>;
             setError(error.response?.data.message || 'Failed to delete property');

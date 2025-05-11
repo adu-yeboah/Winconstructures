@@ -115,9 +115,9 @@ const Products: React.FC = () => {
           data={data}
           pagination
           paginationPerPage={5}
-          // paginationRowsPerPageOptions={[5]}
+          paginationRowsPerPageOptions={[5]}
           onRowClicked={handleRowClick}
-          customStyles={customStyles}
+          // customStyles={customStyles}
           responsive
         />
       </div>

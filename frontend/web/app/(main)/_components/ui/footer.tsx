@@ -5,10 +5,10 @@ import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedin, FaYoutube, FaTiktok, F
 
 const Footer: React.FC = () => {
     return (
-        <footer className="relative bg-white text-black py-12 ">
+        <footer className="relative bg-white text-black py-12 mt-6">
 
             {/* Content */}
-            <div className="relative z-10 container mx-auto px-4 container">
+            <div className="relative z-10 mx-auto px-4 container">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     
                     {/* Column 1: Company Info */}
