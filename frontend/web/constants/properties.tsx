@@ -1,5 +1,4 @@
 import { Product, Property } from "@/types/property"
-import Image from 'next/image';
 
 export const properties: Property[] = [
   {
@@ -28,7 +27,7 @@ export const properties: Property[] = [
     title: "Downtown Luxury Condo",
     description: "A sleek condo with panoramic city views, built by Wiscon Structures.",
     location: "Milwaukee, WI",
-    price: "$2,000/month",
+    price: "$2,000",
     bedrooms: 2,
     bathrooms: 2,
     area: "1,200 sqft",

@@ -14,7 +14,7 @@ const Home = () => {
                     backgroundImage: `url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80')`,
                 }}
             >
-                <div className="absolute inset-0 bg-tertiary opacity-50"></div>
+                <div className="absolute inset-0 bg-tertiary opacity-30"></div>
             </div>
 
 

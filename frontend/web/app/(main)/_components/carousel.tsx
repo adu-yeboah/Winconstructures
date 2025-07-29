@@ -5,6 +5,7 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import PropertyCard from './propertyCard';
+import { h2 } from 'framer-motion/client';
 
 const Carousel: React.FC = () => {
   const settings = {

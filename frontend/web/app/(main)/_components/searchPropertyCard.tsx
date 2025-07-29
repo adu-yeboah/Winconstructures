@@ -10,74 +10,91 @@ interface PropertyCardLuxuryProps {
   property: Property;
 }
 
-
 const PropertyCardTwo: React.FC<PropertyCardLuxuryProps> = ({ property }) => {
-  const navigate = useRouter()
+  const router = useRouter();
+  
   const handleNavigation = () => {
-    navigate.push(`properties/${property.id}`)
-  }
+    router.push(`/properties/${property.id}`);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      handleNavigation();
+    }
+  };
 
   return (
     <div
       onClick={handleNavigation}
-      className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col md:flex-row cursor-pointer transform hover:scale-101 transition-all ease-in-out">
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex={0}
+      className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col md:flex-row cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+      aria-label={`View ${property.title} property details`}
+    >
       {/* Image Section */}
-      <div className="relative w-full  md:w-1/3">
+      <div className="relative w-full md:w-2/5 h-64 md:h-auto">
         <Image
           src={property.images[0]?.img || '/placeholder.jpg'}
           alt={property.title}
-          width={400}
-          height={240}
-          className="w-full md:h-[230px] h-full object-cover"
+          fill
+          sizes="(max-width: 768px) 100vw, 40vw"
+          className="object-cover"
+          loading="lazy"
+          placeholder="blur"
+          blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
+          quality={85}
         />
-        <span className="absolute top-2 left-2 bg-secondary text-white text-xs font-semibold px-2 py-1 rounded">
+        <span className="absolute top-3 left-3 bg-secondary text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
           {property.status.toUpperCase()}
         </span>
       </div>
 
       {/* Details Section */}
-      <div className="p-4 flex-1 flex flex-col items-start justify-start">
-        <div className='flex flex-col gap-2.5'>
-
+      <div className="p-5 md:p-6 flex-1 flex flex-col">
+        <div className="flex flex-col gap-4">
           {/* Title */}
-          <h3 className=" text-xl md:text-2xl font-semibold text-secondary">
+          <h3 className="text-xl md:text-2xl font-bold text-gray-900">
             {property.title}
           </h3>
 
-          <div className="text-base text-grey1 line-clamp-3">
-            {/* {property.description} */}
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Culpa quasi officiis itaque aperiam voluptatibus. Voluptate nulla, quis aliquam sapiente vero voluptas. Voluptatem amet quibusdam, veniam repudiandae nostrum repellendus sapiente ducimus.
-            Necessitatibus quibusdam nemo ad? Sunt voluptates sapiente dolores deleniti eligendi reiciendis quia, rem iusto, animi unde repellendus eaque fuga sit qui eum debitis! Praesentium omnis quae pariatur hic deserunt quidem?
-            Perspiciatis maxime aspernatur commodi? Suscipit, amet. Eius, animi. Doloremque neque, repudiandae ipsa eum, dolorum aut unde voluptates consequatur facere aliquid commodi? Commodi, sint asperiores praesentium cupiditate dolorum iure possimus cum!
-            Perferendis ullam sit ad. Quisquam, blanditiis sed quos esse, eligendi ea molestiae incidunt, atque doloribus earum culpa sequi magnam dicta tempora dignissimos officia! Dignissimos, explicabo expedita consectetur numquam laudantium tempora.
-            Excepturi sint laboriosam voluptates quidem dolorem nesciunt nisi cumque voluptas! Ad nulla ipsam molestiae distinctio, maxime sequi ipsum laborum veniam ex reprehenderit exercitationem explicabo amet dignissimos aliquid placeat quam quo.
-            Sed ullam voluptate provident laboriosam, similique corporis eum perferendis non possimus quae molestiae! Ducimus veniam unde soluta dolorum ipsam veritatis neque corrupti eum ratione, ex earum est dolores eligendi optio!
-          </div>
-
+          {/* Description */}
+          <p className="text-gray-600 line-clamp-3">
+            {property.description || `This stunning ${property.bedrooms}-bedroom property features ${property.bathrooms} bathrooms and ${property.area} sqft of luxurious living space.`}
+          </p>
 
           {/* Details */}
-          <div className="flex gap-4 md:gap-6 text-gray-600 text-sm mb-3">
-            <div className="flex items-center gap-1 text-lg">
-              <FaBed className='text-tertiary' />
-              <span>{property.bedrooms}</span>
+          <div className="flex gap-4 md:gap-6 text-gray-700 mt-2 overflow-ellipsis line-clamp-1">
+            <div className="flex items-center gap-2" title={`${property.bedrooms} bedrooms`}>
+              <FaBed className="text-tertiary text-lg" />
+              <span className="text-sm font-medium">{property.bedrooms} Beds</span>
             </div>
-            <div className="flex items-center gap-1 text-lg">
-              <FaBath className='text-tertiary' />
-              <span>{property.bathrooms}</span>
+            <div className="flex items-center gap-2" title={`${property.bathrooms} bathrooms`}>
+              <FaBath className="text-tertiary text-lg" />
+              <span className="text-sm font-medium">{property.bathrooms} Baths</span>
             </div>
-            <div className="flex items-center gap-1 text-lg">
-              <MdSquareFoot className='text-tertiary' />
-              <span>{property.area}</span>
+            <div className="flex items-center gap-2" title={`${property.area} square feet`}>
+              <MdSquareFoot className="text-tertiary text-lg" />
+              <span className="text-sm font-medium">{property.area} sqft</span>
             </div>
-
           </div>
         </div>
 
         {/* Price and Actions */}
-        <div className="flex items-center justify-between">
-          <p className="text-secondary text-xl font-semibold">{property.price}</p>
+        <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
+          <p className="text-xl font-bold text-secondary">
+            {property.price}
+          </p>
+          <button 
+            className="text-sm font-medium text-secondary hover:text-primary-dark transition-colors"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleNavigation();
+            }}
+          >
+            View Details →
+          </button>
         </div>
-
       </div>
     </div>
   );

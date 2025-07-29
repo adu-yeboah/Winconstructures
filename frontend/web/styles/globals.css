@@ -45,8 +45,40 @@ button {
 
 /* Customize Swiper navigation buttons */
 
-@media (max-width: 768px) {
+/* Customize the container class */
+.container {
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem; /* px-4 */
+  padding-right: 1rem;
+  width: 100%;
+  max-width: 640px; /* Default for smaller screens */
+}
+
+@media (min-width: 640px) {
   .container {
-      max-width: 768px;
+    max-width: 640px; /* sm */
+    padding-left: 1.5rem; /* sm:px-6 */
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 740px; /* Matches your existing rule */
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1280px; /* lg:max-w-6xl */
+    padding-left: 2rem; /* lg:px-8 */
+    padding-right: 2rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1440px; /* xl:max-w-7xl, optional for larger screens */
   }
 }
