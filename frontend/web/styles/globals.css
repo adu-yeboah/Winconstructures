@@ -7,14 +7,34 @@
 @theme {
   --color-*: initial;
 
-  /* Define your custom colors */
-  --color-primary: #C9EFC7;   
-  --color-secondary: #528265;  
-  --color-tertiary: #551E19;   
-  --color-white: #FFFFFF ; 
-  --color-black: #000000;
-  --color-grey: #e3e3e3;
-  --color-grey1: #a8a8a8;
+  /*  Brand Colors */
+  --color-primary: #1f4d3a; /* Deep luxury green */
+  --color-primary-light: #e8f5ee; /* Soft mint */
+  --color-primary-dark: #16382a; /* Hover / active */
+
+  /*  Premium Accent */
+  --color-secondary: #d4af37; /* Gold premium accent */
+  --color-secondary-light: #f8e7a3;
+
+  /*  Supporting Colors */
+  --color-tertiary: #6b7280; /* Neutral gray for text */
+  --color-accent: #528265; /* Your original green */
+
+  /*  Base */
+  --color-white: #ffffff;
+  --color-black: #111827;
+
+  /* 🌫 UI Neutral */
+  --color-grey: #f3f4f6; /* Light background */
+  --color-grey1: #d1d5db; /* Borders */
+  --color-grey2: #6b7280; /* Secondary text */
+
+  /* Status */
+  --color-success: #16a34a;
+  --color-warning: #f59e0b;
+  --color-danger: #dc2626;
+
+  --font-sans: var(--font-poppins);
 }
 
 @theme inline {
