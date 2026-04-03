@@ -37,86 +37,85 @@ const WhyChooseSection: React.FC = () => {
   };
 
   return (
-    <section className="relative py-20 bg-gradient-to-br from-gray-50 to-gray-100">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5 bg-[url('/pattern.svg')] bg-repeat"></div>
-      
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Section Header */}
-        <motion.div 
-          initial="hidden"
-          whileInView="visible"
-          variants={fadeIn}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <div className="flex items-center justify-center mb-4">
-            <div className="w-12 h-1 bg-secondary mr-3"></div>
-            <span className="text-sm uppercase tracking-wider text-gray-500 font-medium">Why Choose Us</span>
-          </div>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-            Why <span className="text-secondary">Wiscon Structures</span> Stands Out
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            We combine innovative technology with real estate expertise to deliver exceptional results for our clients.
-          </p>
-        </motion.div>
-
-        {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {features.map((feature, index) => (
-            <motion.div
-              key={index}
-              initial="hidden"
-              whileInView="visible"
-              variants={fadeIn}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              whileHover={{ y: -5 }}
-              className="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition-all"
-            >
-              <div className="flex items-center mb-4">
-                <span className="text-4xl font-bold text-secondary mr-3">{feature.number}</span>
-                <div className="bg-secondary/10 p-3 rounded-full">
-                  {feature.icon}
-                </div>
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">{feature.title}</h3>
-              <p className="text-gray-600">{feature.description}</p>
-            </motion.div>
-          ))}
+    <section className="relative py-16 sm:py-20 px-4 sm:px-6 md:px-10 max-w-7xl mx-auto">
+      {/* Section Header */}
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        variants={fadeIn}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="text-center mb-12"
+      >
+        {/* Eyebrow */}
+        <div className="flex items-center justify-center gap-3 mb-5">
+          <span className="block w-6 h-px bg-secondary" />
+          <span className="text-secondary text-[11px] font-medium tracking-[0.14em] uppercase">
+            Why choose us
+          </span>
+          <span className="block w-6 h-px bg-secondary" />
         </div>
 
-        {/* Stats Section */}
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          variants={fadeIn}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mt-16 bg-gradient-to-r from-secondary to-tertiary rounded-xl p-8 md:p-12 text-white"
-        >
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            <div>
-              <div className="text-3xl md:text-4xl font-bold mb-2">10+</div>
-              <div className="text-sm uppercase tracking-wider">Years Experience</div>
+        <h2 className="font-serif text-3xl sm:text-4xl font-light text-gray-900 mb-4">
+          Why Wincon Structures{" "}
+          <em className="italic text-secondary">stands out</em>
+        </h2>
+        <p className="text-gray-600 text-base max-w-2xl mx-auto font-light">
+          We combine innovative technology with real estate expertise to deliver exceptional results for our clients.
+        </p>
+      </motion.div>
+
+      {/* Features Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        {features.map((feature, index) => (
+          <motion.div
+            key={index}
+            initial="hidden"
+            whileInView="visible"
+            variants={fadeIn}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: index * 0.1 }}
+            whileHover={{ y: -5 }}
+            className="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition-all"
+          >
+            <div className="flex items-center mb-4">
+              <span className="text-4xl font-bold text-secondary mr-3">{feature.number}</span>
+              <div className="bg-secondary/10 p-3 rounded-full">
+                {feature.icon}
+              </div>
             </div>
-            <div>
-              <div className="text-3xl md:text-4xl font-bold mb-2">1,250+</div>
-              <div className="text-sm uppercase tracking-wider">Happy Clients</div>
-            </div>
-            <div>
-              <div className="text-3xl md:text-4xl font-bold mb-2">98%</div>
-              <div className="text-sm uppercase tracking-wider">Satisfaction Rate</div>
-            </div>
-            <div>
-              <div className="text-3xl md:text-4xl font-bold mb-2">24/7</div>
-              <div className="text-sm uppercase tracking-wider">Support Available</div>
-            </div>
-          </div>
-        </motion.div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">{feature.title}</h3>
+            <p className="text-gray-600 text-sm font-light leading-relaxed">{feature.description}</p>
+          </motion.div>
+        ))}
       </div>
+
+      {/* Stats Bar - Matching Hero Design */}
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        variants={fadeIn}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="grid grid-cols-2 lg:grid-cols-4 border-t border-b border-gray-200"
+      >
+        {[
+          { num: "12yr", label: "Years experience" },
+          { num: "500+", label: "Happy clients" },
+          { num: "98%", label: "Satisfaction rate" },
+          { num: "24/7", label: "Support available" },
+        ].map((stat, i) => (
+          <div
+            key={i}
+            className="px-6 lg:px-8 py-5 bg-gray-50 border-r border-gray-200 last:border-r-0"
+          >
+            <p className="font-serif text-3xl font-semibold text-gray-900 leading-none mb-1">
+              {stat.num}
+            </p>
+            <p className="text-xs text-gray-500 font-light">{stat.label}</p>
+          </div>
+        ))}
+      </motion.div>
     </section>
   );
 };

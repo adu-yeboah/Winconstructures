@@ -64,6 +64,13 @@
   /*  */
 
   /* Customize Swiper navigation buttons */
+    .slick-dots li button:before {
+  color: #d1d5db !important;
+  font-size: 8px !important;
+}
+.slick-dots li.slick-active button:before {
+  color: #1f4d3a !important;
+}
 
   /* Customize the container class */
   .container {

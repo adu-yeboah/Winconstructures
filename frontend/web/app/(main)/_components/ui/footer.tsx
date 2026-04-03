@@ -1,99 +1,127 @@
-"use client"; // Ensure client-side rendering for Next.js App Router
+"use client";
 
-import React from 'react';
-import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedin, FaYoutube, FaTiktok, FaPinterest } from 'react-icons/fa';
+import React from "react";
+import Link from "next/link";
+import {
+  FaFacebookF,
+  FaTwitter,
+  FaInstagram,
+  FaLinkedin,
+  FaYoutube,
+  FaTiktok,
+  FaPinterest,
+} from "react-icons/fa";
+import { Building2, Phone, Mail, MapPin } from "lucide-react";
 
 const Footer: React.FC = () => {
-    return (
-        <footer className="relative bg-white text-black py-12 mt-6">
+  return (
+    <footer className="relative bg-primary-dark text-white overflow-hidden">
+      {/* Top Border Glow */}
+      <div className="absolute inset-x-0 top-0 h-px bg-white/10" />
 
-            {/* Content */}
-            <div className="relative z-10 mx-auto px-4 container">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    
-                    {/* Column 1: Company Info */}
-                    <div>
-                        <div className="flex items-center mb-4">
-                            <div className="w-8 h-8 bg-blue-500 mr-2 flex items-center justify-center">
-                                <span className="text-black font-bold">🏠</span>
-                            </div>
-                            <h3 className="text-xl font-bold text-secondary">Wisconstructures</h3>
-                        </div>
-                        <p className="text-gray-400 mb-4">
-                            Discover leading properties and secure your dream home with us. Expert guidance and support at every step.
-                        </p>
-                        <ul className="text-gray-400 space-y-2">
-                            <li className="flex items-center">
-                                <span className="mr-2">📞</span> (123) 345-6789
-                            </li>
-                            <li className="flex items-center">
-                                <span className="mr-2">📧</span> support@tangibewp.com
-                            </li>
-                        </ul>
-                    </div>
-
-                    {/* Column 2: Useful Links */}
-                    <div>
-                        <h4 className="text-lg font-semibold mb-4 uppercase text-secondary">Useful Links</h4>
-                        <ul className="text-gray-400 space-y-2">
-                            <li>
-                                <a href="#" className="hover:text-secondary transition">
-                                    About Us
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" className="hover:text-secondary transition">
-                                    Contact Us
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" className="hover:text-secondary transition">
-                                    search
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-
-                   
-
-                    {/* Column 3 Social Media */}
-                    <div>
-                        <h4 className="text-lg font-semibold mb-4 uppercase text-secondary">Follow Our Social Media</h4>
-                        <div className="flex space-x-4 mb-6">
-                            <a href="#" className="text-gray-400 hover:text-secondary transition">
-                                <FaFacebookF size={20} />
-                            </a>
-                            <a href="#" className="text-gray-400 hover:text-secondary transition">
-                                <FaTwitter size={20} />
-                            </a>
-                            <a href="#" className="text-gray-400 hover:text-secondary transition">
-                                <FaInstagram size={20} />
-                            </a>
-                            <a href="#" className="text-gray-400 hover:text-secondary transition">
-                                <FaLinkedin size={20} />
-                            </a>
-                            <a href="#" className="text-gray-400 hover:text-secondary transition">
-                                <FaYoutube size={20} />
-                            </a>
-                            <a href="#" className="text-gray-400 hover:text-secondary transition">
-                                <FaTiktok size={20} />
-                            </a>
-                            <a href="#" className="text-gray-400 hover:text-secondary transition">
-                                <FaPinterest size={20} />
-                            </a>
-                        </div>
-
-
-                    </div>
-                </div>
-
-                {/* Footer Note */}
-                <div className="mt-12 text-center text-gray-500 text-sm">
-                    © 2025 Wisconstructure - Real Estate WordPress Theme. All rights reserved.
-                </div>
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 py-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+          {/* Brand */}
+          <div className="lg:col-span-2">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-11 h-11 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center">
+                <Building2 className="w-5 h-5 text-secondary" />
+              </div>
+              <h3 className="font-serif text-2xl font-light tracking-wide">
+                Wincon Structures
+              </h3>
             </div>
-        </footer>
-    );
+
+            <p className="text-white/65 leading-relaxed max-w-lg font-light mb-8">
+              Discover curated luxury homes, investment properties, and premium
+              spaces designed for modern living. We help you buy, rent, and
+              invest with confidence.
+            </p>
+
+            <div className="space-y-4 text-sm text-white/70 font-light">
+              <div className="flex items-center gap-3">
+                <Phone className="w-4 h-4 text-secondary" />
+                <span>(123) 345-6789</span>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <Mail className="w-4 h-4 text-secondary" />
+                <span>support@winconstructures.com</span>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <MapPin className="w-4 h-4 text-secondary" />
+                <span>Accra, Ghana</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Links */}
+          <div>
+            <p className="text-secondary text-xs tracking-[0.18em] uppercase mb-6">
+              Navigation
+            </p>
+
+            <div className="space-y-4 text-white/70 font-light">
+              <Link href="/about" className="block hover:text-white transition-colors">
+                About Us
+              </Link>
+              <Link href="/search" className="block hover:text-white transition-colors">
+                Properties
+              </Link>
+              <Link href="/services" className="block hover:text-white transition-colors">
+                Services
+              </Link>
+              <Link href="/contact" className="block hover:text-white transition-colors">
+                Contact
+              </Link>
+            </div>
+          </div>
+
+          {/* Social */}
+          <div>
+            <p className="text-secondary text-xs tracking-[0.18em] uppercase mb-6">
+              Follow Us
+            </p>
+
+            <div className="flex flex-wrap gap-3">
+              {[
+                FaFacebookF,
+                FaTwitter,
+                FaInstagram,
+                FaLinkedin,
+                FaYoutube,
+                FaTiktok,
+                FaPinterest,
+              ].map((Icon, i) => (
+                <a
+                  key={i}
+                  href="#"
+                  className="w-11 h-11 rounded-full border border-white/10 bg-white/5 hover:bg-secondary hover:border-secondary transition-all duration-300 flex items-center justify-center"
+                >
+                  <Icon size={15} />
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom */}
+        <div className="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white/50 font-light">
+          <p>© 2026 Wincon Structures. All rights reserved.</p>
+
+          <div className="flex gap-6">
+            <Link href="/privacy" className="hover:text-white transition-colors">
+              Privacy Policy
+            </Link>
+            <Link href="/terms" className="hover:text-white transition-colors">
+              Terms of Service
+            </Link>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
 };
 
 export default Footer;
