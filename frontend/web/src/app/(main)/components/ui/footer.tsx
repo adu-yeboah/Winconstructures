@@ -12,6 +12,7 @@ import {
   FaPinterest,
 } from "react-icons/fa";
 import { Building2, Phone, Mail, MapPin } from "lucide-react";
+import Image from "next/image";
 
 const Footer: React.FC = () => {
   return (
@@ -24,9 +25,14 @@ const Footer: React.FC = () => {
           {/* Brand */}
           <div className="lg:col-span-2">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-11 h-11 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center">
-                <Building2 className="w-5 h-5 text-secondary" />
-              </div>
+              <Image
+                src="/logo.png"
+                alt="Wiscon Structures Logo"
+                width={120}
+                height={60}
+                className="h-10 w-auto"
+                priority
+              />
               <h3 className="font-serif text-2xl font-light tracking-wide">
                 Wincon Structures
               </h3>
@@ -63,16 +69,28 @@ const Footer: React.FC = () => {
             </p>
 
             <div className="space-y-4 text-white/70 font-light">
-              <Link href="/about" className="block hover:text-white transition-colors">
+              <Link
+                href="/about"
+                className="block hover:text-white transition-colors"
+              >
                 About Us
               </Link>
-              <Link href="/search" className="block hover:text-white transition-colors">
+              <Link
+                href="/search"
+                className="block hover:text-white transition-colors"
+              >
                 Properties
               </Link>
-              <Link href="/services" className="block hover:text-white transition-colors">
+              <Link
+                href="/services"
+                className="block hover:text-white transition-colors"
+              >
                 Services
               </Link>
-              <Link href="/contact" className="block hover:text-white transition-colors">
+              <Link
+                href="/contact"
+                className="block hover:text-white transition-colors"
+              >
                 Contact
               </Link>
             </div>
@@ -108,10 +126,15 @@ const Footer: React.FC = () => {
 
         {/* Bottom */}
         <div className="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white/50 font-light">
-          <p>© 2026 Wincon Structures. All rights reserved.</p>
+          <p>
+            © {new Date().getFullYear()} Wincon Structures. All rights reserved.
+          </p>
 
           <div className="flex gap-6">
-            <Link href="/privacy" className="hover:text-white transition-colors">
+            <Link
+              href="/privacy"
+              className="hover:text-white transition-colors"
+            >
               Privacy Policy
             </Link>
             <Link href="/terms" className="hover:text-white transition-colors">

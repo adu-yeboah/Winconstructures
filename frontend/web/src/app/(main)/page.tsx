@@ -1,8 +1,9 @@
 import React from "react";
-import { SearchBar } from "./_components/searchBar";
-import Carousel from "./_components/carousel";
-import ContactSection from "./_components/ui/contactBanner";
-import WhyChooseSection from "./_components/ui/whyChoose";
+import { SearchBar } from "./components/searchBar";
+import ContactSection from "./components/ui/contactBanner";
+import WhyChooseSection from "./components/ui/whyChoose";
+import Carousel from "./components/carousel";
+
 
 const Home = () => {
   return (
@@ -31,7 +32,7 @@ const Home = () => {
             {/* Title */}
             <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-light text-white leading-[1.08] tracking-tight mb-5">
               Find your{" "}
-              <em className="italic text-secondary not-italic">perfect</em>
+              <em className="italic text-secondary ">perfect</em>
               <br />
               place to live
             </h1>
@@ -67,7 +68,7 @@ const Home = () => {
         </div>
       </div>
 
-      <Carousel />
+      <Carousel title="Recent properties" />
 
       <ContactSection />
 

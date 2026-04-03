@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "../../styles/globals.css";
-import Footer from "./_components/ui/footer";
-import Navbar from "./_components/navbar";
+import Navbar from "./components/navbar";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import Footer from "./components/ui/footer";
 
 const poppins = Poppins({
   subsets: ["latin"],
