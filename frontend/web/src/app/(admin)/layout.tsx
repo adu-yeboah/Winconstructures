@@ -3,8 +3,8 @@ import '../../styles/globals.css';
 
 
 export const metadata: Metadata = {
-    title: 'Wisconstructures',
-    description: 'dsrg',
+    title: 'Wisconstructures Admin',
+    description: 'Admin dashboard for Wisconstructures',
 };
 
 type RootLayoutProps = {

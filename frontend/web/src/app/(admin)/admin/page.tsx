@@ -11,8 +11,8 @@ import {
   Tooltip,
   Legend
 } from 'chart.js'
-import { Widgets } from '../../components/Widgets'
 import widgetsData from '@/constants/widgets'
+import { Widgets } from '../components/Widgets'
 
 ChartJS.register(
   BarElement,
