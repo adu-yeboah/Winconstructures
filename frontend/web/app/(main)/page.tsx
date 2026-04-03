@@ -1,44 +1,79 @@
-import React from 'react';
-import { SearchBar } from './_components/searchBar';
-import Carousel from './_components/carousel';
-import ContactSection from './_components/ui/contactBanner';
-import WhyChooseSection from './_components/ui/whyChoose';
+import React from "react";
+import { SearchBar } from "./_components/searchBar";
+import Carousel from "./_components/carousel";
+import ContactSection from "./_components/ui/contactBanner";
+import WhyChooseSection from "./_components/ui/whyChoose";
 
 const Home = () => {
-    return (
-        <>
-            {/* Background Image */}
-            <div
-                className="absolute inset-0 bg-cover bg-center h-[100vh]"
-                style={{
-                    backgroundImage: `url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80')`,
-                }}
-            >
-                <div className="absolute inset-0 bg-tertiary opacity-30"></div>
+  return (
+    <>
+      {/* Hero */}
+      <div className="relative min-h-screen flex flex-col overflow-hidden">
+        {/* Background */}
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1350&q=80')`,
+          }}
+        />
+        <div className="absolute inset-0 bg-primary-dark/60" />
+
+        {/* Hero Content */}
+        <section className="relative z-10 flex flex-col justify-center flex-1 px-6 lg:px-12 pt-32 pb-48">
+          <div className="max-w-2xl animate-fade-up">
+            {/* Eyebrow */}
+            <div className="flex items-center gap-3 mb-5">
+              <span className="text-secondary text-xs font-medium tracking-[0.14em] uppercase">
+                Premium Real Estate
+              </span>
             </div>
 
+            {/* Title */}
+            <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-light text-white leading-[1.08] tracking-tight mb-5">
+              Find your{" "}
+              <em className="italic text-secondary not-italic">perfect</em>
+              <br />
+              place to live
+            </h1>
 
-            {/* Main Content */}
-            <section className="relative flex flex-col items-center justify-center min-h-[calc(100vh-80px)] text-center text-primary px-4">
-                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">
-                    Find Your Perfect Home
-                </h1>
-                <p className="text-base sm:text-lg md:text-xl mb-8 max-w-xl md:max-w-2xl">
-                    Discover a place you’ll love to call home – search through a wide range of properties tailored to your needs and preferences. Explore spaces perfect for living, working, or relaxing.
-                </p>
-                <SearchBar />
-            </section>
+            <p className="text-white/65 text-base md:text-lg leading-relaxed max-w-md font-light mb-10">
+              Discover curated properties across prime locations — built for the
+              way you want to live, work, and invest.
+            </p>
 
+            {/* Search */}
+            <SearchBar />
+          </div>
+        </section>
 
-            <Carousel />
+        {/* Stats Bar */}
+        <div className="relative z-10 grid grid-cols-2 lg:grid-cols-4 border-t border-white/10">
+          {[
+            { num: "1.2k+", label: "Properties listed" },
+            { num: "840+", label: "Happy clients" },
+            { num: "15yr", label: "Years of experience" },
+            { num: "98%", label: "Client satisfaction" },
+          ].map((stat, i) => (
+            <div
+              key={i}
+              className="px-6 lg:px-8 py-5 bg-white/[0.06] backdrop-blur-sm border-r border-white/10 last:border-r-0"
+            >
+              <p className="font-serif text-3xl font-semibold text-white leading-none mb-1">
+                {stat.num}
+              </p>
+              <p className="text-xs text-white/55 font-light">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
 
-            <ContactSection />
+      <Carousel />
 
-            <WhyChooseSection />
+      <ContactSection />
 
-        </>
-
-    );
+      <WhyChooseSection />
+    </>
+  );
 };
 
 export default Home;

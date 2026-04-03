@@ -1,104 +1,104 @@
-@import "tailwindcss";
+  @import "tailwindcss";
 
-:root {
-  --foreground: #171717;
-}
-
-@theme {
-  --color-*: initial;
-
-  /*  Brand Colors */
-  --color-primary: #1f4d3a; /* Deep luxury green */
-  --color-primary-light: #e8f5ee; /* Soft mint */
-  --color-primary-dark: #16382a; /* Hover / active */
-
-  /*  Premium Accent */
-  --color-secondary: #d4af37; /* Gold premium accent */
-  --color-secondary-light: #f8e7a3;
-
-  /*  Supporting Colors */
-  --color-tertiary: #6b7280; /* Neutral gray for text */
-  --color-accent: #528265; /* Your original green */
-
-  /*  Base */
-  --color-white: #ffffff;
-  --color-black: #111827;
-
-  /* 🌫 UI Neutral */
-  --color-grey: #f3f4f6; /* Light background */
-  --color-grey1: #d1d5db; /* Borders */
-  --color-grey2: #6b7280; /* Secondary text */
-
-  /* Status */
-  --color-success: #16a34a;
-  --color-warning: #f59e0b;
-  --color-danger: #dc2626;
-
-  --font-sans: var(--font-poppins);
-}
-
-@theme inline {
-  --color-background: var(--color-primary);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
   :root {
-    --background: #a8a8a8;
-    --foreground: #000000;
+    --foreground: #171717;
   }
-}
 
-body {
-  background: var(--color-grey);
-  color: var(--color-foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
+  @theme {
+    --color-*: initial;
 
-button {
-  cursor: pointer;
-}
+    /*  Brand Colors */
+    --color-primary: #1f4d3a; /* Deep luxury green */
+    --color-primary-light: #e8f5ee; /* Soft mint */
+    --color-primary-dark: #16382a; /* Hover / active */
 
-/*  */
+    /*  Premium Accent */
+    --color-secondary: #d4af37; /* Gold premium accent */
+    --color-secondary-light: #f8e7a3;
 
-/* Customize Swiper navigation buttons */
+    /*  Supporting Colors */
+    --color-tertiary: #6b7280; /* Neutral gray for text */
+    --color-accent: #528265; /* Your original green */
 
-/* Customize the container class */
-.container {
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1rem; /* px-4 */
-  padding-right: 1rem;
-  width: 100%;
-  max-width: 640px; /* Default for smaller screens */
-}
+    /*  Base */
+    --color-white: #ffffff;
+    --color-black: #111827;
 
-@media (min-width: 640px) {
+    /* 🌫 UI Neutral */
+    --color-grey: #f3f4f6; /* Light background */
+    --color-grey1: #d1d5db; /* Borders */
+    --color-grey2: #6b7280; /* Secondary text */
+
+    /* Status */
+    --color-success: #16a34a;
+    --color-warning: #f59e0b;
+    --color-danger: #dc2626;
+
+    --font-sans: var(--font-poppins);
+  }
+
+  @theme inline {
+    --color-background: var(--color-primary);
+    --color-foreground: var(--foreground);
+    --font-sans: var(--font-geist-sans);
+    --font-mono: var(--font-geist-mono);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background: #a8a8a8;
+      --foreground: #000000;
+    }
+  }
+
+  body {
+    background: var(--color-grey);
+    color: var(--color-foreground);
+    font-family: var(--font-poppins), sans-serif;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  /*  */
+
+  /* Customize Swiper navigation buttons */
+
+  /* Customize the container class */
   .container {
-    max-width: 640px; /* sm */
-    padding-left: 1.5rem; /* sm:px-6 */
-    padding-right: 1.5rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem; /* px-4 */
+    padding-right: 1rem;
+    width: 100%;
+    max-width: 640px; /* Default for smaller screens */
   }
-}
 
-@media (min-width: 768px) {
-  .container {
-    max-width: 740px; /* Matches your existing rule */
+  @media (min-width: 640px) {
+    .container {
+      max-width: 640px; /* sm */
+      padding-left: 1.5rem; /* sm:px-6 */
+      padding-right: 1.5rem;
+    }
   }
-}
 
-@media (min-width: 1024px) {
-  .container {
-    max-width: 1280px; /* lg:max-w-6xl */
-    padding-left: 2rem; /* lg:px-8 */
-    padding-right: 2rem;
+  @media (min-width: 768px) {
+    .container {
+      max-width: 740px; /* Matches your existing rule */
+    }
   }
-}
 
-@media (min-width: 1280px) {
-  .container {
-    max-width: 1440px; /* xl:max-w-7xl, optional for larger screens */
+  @media (min-width: 1024px) {
+    .container {
+      max-width: 1280px; /* lg:max-w-6xl */
+      padding-left: 2rem; /* lg:px-8 */
+      padding-right: 2rem;
+    }
   }
-}
+
+  @media (min-width: 1280px) {
+    .container {
+      max-width: 1440px; /* xl:max-w-7xl, optional for larger screens */
+    }
+  }
