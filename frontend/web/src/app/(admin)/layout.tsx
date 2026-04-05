@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import '../../styles/globals.css';
+import '../../styles/globals-shadcn.css';
+import { Poppins } from 'next/font/google';
 
 
 export const metadata: Metadata = {
@@ -11,10 +12,16 @@ type RootLayoutProps = {
     children: React.ReactNode;
 };
 
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-poppins",
+});
+
 export default function RootLayout({ children }: RootLayoutProps) {
     return (
-        <html lang="en">
-            <body>
+        <html lang="en" className={poppins.variable}>
+            <body className={poppins.className}>
                 {children}
             </body>
         </html>

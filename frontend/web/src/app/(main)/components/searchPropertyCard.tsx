@@ -1,28 +1,20 @@
 "use client";
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { FaBed, FaBath, FaMapMarkerAlt } from "react-icons/fa";
 import { MdSquareFoot } from "react-icons/md";
 import { Property } from "@/types/property";
-import { useRouter } from "next/navigation";
 
 interface PropertyCardLuxuryProps {
   property: Property;
 }
 
 const PropertyCardTwo: React.FC<PropertyCardLuxuryProps> = ({ property }) => {
-  const router = useRouter();
-
-  const handleNavigation = () => {
-    router.push(`/properties/${property.id}`);
-  };
-
   return (
-    <div
-      onClick={handleNavigation}
-      role="button"
-      tabIndex={0}
-      className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer"
+    <Link
+      href={`/properties/${property.id}`}
+      className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
     >
       {/* Image */}
       <div className="relative h-80 overflow-hidden">
@@ -83,7 +75,7 @@ const PropertyCardTwo: React.FC<PropertyCardLuxuryProps> = ({ property }) => {
           </button>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

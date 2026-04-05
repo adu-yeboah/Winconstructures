@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Poppins, Geist } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
-import "../styles/globals.css";
 import { cn } from "@/lib/utils";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
@@ -26,7 +25,7 @@ type RootLayoutProps = {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en" className={cn("font-sans", geist.variable)}>
+    <html lang="en" className={cn("font-sans", geist.variable)} >
       <body className={poppins.className}>
         <NextTopLoader
           color="#d4af37"

@@ -27,4 +27,8 @@ export type Product = {
     orders: number;
     stock: number;
     amount: number;
+    type?: string;
+    location?: string;
+    bedrooms?: number;
+    bathrooms?: number;
   };

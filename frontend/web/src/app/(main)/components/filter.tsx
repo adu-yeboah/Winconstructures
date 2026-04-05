@@ -24,16 +24,6 @@ const PropertySearchFilter: React.FC = () => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         // Add your search logic here
-        console.log({
-            status,
-            keyword,
-            location,
-            propertyType,
-            rooms,
-            bathrooms,
-            bedrooms,
-            priceRange
-        });
     };
 
     return (

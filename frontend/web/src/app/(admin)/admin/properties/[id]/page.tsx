@@ -1,18 +1,18 @@
 'use client';
 
-import { notFound, useParams } from 'next/navigation';
+import { notFound, useParams, useRouter } from 'next/navigation';
 import { properties } from '@/constants/properties';
 import { Property } from '@/types/property';
 import React, { useState } from 'react';
-import Head from '@/app/(admin)/components/ui/head';
-
+import { Save, Trash2, Plus, X, ArrowLeft } from 'lucide-react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 
 export default function ProductDetails() {
   const params = useParams();
-  const id = params?.id;
+  const router = useRouter();
   const property = properties.find((item) => item.id.toString() === params.id);
-
-  console.log(property);
 
   if (!property) return notFound();
 
@@ -29,150 +29,193 @@ export default function ProductDetails() {
   };
 
   const handleUpdate = () => {
-    console.log('Updated Property:', formData);
-    // TODO: Call backend API to update
-    alert('Property updated (check console)');
+    // TODO: API call
   };
 
   const handleDelete = () => {
-    console.log('Delete Property ID:', property.id);
-    // TODO: Call backend API to delete
-    alert('Property deleted (check console)');
+    // TODO: API call
   };
 
+  const fieldClass = "w-full border border-gray-200 rounded-lg px-3 py-2.5 text-[13px] text-gray-900 font-[DM_Sans] outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all";
+  const labelClass = "block text-[10px] font-medium uppercase tracking-[0.07em] text-tertiary mb-1.5";
+
   return (
-    <>
-      <Head head='Edit Property' />
-      <div className="max-w-4xl mx-auto px-4 py-10">
-        {/* Image Gallery */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
-          {formData.images.map((imgObj, idx) => (
-            <img
-              key={idx}
-              src={imgObj.img}
-              alt={`Property Image ${idx + 1}`}
-              className="w-full h-40 object-cover rounded shadow-sm" />
-          ))}
+    <div className="max-w-5xl mx-auto space-y-5">
+      {/* Header */}
+      <div className="flex items-end justify-between">
+        <div>
+          <button
+            onClick={() => router.back()}
+            className="flex items-center gap-1.5 text-[12px] text-tertiary hover:text-gray-800 mb-3 transition-colors"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" /> Back to Properties
+          </button>
+          <div className="flex items-center gap-2.5 mb-1.5">
+            <span className="block w-4 h-px bg-secondary" />
+            <span className="text-secondary text-[10px] font-medium tracking-[0.12em] uppercase">Edit Listing</span>
+          </div>
+          <h1 className="font-serif text-[24px] font-semibold text-gray-900 leading-tight">{formData.title}</h1>
+          <p className="text-[12px] text-tertiary mt-0.5">ID: #{property.id} · Last updated recently</p>
+        </div>
+        <div className="flex gap-2">
+          <Button
+            onClick={handleDelete}
+            variant="outline"
+            className="h-9 text-[13px] gap-2 text-red-500 border-red-200 bg-red-50 hover:bg-red-100 hover:border-red-300"
+          >
+            <Trash2 className="w-3.5 h-3.5" /> Delete
+          </Button>
+          <Button
+            onClick={handleUpdate}
+            className="h-9 bg-primary hover:bg-primary-dark text-white text-[13px] gap-2"
+          >
+            <Save className="w-3.5 h-3.5" /> Save Changes
+          </Button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-5">
+        {/* LEFT */}
+        <div className="space-y-4">
+          {/* Images */}
+          <Card className="rounded-xl border border-gray-100 shadow-none">
+            <CardHeader className="px-5 py-3.5 border-b border-gray-100 flex-row items-center justify-between space-y-0">
+              <p className="text-[13px] font-medium text-gray-900">Property Images</p>
+              <Button variant="outline" size="sm" className="h-7 text-[12px] gap-1.5 border-gray-200">
+                <Plus className="w-3 h-3" /> Add Image
+              </Button>
+            </CardHeader>
+            <CardContent className="p-4">
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                {formData.images.map((imgObj, idx) => (
+                  <div key={idx} className="relative group h-24 rounded-lg overflow-hidden bg-primary-light">
+                    <Image
+                      src={imgObj.img || '/placeholder.jpg'}
+                      alt={`Image ${idx + 1}`}
+                      fill
+                      className="object-cover"
+                    />
+                    <button className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                      <X className="w-4 h-4 text-white" />
+                    </button>
+                  </div>
+                ))}
+                <div className="h-24 rounded-lg border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-primary hover:bg-primary-light transition-all">
+                  <Plus className="w-4 h-4 text-gray-400" />
+                  <span className="text-[10px] text-gray-400">Add</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Basic Info */}
+          <Card className="rounded-xl border border-gray-100 shadow-none">
+            <CardHeader className="px-5 py-3.5 border-b border-gray-100 space-y-0">
+              <p className="text-[13px] font-medium text-gray-900">Basic Information</p>
+            </CardHeader>
+            <CardContent className="p-5 space-y-4">
+              <div>
+                <label className={labelClass}>Title *</label>
+                <input name="title" type="text" value={formData.title} onChange={handleChange} className={fieldClass} />
+              </div>
+              <div>
+                <label className={labelClass}>Description</label>
+                <textarea name="description" value={formData.description} onChange={handleChange} rows={4} className={fieldClass} />
+              </div>
+              <div>
+                <label className={labelClass}>Location *</label>
+                <input name="location" type="text" value={formData.location} onChange={handleChange} className={fieldClass} />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Pricing */}
+          <Card className="rounded-xl border border-gray-100 shadow-none">
+            <CardHeader className="px-5 py-3.5 border-b border-gray-100 space-y-0">
+              <p className="text-[13px] font-medium text-gray-900">Pricing & Specifications</p>
+            </CardHeader>
+            <CardContent className="p-5">
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  { label: "Price *", name: "price", type: "text" },
+                  { label: "Area (sq ft) *", name: "area", type: "text" },
+                  { label: "Bedrooms", name: "bedrooms", type: "number" },
+                  { label: "Bathrooms", name: "bathrooms", type: "number" },
+                ].map((f) => (
+                  <div key={f.name}>
+                    <label className={labelClass}>{f.label}</label>
+                    <input
+                      name={f.name}
+                      type={f.type}
+                      value={(formData as any)[f.name]}
+                      onChange={handleChange}
+                      min={f.type === "number" ? 1 : undefined}
+                      className={fieldClass}
+                    />
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Editable Form */}
-        <form className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium">Title</label>
-            <input
-              type="text"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              className="w-full border rounded px-3 py-2" />
-          </div>
+        {/* RIGHT */}
+        <div className="space-y-4">
+          <Card className="rounded-xl border border-gray-100 shadow-none">
+            <CardHeader className="px-5 py-3.5 border-b border-gray-100 space-y-0">
+              <p className="text-[13px] font-medium text-gray-900">Listing Settings</p>
+            </CardHeader>
+            <CardContent className="p-5 space-y-4">
+              {[
+                { label: "Status *", name: "status", options: ["For Sale", "For Rent"] },
+                { label: "Property Type *", name: "type", options: ["House", "Condo", "Apartment", "Townhouse", "Land"] },
+                { label: "Availability", name: "availability", options: ["Available", "Sold", "Leased"] },
+              ].map((f) => (
+                <div key={f.name}>
+                  <label className={labelClass}>{f.label}</label>
+                  <select name={f.name} value={(formData as any)[f.name]} onChange={handleChange} className={fieldClass}>
+                    {f.options.map((o) => <option key={o}>{o}</option>)}
+                  </select>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
 
-          <div>
-            <label className="block text-sm font-medium">Description</label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              className="w-full border rounded px-3 py-2"
-              rows={3} />
-          </div>
+          <Card className="rounded-xl border border-gray-100 shadow-none">
+            <CardHeader className="px-5 py-3.5 border-b border-gray-100 space-y-0">
+              <p className="text-[13px] font-medium text-gray-900">Listing Stats</p>
+            </CardHeader>
+            <CardContent className="p-4">
+              <div className="grid grid-cols-2 gap-3">
+                {[{ label: "Views", value: "284" }, { label: "Inquiries", value: "12" }].map((s) => (
+                  <div key={s.label} className="bg-gray-50 rounded-lg p-3">
+                    <p className="text-[10px] font-medium uppercase tracking-[0.07em] text-tertiary mb-1">{s.label}</p>
+                    <p className="font-serif text-[22px] font-semibold text-gray-900">{s.value}</p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium">Location</label>
-              <input
-                type="text"
-                name="location"
-                value={formData.location}
-                onChange={handleChange}
-                className="w-full border rounded px-3 py-2" />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium">Price</label>
-              <input
-                type="text"
-                name="price"
-                value={formData.price}
-                onChange={handleChange}
-                className="w-full border rounded px-3 py-2" />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium">Bedrooms</label>
-              <input
-                type="number"
-                name="bedrooms"
-                value={formData.bedrooms}
-                onChange={handleChange}
-                className="w-full border rounded px-3 py-2" />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium">Bathrooms</label>
-              <input
-                type="number"
-                name="bathrooms"
-                value={formData.bathrooms}
-                onChange={handleChange}
-                className="w-full border rounded px-3 py-2" />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium">Area</label>
-              <input
-                type="text"
-                name="area"
-                value={formData.area}
-                onChange={handleChange}
-                className="w-full border rounded px-3 py-2" />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium">Status</label>
-              <select
-                name="status"
-                value={formData.status}
-                onChange={handleChange}
-                className="w-full border rounded px-3 py-2"
+          <Card className="rounded-xl border border-red-200 shadow-none">
+            <CardHeader className="px-5 py-3.5 border-b border-red-100 bg-red-50 space-y-0 rounded-t-xl">
+              <p className="text-[13px] font-medium text-red-600">Danger Zone</p>
+            </CardHeader>
+            <CardContent className="p-4">
+              <p className="text-[12px] text-tertiary mb-3 leading-relaxed">
+                This action is permanent. The listing and all associated data will be removed.
+              </p>
+              <Button
+                onClick={handleDelete}
+                className="w-full bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 shadow-none h-9 text-[13px] gap-2"
+                variant="outline"
               >
-                <option value="For Sale">For Sale</option>
-                <option value="For Rent">For Rent</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium">Type</label>
-              <select
-                name="type"
-                value={formData.type}
-                onChange={handleChange}
-                className="w-full border rounded px-3 py-2"
-              >
-                <option value="House">House</option>
-                <option value="Condo">Condo</option>
-                <option value="Apartment">Apartment</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="mt-6 flex gap-4">
-            <button
-              type="button"
-              onClick={handleUpdate}
-              className="bg-secondary text-white px-6 py-2 rounded"
-            >
-              Save Changes
-            </button>
-            <button
-              type="button"
-              onClick={handleDelete}
-              className="bg-tertiary hover:bg-red-700 text-white px-6 py-2 rounded"
-            >
-              Delete Property
-            </button>
-          </div>
-        </form>
-      </div></>
+                <Trash2 className="w-3.5 h-3.5" /> Delete this property
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
   );
 }

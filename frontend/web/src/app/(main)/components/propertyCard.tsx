@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { Property } from '@/types/property';
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useState } from 'react';
 
 interface PropertyCardProps {
@@ -10,16 +10,12 @@ interface PropertyCardProps {
 
 const PropertyCard: FC<PropertyCardProps> = ({ property }) => {
   const { title, price, bedrooms, bathrooms, area, images, status, location } = property;
-  const router = useRouter();
   const [saved, setSaved] = useState(false);
 
   return (
-    <div
-      onClick={() => router.push(`/properties/${property.id}`)}
-      className="group bg-white rounded-xl overflow-hidden cursor-pointer border border-gray-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(31,77,58,0.10)]"
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => e.key === 'Enter' && router.push(`/properties/${property.id}`)}
+    <Link
+      href={`/properties/${property.id}`}
+      className="group bg-white rounded-xl overflow-hidden border border-gray-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(31,77,58,0.10)]"
     >
       {/* Image */}
       <div className="relative h-52 overflow-hidden bg-gray-100">
@@ -112,7 +108,7 @@ const PropertyCard: FC<PropertyCardProps> = ({ property }) => {
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

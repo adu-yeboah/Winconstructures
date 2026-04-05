@@ -1,26 +1,30 @@
-import React from 'react';
-import Link from 'next/link';
-import { LucideIcon } from 'lucide-react';
+"use client";
+import React from "react";
+import { LucideIcon } from "lucide-react";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 
-interface WidgetsProps {
+interface WidgetCardProps {
   icon: LucideIcon;
   title: string;
   figure: number | string;
   link: string;
   linkText: string;
+  change?: string;
 }
 
-export const Widgets = ({ icon: Icon, title, figure, link, linkText }: WidgetsProps) => {
+export function WidgetCard({ icon: Icon, title, figure, link, linkText }: WidgetCardProps) {
   return (
-    <div className="flex flex-col justify-around w-[300px] h-[150px] p-2.5 bg-white text-white rounded-[10px]">
-      <div className="text-base uppercase text-grey1">{title}</div>
-      <div className="text-3xl p-[0_5px] text-tertiary">{figure}</div>
-      <div className="flex items-center justify-between">
-        <Link href={link} className="underline text-grey1 hover:text-secondary lowercase">
-          {linkText}
-        </Link>
-        <Icon className="text-tertiary" />
-      </div>
-    </div>
-  );
-};
+    <Card className="md:w-[30%] hover:shadow-lg transition-shadow">
+      <CardHeader>
+        <div className="text-sm font-semibold uppercase text-gray-500">{title}</div>
+      </CardHeader>
+      <CardContent>
+        <div className="text-3xl font-bold text-gray-900">{figure}</div>
+      </CardContent>
+      <CardFooter className="flex justify-between items-center">
+        <a href={link} className="text-sm text-gray-500 hover:text-primary underline lowercase">{linkText}</a>
+        <Icon className="w-5 h-5 text-primary" />
+      </CardFooter>
+    </Card>
+  )
+}
