@@ -69,7 +69,7 @@ export function RecentPropertiesTable() {
   const customStyles = {
     headCells: {
       style: {
-        fontSize: "11px", fontWeight: "500", textTransform: "uppercase",
+        fontSize: "11px", fontWeight: "500", textTransform: "uppercase" as const,
         letterSpacing: "0.06em", color: "#6b7280", backgroundColor: "#f9fafb",
         paddingTop: "10px", paddingBottom: "10px",
       },
