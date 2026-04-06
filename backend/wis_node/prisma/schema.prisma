@@ -1,0 +1,180 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+
+
+enum PropertyStatus {
+  FOR_SALE
+  FOR_RENT
+}
+
+enum PropertyType {
+  HOUSE
+  CONDO
+  APARTMENT
+}
+
+enum InquiryStatus {
+  NEW_LEAD
+  CONTACTED
+  CLOSED
+}
+
+enum ViewingStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+enum ActivityAction {
+  ADD
+  EDIT
+  DELETE
+  MESSAGE
+  VIEW
+}
+
+enum ActivityEntityType {
+  PROPERTY
+  MESSAGE
+  VIEWING
+}
+
+model User {
+  id            Int               @id @default(autoincrement())
+  email         String            @unique @db.VarChar(255)
+  password      String?           @db.VarChar(255)
+  firstName     String?           @db.VarChar(100)
+  lastName      String?           @db.VarChar(100)
+  phone         String?           @db.VarChar(20)
+  location      String?           @db.VarChar(255)
+  bio           String?           @db.Text
+  role          String?           @default(ADMIN)
+  avatar        String?           @db.VarChar(500)
+
+  inquiriesNotification Boolean   @default(true)
+  updatesNotification   Boolean   @default(true)
+  weeklyNotification    Boolean   @default(true)
+
+  isActive      Boolean           @default(true)
+
+  properties    Property[]
+  replies       InquiryReply[]
+  scheduledViewings ViewingRequest[]
+  activities    ActivityLog[]
+
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+}
+
+model Property {
+  id            Int               @id @default(autoincrement())
+  title         String            @db.VarChar(255)
+  description   String            @db.Text
+  location      String            @db.VarChar(255)
+  price         String            @db.VarChar(100)
+  bedrooms      Int
+  bathrooms     Int
+  area          String            @db.VarChar(100)
+  status        PropertyStatus
+  type          PropertyType
+  featured      Boolean           @default(false)
+  viewCount     Int               @default(0)
+
+  listedById    Int
+  listedBy      User              @relation(fields: [listedById], references: [id])
+
+  images        PropertyImage[]
+  inquiries     Inquiry[]
+  viewingRequests ViewingRequest[]
+
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+}
+
+model PropertyImage {
+  id            Int               @id @default(autoincrement())
+  img           String            @db.VarChar(500)
+
+  propertyId    Int
+  property      Property          @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+}
+
+model Inquiry {
+  id              Int               @id @default(autoincrement())
+  title           String            @db.VarChar(255)
+  email           String            @db.VarChar(255)
+  subject         String            @db.VarChar(255)
+  message         String?           @db.Text
+  read            Boolean           @default(false)
+  date            DateTime          @default(now())
+  status          InquiryStatus     @default(NEW_LEAD)
+
+  relatedPropertyId Int?
+  relatedProperty   Property?       @relation(fields: [relatedPropertyId], references: [id])
+
+  replies         InquiryReply[]
+
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+}
+
+model InquiryReply {
+  id            Int               @id @default(autoincrement())
+  message       String            @db.Text
+  repliedAt     DateTime          @default(now())
+
+  inquiryId     Int
+  inquiry       Inquiry           @relation(fields: [inquiryId], references: [id], onDelete: Cascade)
+
+  repliedById   Int
+  repliedBy     User              @relation(fields: [repliedById], references: [id])
+}
+
+
+model ViewingRequest {
+  id            Int               @id @default(autoincrement())
+  name          String            @db.VarChar(255)
+  email         String            @db.VarChar(255)
+  phone         String?           @db.VarChar(20)
+  preferredDate DateTime?
+  preferredTime String?           @db.VarChar(50)
+  message       String?           @db.Text
+  status        ViewingStatus     @default(PENDING)
+
+  propertyId    Int
+  property      Property          @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  scheduledById Int?
+  scheduledBy   User?             @relation(fields: [scheduledById], references: [id])
+
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+}
+
+
+model ActivityLog {
+  id            Int                @id @default(autoincrement())
+  action        ActivityAction
+  entityType    ActivityEntityType
+  entityId      Int
+  description   String             @db.Text
+  metadata      Json?
+
+  userId        Int
+  user          User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt     DateTime           @default(now())
+}
