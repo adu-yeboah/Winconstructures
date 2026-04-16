@@ -1,10 +1,13 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { connectDB } from './config/db';
+import prisma, { initializeDatabase } from './config/database.prisma';
+
+
 import propertyRoute from "./routes/propertyRoute"
-import authRoute from "./routes/authRoute"
-import messageRoute from "./routes/messageRoutes"
+import authRoute from "./routes/auth.routes"
+import messageRoute from "./routes/message.routes"
+
 
 dotenv.config();
 
@@ -26,9 +29,54 @@ app.use("/api/message", messageRoute)
 
 
 
+// Request logging middleware
+app.use((req, res, next) => {
+  const start = Date.now();
+
+  // Log incoming request
+  console.log('\n========================================');
+  console.log('📥 INCOMING REQUEST');
+  console.log('========================================');
+  console.log('Method:', req.method);
+  console.log('URL:', req.url);
+  console.log('Headers:', JSON.stringify(req.headers, null, 2));
+  console.log('Body:', req.body ? JSON.stringify(req.body, null, 2) : 'No body');
+  console.log('Query:', JSON.stringify(req.query, null, 2));
+  console.log('========================================\n');
+
+  // Log response when finished
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    console.log('\n========================================');
+    console.log('📤 OUTGOING RESPONSE');
+    console.log('========================================');
+    console.log('Method:', req.method);
+    console.log('URL:', req.url);
+    console.log('Status:', res.statusCode);
+    console.log('Duration:', `${duration}ms`);
+    console.log('========================================\n');
+  });
+
+  next();
+});
+
+// Graceful shutdown
+process.on('SIGINT', async () => {
+  console.log('\n Shutting down gracefully...');
+  await prisma.$disconnect();
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  console.log('\n Shutting down gracefully...');
+  await prisma.$disconnect();
+  process.exit(0);
+});
+
+
 const startServer = async () => {
   try {
-    await connectDB();
+    await initializeDatabase();
     app.listen(PORT, () => {
       console.log(`Server running on http://localhost:${PORT}`);
     });

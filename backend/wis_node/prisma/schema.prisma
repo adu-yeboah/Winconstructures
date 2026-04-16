@@ -4,7 +4,6 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
 }
 
 
@@ -55,7 +54,7 @@ model User {
   phone         String?           @db.VarChar(20)
   location      String?           @db.VarChar(255)
   bio           String?           @db.Text
-  role          String?           @default(ADMIN)
+  role          String?           @default("ADMIN")
   avatar        String?           @db.VarChar(500)
 
   inquiriesNotification Boolean   @default(true)

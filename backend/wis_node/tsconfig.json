@@ -9,10 +9,13 @@
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
     },
+    "baseUrl": "./",
+    "@alias/*": ["src/*"],
     "include": [
         "src/**/*"
     ],
     "exclude": [
         "node_modules"
     ]
+
 }

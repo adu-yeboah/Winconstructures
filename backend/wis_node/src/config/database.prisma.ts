@@ -20,9 +20,7 @@ export const initializeDatabase = async (): Promise<void> => {
 
     // Log database info in development
     if (process.env.NODE_ENV === 'development') {
-      const userCount = await prisma.user.count();
-      const materialCount = await prisma.studyMaterial.count();
-      console.log(` Database stats: ${userCount} users, ${materialCount} materials`);
+
     }
   } catch (error) {
     console.error('Database connection failed:', error);

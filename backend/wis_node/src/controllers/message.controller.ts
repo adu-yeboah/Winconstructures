@@ -1,16 +1,16 @@
 import { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
-import Message from '../models/message';
+import prisma from '../config/database.prisma';
 
 // Get all messages
 export const getMessages = asyncHandler(async (req: Request, res: Response) => {
-  const messages = await Message.find();
+  const messages = await prisma.message.find();
   res.json(messages);
 });
 
 // Get a single message by ID
 export const getMessageById = asyncHandler(async (req: Request, res: Response) => {
-  const message = await Message.findById(req.params.id);
+  const message = await prisma.findById(req.params.id);
   if (!message) {
     res.status(404);
     throw new Error('Message not found');
@@ -25,14 +25,14 @@ export const createMessage = asyncHandler(async (req: Request, res: Response) =>
     res.status(400);
     throw new Error('Please provide title, email, and subject');
   }
-  const message = await Message.create({ title, email, subject });
+  const message = await prisma.create({ title, email, subject });
   res.status(201).json(message);
 });
 
 // Update a message
 export const updateMessage = asyncHandler(async (req: Request, res: Response) => {
   const { title, email, subject } = req.body;
-  const message = await Message.findById(req.params.id);
+  const message = await prisma.message.findById(req.params.id);
   if (!message) {
     res.status(404);
     throw new Error('Message not found');
@@ -46,7 +46,7 @@ export const updateMessage = asyncHandler(async (req: Request, res: Response) =>
 
 // Delete a message
 export const deleteMessage = asyncHandler(async (req: Request, res: Response) => {
-  const message = await Message.findById(req.params.id);
+  const message = await prisma.message.findById(req.params.id);
   if (!message) {
     res.status(404);
     throw new Error('Message not found');
