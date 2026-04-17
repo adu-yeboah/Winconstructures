@@ -20,17 +20,44 @@ app.use(cors());
 app.use(express.json());
 
 
-// Routes
-app.get('/', (req: Request, res: Response) => {
-  res.json({ message: 'Welcome to the Messages API' });
+// Request logging middleware (MUST be before routes to work properly)
+app.use((req, res, next) => {
+  const start = Date.now();
+
+  // Log incoming request
+  console.log('\n========================================');
+  console.log('INCOMING REQUEST');
+  console.log('========================================');
+  console.log('Method:', req.method);
+  console.log('URL:', req.url);
+  console.log('Headers:', JSON.stringify(req.headers, null, 2));
+  console.log('Body:', req.body ? JSON.stringify(req.body, null, 2) : 'No body');
+  console.log('Query:', JSON.stringify(req.query, null, 2));
+  console.log('========================================\n');
+
+  // Log response when finished
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    console.log('\n========================================');
+    console.log('OUTGOING RESPONSE');
+    console.log('========================================');
+    console.log('Method:', req.method);
+    console.log('URL:', req.url);
+    console.log('Status:', res.statusCode);
+    console.log('Duration:', `${duration}ms`);
+    console.log('========================================\n');
+  });
+
+  next();
 });
-app.use('/api/auth', authRoute); 
+
+// Routes
+app.get('/', (_req: Request, res: Response) => {
+  res.json({ message: 'Welcome to Winconstructures API' });
+});
+app.use('/api/auth', authRoute);
 app.use("/api/property", propertyRoute)
 app.use("/api/message", messageRoute)
-
-
-
-// Request logging middleware
 app.use((req, res, next) => {
   const start = Date.now();
 
