@@ -1,107 +1,170 @@
-import apiClient from "@/service/apiClient";
-import { Message } from "@/types/messages";
-import { ErrorResponse } from "@/types/utills";
-import { AxiosError } from "axios";
-import { useCallback, useState } from "react";
+import { useCallback, useState } from 'react';
+import messageService from '@/service/messageService';
+import { Message } from '@/types/messages';
 
 export const useMessages = () => {
-    const [messages, setMessages] = useState<Message[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
+  // Fetch all messages
+  const fetchMessages = useCallback(async (filters?: {
+    status?: 'NEW_LEAD' | 'CONTACTED' | 'CLOSED';
+    read?: boolean;
+    unread?: boolean;
+  }) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await messageService.getAll(filters);
+      setMessages(data);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch messages';
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-    // Fetch all Messages
-    const fetchMessages = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const response = await apiClient.get<Message[]>("property");
-            setMessages(response.data);
-        } catch (err) {
-            const error = err as AxiosError<ErrorResponse>;
-            setError(error.response?.data.message || 'Failed to fetch properties');
-        } finally {
-            setLoading(false);
-        }
-    }, [])
+  // Fetch single message by ID
+  const fetchMessage = useCallback(async (id: string | number) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await messageService.getById(id);
+      return data;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch message';
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
+  // Create new message
+  const createMessage = useCallback(async (messageData: import('@/service/messageService').CreateMessageDto) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await messageService.create(messageData);
+      setMessages((prev) => [...prev, data]);
+      return data;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to create message';
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-    // Fetch single property by ID
-    const fetchMessage = useCallback(async (id: string) => {
-        setLoading(true);
-        setError(null);
-        try {
-            const response = await apiClient.get<Message>(`message/${id}`);
-            return response.data;
-        } catch (err) {
-            const error = err as AxiosError<ErrorResponse>;
-            setError(error.response?.data.message || 'Failed to fetch property');
-            throw error;
-        } finally {
-            setLoading(false);
-        }
-    }, []);
+  // Update existing message
+  const updateMessage = useCallback(async (id: string | number, messageData: import('@/service/messageService').UpdateMessageDto) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await messageService.update(id, messageData);
+      setMessages((prev) =>
+        prev.map((msg) => (msg.id === id ? data : msg))
+      );
+      return data;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update message';
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-    const createMessage = useCallback(async (propertyData: Omit<Message, 'id'>) => {
-        setLoading(true);
-        setError(null);
-        try {
-            const response = await apiClient.post<Message>("property/", propertyData);
-            setMessages((prev) => [...prev, response.data]);
-            return response.data;
-        } catch (err) {
-            const error = err as AxiosError<ErrorResponse>;
-            setError(error.response?.data.message || 'Failed to create property');
-            throw error;
-        } finally {
-            setLoading(false);
-        }
-    }, []);
+  // Delete message
+  const deleteMessage = useCallback(async (id: string | number) => {
+    setLoading(true);
+    setError(null);
+    try {
+      await messageService.delete(id);
+      setMessages((prev) => prev.filter((msg) => msg.id !== id));
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete message';
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-    // Update existing property
-    const updateMessage = useCallback(async (id: string, messageData: Partial<Message>) => {
-        setLoading(true);
-        setError(null);
-        try {
-            const response = await apiClient.put<Message>(`message/${id}`, messageData);
-            setMessages((prev) =>
-                prev.map((prop) => (prop.id as unknown as string === id ? response.data : prop))
-            );
-            return response.data;
-        } catch (err) {
-            const error = err as AxiosError<ErrorResponse>;
-            setError(error.response?.data.message || 'Failed to update property');
-            throw error;
-        } finally {
-            setLoading(false);
-        }
-    }, []);
+  // Helper methods
+  const markAsRead = useCallback(async (id: string | number) => {
+    try {
+      const data = await messageService.markAsRead(id);
+      setMessages((prev) =>
+        prev.map((msg) => (msg.id === id ? data : msg))
+      );
+      return data;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to mark as read';
+      setError(errorMessage);
+      throw err;
+    }
+  }, []);
 
-    // Delete property
-    const deleteMessage = useCallback(async (id: string) => {
-        setLoading(true);
-        setError(null);
-        try {
-            await apiClient.delete(`property/${id}`);
-            setMessages((prev) => prev.filter((prop) => prop.id as unknown !== id));
-        } catch (err) {
-            const error = err as AxiosError<ErrorResponse>;
-            setError(error.response?.data.message || 'Failed to delete property');
-            throw error;
-        } finally {
-            setLoading(false);
-        }
-    }, []);
+  const markAsUnread = useCallback(async (id: string | number) => {
+    try {
+      const data = await messageService.markAsUnread(id);
+      setMessages((prev) =>
+        prev.map((msg) => (msg.id === id ? data : msg))
+      );
+      return data;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to mark as unread';
+      setError(errorMessage);
+      throw err;
+    }
+  }, []);
 
-    return {
-        messages,
-        loading,
-        error,
-        fetchMessages,
-        fetchMessage,
-        createMessage,
-        updateMessage,
-        deleteMessage,
-    };
+  const updateStatus = useCallback(async (id: string | number, status: 'NEW_LEAD' | 'CONTACTED' | 'CLOSED') => {
+    try {
+      const data = await messageService.updateStatus(id, status);
+      setMessages((prev) =>
+        prev.map((msg) => (msg.id === id ? data : msg))
+      );
+      return data;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update status';
+      setError(errorMessage);
+      throw err;
+    }
+  }, []);
 
-}
+  const getNewLeads = useCallback(async () => {
+    return fetchMessages({ status: 'NEW_LEAD' });
+  }, [fetchMessages]);
+
+  const getUnreadCount = useCallback(async () => {
+    try {
+      return await messageService.getUnreadCount();
+    } catch (err) {
+      console.error('Failed to get unread count:', err);
+      return 0;
+    }
+  }, []);
+
+  return {
+    messages,
+    loading,
+    error,
+    fetchMessages,
+    fetchMessage,
+    createMessage,
+    updateMessage,
+    deleteMessage,
+    // Helper methods
+    markAsRead,
+    markAsUnread,
+    updateStatus,
+    getNewLeads,
+    getUnreadCount,
+  };
+};
