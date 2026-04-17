@@ -3,16 +3,25 @@ export type User = {
     password: string,
 }
 
+export interface AuthUser {
+    email: string;
+    firstName?: string;
+    lastName?: string;
+    role?: string;
+}
 
 export interface AuthContextType {
-    user: User | null;
+    user: AuthUser | null;
     login: (credentials: User) => Promise<{ success: boolean; message?: string }>;
     logout: () => Promise<void>;
     loading: boolean;
+    error: string | null;
+    checkAuth: () => boolean;
 }
 
 export interface LoginResponse {
     accessToken: string,
     refreshToken: string,
     detail: string,
+    user: AuthUser;
 }
