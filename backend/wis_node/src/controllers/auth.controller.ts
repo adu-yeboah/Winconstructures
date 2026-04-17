@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { sendLoginAlert } from "../utils/send.mail";
+import { sendLoginAlert } from "../utils/mailer";
 
 dotenv.config();
 
@@ -32,6 +32,15 @@ export const Login = asyncHandler(
 
       // Validate credentials against environment variables
       if (email !== adminEmail || password !== adminPassword) {
+        // Send failed login alert (don't wait for email to complete)
+        sendLoginAlert({
+          email,
+          timestamp: new Date(),
+          successful: false
+        }).catch(emailError => {
+          console.error('Failed to send login alert email:', emailError);
+        });
+
         res.status(401).json({ detail: "Invalid email or password" });
         return;
       }
@@ -50,8 +59,14 @@ export const Login = asyncHandler(
         { expiresIn: "7d" },
       );
 
-      // Send login alert email
-      await sendLoginAlert(email);
+      // Send successful login alert (don't wait for email to complete)
+      sendLoginAlert({
+        email,
+        timestamp: new Date(),
+        successful: true
+      }).catch(emailError => {
+        console.error('Failed to send login alert email:', emailError);
+      });
 
       // Return successful response with tokens and user info
       res.status(200).json({

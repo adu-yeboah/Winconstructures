@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createProperty, deleteProperty, getProperties, getProperty, updateProperty } from "../controllers/propertyController";
+import { createProperty, deleteProperty, getProperties, getProperty, updateProperty } from "../controllers/property.controller";
 import { protect } from "../middleware/authMiddleware";
 
 const router = Router()
