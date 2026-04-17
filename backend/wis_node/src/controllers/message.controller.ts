@@ -29,20 +29,6 @@ export const createMessage = asyncHandler(async (req: Request, res: Response) =>
   res.status(201).json(message);
 });
 
-// Update a message
-export const updateMessage = asyncHandler(async (req: Request, res: Response) => {
-  const { title, email, subject } = req.body;
-  const message = await prisma.message.findById(req.params.id);
-  if (!message) {
-    res.status(404);
-    throw new Error('Message not found');
-  }
-  message.title = title || message.title;
-  message.email = email || message.email;
-  message.subject = subject || message.subject;
-  const updatedMessage = await message.save();
-  res.json(updatedMessage);
-});
 
 // Delete a message
 export const deleteMessage = asyncHandler(async (req: Request, res: Response) => {
