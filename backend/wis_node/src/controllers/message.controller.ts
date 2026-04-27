@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import prisma from '../config/database.prisma';
-import { sendNewInquiryAlert } from '../utils/mailer';
 
 // Get all messages (inquiries)
 export const getMessages = asyncHandler(async (req: Request, res: Response) => {
@@ -140,18 +139,6 @@ export const createMessage = asyncHandler(async (req: Request, res: Response) =>
       status: 'NEW_LEAD',
       relatedPropertyId: relatedPropertyId ? parseInt(relatedPropertyId) : null,
     }
-  });
-
-  // Send email alert to admin (don't wait for email to complete)
-  sendNewInquiryAlert({
-    title: inquiry.title,
-    email: inquiry.email,
-    subject: inquiry.subject,
-    message: inquiry.message,
-    relatedPropertyId: inquiry.relatedPropertyId,
-    relatedProperty: relatedProperty,
-  }).catch(emailError => {
-    console.error('Failed to send inquiry alert email:', emailError);
   });
 
   // Transform response to match frontend expectations

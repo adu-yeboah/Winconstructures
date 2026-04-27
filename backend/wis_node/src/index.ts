@@ -2,8 +2,6 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import prisma, { initializeDatabase } from './config/database.prisma';
-import { verifyEmailConfig } from './config/mail';
-
 
 import propertyRoute from "./routes/propertyRoute"
 import authRoute from "./routes/auth.routes"
@@ -105,9 +103,6 @@ process.on('SIGTERM', async () => {
 const startServer = async () => {
   try {
     await initializeDatabase();
-
-    // Verify email configuration (optional - won't stop server if fails)
-    await verifyEmailConfig();
 
     app.listen(PORT, () => {
       console.log(`Server running on http://localhost:${PORT}`);
