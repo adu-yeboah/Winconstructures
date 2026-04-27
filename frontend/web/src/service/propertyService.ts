@@ -108,6 +108,16 @@ class PropertyService {
   async getByType(type: 'HOUSE' | 'CONDO' | 'APARTMENT'): Promise<Property[]> {
     return this.getAll({ type });
   }
+
+  /**
+   * Get similar properties
+   */
+  async getSimilarProperties(propertyId: string | number, limit: number = 3): Promise<Property[]> {
+    const response = await apiClient.get(`${this.baseUrl}/${propertyId}/similar`, {
+      params: { limit }
+    });
+    return response.data;
+  }
 }
 
 export default new PropertyService();

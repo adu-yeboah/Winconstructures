@@ -386,3 +386,135 @@ export const deleteProperty = asyncHandler(async (req: Request, res: Response): 
 
     res.status(200).json({ message: "Property deleted successfully" });
 });
+
+// Get Similar Properties
+export const getSimilarProperties = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const propertyId = parseInt(req.params.id);
+    const limit = parseInt(req.query.limit as string) || 3;
+
+    if (isNaN(propertyId)) {
+        res.status(400);
+        throw new Error("Invalid property ID");
+    }
+
+    // Get the current property
+    const currentProperty = await prisma.property.findUnique({
+        where: { id: propertyId }
+    });
+
+    if (!currentProperty) {
+        res.status(404);
+        throw new Error("Property not found");
+    }
+
+    // Get all other properties
+    const allProperties = await prisma.property.findMany({
+        where: {
+            id: { not: propertyId },
+            status: currentProperty.status // Same status (FOR_SALE/FOR_RENT)
+        },
+        include: {
+            images: true,
+            listedBy: {
+                select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    email: true,
+                }
+            }
+        }
+    });
+
+    // Calculate similarity scores
+    interface SimilarProperty {
+        property: any;
+        score: number;
+    }
+
+    const similarProperties: SimilarProperty[] = allProperties.map(property => {
+        let score = 0;
+
+        // Property type match (highest weight)
+        if (property.type === currentProperty.type) {
+            score += 40;
+        }
+
+        // Location proximity (extract city/area)
+        const currentLocation = currentProperty.location.toLowerCase();
+        const propertyLocation = property.location.toLowerCase();
+
+        // Check for same city or area
+        const currentWords = currentLocation.split(/[\s,]+/);
+        const propertyWords = propertyLocation.split(/[\s,]+/);
+        const commonWords = currentWords.filter(word => propertyWords.includes(word));
+
+        if (commonWords.length > 0) {
+            score += (commonWords.length / Math.max(currentWords.length, propertyWords.length)) * 30;
+        }
+
+        // Price range similarity (within 20%)
+        const currentPrice = parseInt(currentProperty.price.replace(/[^0-9]/g, ''));
+        const propertyPrice = parseInt(property.price.replace(/[^0-9]/g, ''));
+
+        if (!isNaN(currentPrice) && !isNaN(propertyPrice)) {
+            const priceDifference = Math.abs(currentPrice - propertyPrice);
+            const pricePercentage = (priceDifference / currentPrice) * 100;
+
+            if (pricePercentage <= 10) {
+                score += 20;
+            } else if (pricePercentage <= 20) {
+                score += 15;
+            } else if (pricePercentage <= 30) {
+                score += 10;
+            }
+        }
+
+        // Bedroom similarity
+        if (property.bedrooms === currentProperty.bedrooms) {
+            score += 5;
+        } else if (Math.abs(property.bedrooms - currentProperty.bedrooms) === 1) {
+            score += 3;
+        }
+
+        // Bathroom similarity
+        if (property.bathrooms === currentProperty.bathrooms) {
+            score += 5;
+        } else if (Math.abs(property.bathrooms - currentProperty.bathrooms) === 1) {
+            score += 3;
+        }
+
+        return {
+            property,
+            score
+        };
+    });
+
+    // Sort by similarity score (descending) and take top results
+    const topSimilarProperties = similarProperties
+        .sort((a, b) => b.score - a.score)
+        .slice(0, limit)
+        .filter(item => item.score > 20) // Only return properties with meaningful similarity
+        .map(item => ({
+            id: item.property.id,
+            title: item.property.title,
+            description: item.property.description,
+            location: item.property.location,
+            price: item.property.price,
+            bedrooms: item.property.bedrooms,
+            bathrooms: item.property.bathrooms,
+            area: item.property.area,
+            status: item.property.status,
+            type: item.property.type,
+            images: item.property.images.map(img => ({ img: img.img })),
+            featured: item.property.featured,
+            viewCount: item.property.viewCount,
+            listedById: item.property.listedById,
+            listedBy: item.property.listedBy,
+            createdAt: item.property.createdAt,
+            updatedAt: item.property.updatedAt,
+            similarityScore: item.score
+        }));
+
+    res.status(200).json(topSimilarProperties);
+});
