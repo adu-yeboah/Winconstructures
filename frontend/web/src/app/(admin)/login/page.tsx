@@ -3,24 +3,36 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import Image from 'next/image';
+import { useAuth } from '@/hooks/auth';
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login, loading, error: authError } = useAuth();
+
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
   const [showPwd, setShowPwd]   = useState(false);
   const [remember, setRemember] = useState(true);
-  const [loading, setLoading]   = useState(false);
-  const [error, setError]       = useState('');
+  const [localError, setLocalError] = useState('');
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) { setError('Please fill in all fields.'); return; }
-    setLoading(true); setError('');
-    await new Promise(r => setTimeout(r, 1500)); // Replace with real auth
-    setLoading(false);
-    router.push('/admin');
+    if (!email || !password) {
+      setLocalError('Please fill in all fields.');
+      return;
+    }
+
+    setLocalError('');
+    const result = await login({ email, password });
+
+    if (result.success) {
+      router.push('/admin');
+    } else {
+      setLocalError(result.message || 'Login failed');
+    }
   };
+
+  const displayError = localError || authError;
 
   const fieldClass = "w-full border border-gray-200 rounded-lg px-4 py-2.5 text-[13px] text-gray-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all font-[DM_Sans] bg-white";
   const labelClass = "block text-[10px] font-medium uppercase tracking-[0.07em] text-gray-500 mb-1.5";
@@ -54,7 +66,11 @@ export default function LoginPage() {
 
         {/* Stats */}
         <div className="relative flex gap-6">
-          {[['1.2k+', 'Properties listed'], ['840+', 'Happy clients'], ['98%', 'Satisfaction']].map(([num, label], i, arr) => (
+          {[
+            ['1.2k+', 'Properties listed'],
+            ['840+', 'Happy clients'],
+            ['98%', 'Satisfaction']
+          ].map(([num, label], i, arr) => (
             <React.Fragment key={label}>
               <div>
                 <p className="font-serif text-[24px] font-semibold text-white">{num}</p>
@@ -79,9 +95,9 @@ export default function LoginPage() {
         <h2 className="font-serif text-[26px] font-semibold text-gray-900 mb-1">Welcome back</h2>
         <p className="text-[13px] text-tertiary mb-8">Sign in to your admin account</p>
 
-        {error && (
+        {displayError && (
           <div className="mb-5 px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-[13px] text-red-600">
-            {error}
+            {displayError}
           </div>
         )}
 
@@ -89,8 +105,12 @@ export default function LoginPage() {
           <div>
             <label className={labelClass}>Email Address</label>
             <input
-              type="email" value={email} onChange={e => setEmail(e.target.value)}
-              placeholder="admin@wiscon.com" className={fieldClass} required
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              placeholder="admin@winconstructures.com"
+              className={fieldClass}
+              required
             />
           </div>
 
@@ -98,13 +118,16 @@ export default function LoginPage() {
             <label className={labelClass}>Password</label>
             <div className="relative">
               <input
-                type={showPwd ? 'text' : 'password'} value={password}
+                type={showPwd ? 'text' : 'password'}
+                value={password}
                 onChange={e => setPassword(e.target.value)}
                 placeholder="Enter your password"
-                className={`${fieldClass} pr-10`} required
+                className={`${fieldClass} pr-10`}
+                required
               />
               <button
-                type="button" onClick={() => setShowPwd(s => !s)}
+                type="button"
+                onClick={() => setShowPwd(s => !s)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
               >
                 {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -115,7 +138,9 @@ export default function LoginPage() {
           <div className="flex items-center justify-between pt-1">
             <label className="flex items-center gap-2 text-[13px] text-gray-600 cursor-pointer">
               <input
-                type="checkbox" checked={remember} onChange={e => setRemember(e.target.checked)}
+                type="checkbox"
+                checked={remember}
+                onChange={e => setRemember(e.target.checked)}
                 className="w-3.5 h-3.5 accent-primary"
               />
               Remember me
@@ -126,7 +151,8 @@ export default function LoginPage() {
           </div>
 
           <button
-            type="submit" disabled={loading}
+            type="submit"
+            disabled={loading}
             className="w-full bg-primary hover:bg-primary-dark disabled:opacity-60 text-white rounded-lg py-2.5 text-[14px] font-medium transition-colors flex items-center justify-center gap-2"
           >
             {loading && <Loader2 className="w-4 h-4 animate-spin" />}

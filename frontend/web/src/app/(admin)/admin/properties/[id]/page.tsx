@@ -1,46 +1,133 @@
 'use client';
 
-import { notFound, useParams, useRouter } from 'next/navigation';
-import { properties } from '@/constants/properties';
+import { useParams, useRouter } from 'next/navigation';
 import { Property } from '@/types/property';
-import React, { useState } from 'react';
-import { Save, Trash2, Plus, X, ArrowLeft } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Save, Trash2, Plus, X, ArrowLeft, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
+import { useProperties } from '@/hooks/useProperty';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function ProductDetails() {
   const params = useParams();
   const router = useRouter();
-  const property = properties.find((item) => item.id.toString() === params.id);
+  const { fetchProperty, loading, updateProperty, deleteProperty } = useProperties();
 
-  if (!property) return notFound();
+  const [property, setProperty] = useState<Property | null>(null);
+  const [formData, setFormData] = useState<Property | null>(null);
+  const [mounted, setMounted] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const [formData, setFormData] = useState<Property>({ ...property });
+  useEffect(() => {
+    setMounted(true);
+    const loadProperty = async () => {
+      if (params.id) {
+        try {
+          const data = await fetchProperty(params.id as string);
+          setProperty(data);
+          setFormData(data);
+        } catch (err) {
+          setError("Failed to load property");
+          console.error("Error loading property:", err);
+        }
+      }
+    };
+
+    loadProperty();
+  }, [params.id]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
+    if (!formData) return;
+
     const { name, value } = e.target;
     setFormData((prev) => ({
-      ...prev,
+      ...prev!,
       [name]: name === 'bedrooms' || name === 'bathrooms' ? parseInt(value) : value,
     }));
   };
 
-  const handleUpdate = () => {
-    // TODO: API call
+  const handleUpdate = async () => {
+    if (!formData) return;
+
+    setSaving(true);
+    setError(null);
+
+    try {
+      const updated = await updateProperty(params.id as string, formData);
+      setProperty(updated);
+      setFormData(updated);
+      alert("Property updated successfully!");
+    } catch (err: any) {
+      setError(err.message || "Failed to update property");
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleDelete = () => {
-    // TODO: API call
+  const handleDelete = async () => {
+    if (!confirm("Are you sure you want to delete this property? This action cannot be undone.")) {
+      return;
+    }
+
+    try {
+      await deleteProperty(params.id as string);
+      router.push("/admin/properties");
+    } catch (err: any) {
+      setError(err.message || "Failed to delete property");
+    }
   };
 
   const fieldClass = "w-full border border-gray-200 rounded-lg px-3 py-2.5 text-[13px] text-gray-900 font-[DM_Sans] outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all";
   const labelClass = "block text-[10px] font-medium uppercase tracking-[0.07em] text-tertiary mb-1.5";
 
+  // Loading state
+  if (!mounted || loading || !formData) {
+    return (
+      <div className="max-w-5xl mx-auto space-y-5">
+        <Skeleton className="h-20 w-full" />
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-5">
+          <div className="space-y-4">
+            <Skeleton className="h-64 w-full" />
+            <Skeleton className="h-48 w-full" />
+            <Skeleton className="h-32 w-full" />
+          </div>
+          <div className="space-y-4">
+            <Skeleton className="h-48 w-full" />
+            <Skeleton className="h-32 w-full" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error && !formData) {
+    return (
+      <div className="max-w-5xl mx-auto p-8 text-center">
+        <p className="text-red-600 text-xl mb-4">{error}</p>
+        <button
+          onClick={() => router.push("/admin/properties")}
+          className="text-primary hover:underline"
+        >
+          Back to Properties
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-5xl mx-auto space-y-5">
+      {/* Error Display */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-sm">
+          {error}
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-end justify-between">
         <div>
@@ -55,7 +142,7 @@ export default function ProductDetails() {
             <span className="text-secondary text-[10px] font-medium tracking-[0.12em] uppercase">Edit Listing</span>
           </div>
           <h1 className="font-serif text-[24px] font-semibold text-gray-900 leading-tight">{formData.title}</h1>
-          <p className="text-[12px] text-tertiary mt-0.5">ID: #{property.id} · Last updated recently</p>
+          <p className="text-[12px] text-tertiary mt-0.5">ID: #{property?.id} · Last updated {new Date(property?.updatedAt || Date()).toLocaleDateString()}</p>
         </div>
         <div className="flex gap-2">
           <Button
@@ -67,9 +154,11 @@ export default function ProductDetails() {
           </Button>
           <Button
             onClick={handleUpdate}
+            disabled={saving}
             className="h-9 bg-primary hover:bg-primary-dark text-white text-[13px] gap-2"
           >
-            <Save className="w-3.5 h-3.5" /> Save Changes
+            {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+            {saving ? 'Saving...' : 'Save Changes'}
           </Button>
         </div>
       </div>
@@ -166,18 +255,43 @@ export default function ProductDetails() {
               <p className="text-[13px] font-medium text-gray-900">Listing Settings</p>
             </CardHeader>
             <CardContent className="p-5 space-y-4">
-              {[
-                { label: "Status *", name: "status", options: ["For Sale", "For Rent"] },
-                { label: "Property Type *", name: "type", options: ["House", "Condo", "Apartment", "Townhouse", "Land"] },
-                { label: "Availability", name: "availability", options: ["Available", "Sold", "Leased"] },
-              ].map((f) => (
-                <div key={f.name}>
-                  <label className={labelClass}>{f.label}</label>
-                  <select name={f.name} value={(formData as any)[f.name]} onChange={handleChange} className={fieldClass}>
-                    {f.options.map((o) => <option key={o}>{o}</option>)}
-                  </select>
-                </div>
-              ))}
+              <div>
+                <label className={labelClass}>Status *</label>
+                <select
+                  name="status"
+                  value={formData.status}
+                  onChange={handleChange}
+                  className={fieldClass}
+                >
+                  <option value="FOR_SALE">For Sale</option>
+                  <option value="FOR_RENT">For Rent</option>
+                </select>
+              </div>
+
+              <div>
+                <label className={labelClass}>Property Type *</label>
+                <select
+                  name="type"
+                  value={formData.type}
+                  onChange={handleChange}
+                  className={fieldClass}
+                >
+                  <option value="HOUSE">House</option>
+                  <option value="CONDO">Condo</option>
+                  <option value="APARTMENT">Apartment</option>
+                </select>
+              </div>
+
+              <div className="flex items-center gap-2 pt-2">
+                <input
+                  type="checkbox"
+                  id="featured"
+                  checked={formData.featured}
+                  onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                  className="w-4 h-4 accent-primary"
+                />
+                <label htmlFor="featured" className="text-sm text-gray-700">Featured Property</label>
+              </div>
             </CardContent>
           </Card>
 
@@ -187,7 +301,10 @@ export default function ProductDetails() {
             </CardHeader>
             <CardContent className="p-4">
               <div className="grid grid-cols-2 gap-3">
-                {[{ label: "Views", value: "284" }, { label: "Inquiries", value: "12" }].map((s) => (
+                {[
+                  { label: "Views", value: property?.viewCount?.toString() || "0" },
+                  { label: "ID", value: `#${property?.id}` }
+                ].map((s) => (
                   <div key={s.label} className="bg-gray-50 rounded-lg p-3">
                     <p className="text-[10px] font-medium uppercase tracking-[0.07em] text-tertiary mb-1">{s.label}</p>
                     <p className="font-serif text-[22px] font-semibold text-gray-900">{s.value}</p>

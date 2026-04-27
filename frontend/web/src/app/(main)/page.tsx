@@ -4,7 +4,6 @@ import ContactSection from "./components/ui/contactBanner";
 import WhyChooseSection from "./components/ui/whyChoose";
 import Carousel from "./components/carousel";
 
-
 const Home = () => {
   return (
     <>
@@ -68,7 +67,13 @@ const Home = () => {
         </div>
       </div>
 
-      <Carousel title="Recent properties" />
+      {/* Featured Properties */}
+      <Carousel
+        title="Recent properties"
+        subtitle="Available now"
+        featuredOnly={true}
+        viewAllLink="/search"
+      />
 
       <ContactSection />
 

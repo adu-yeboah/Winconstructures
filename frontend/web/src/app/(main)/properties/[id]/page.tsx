@@ -1,36 +1,145 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React from "react";
-import { properties } from "@/constants/properties";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Slider from "react-slick";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { FaBath, FaBed, FaMapMarkerAlt, FaPhoneAlt } from "react-icons/fa";
 import { MdSquareFoot } from "react-icons/md";
-import Carousel from "../../components/carousel";
+import { SimilarProperties } from "../../components/similarProperties";
+import { useProperties } from "@/hooks/useProperty";
+import { useMessages } from "@/hooks/useMessage";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Loader2 } from "lucide-react";
 
 export default function PropertyDetail() {
   const params = useParams();
-  const id = params?.id;
-  const property = properties.find((p) => p.id === parseInt(id as any));
+  const router = useRouter();
+  const { fetchProperty, loading: propertyLoading } = useProperties();
+  const { createMessage, loading: messageLoading } = useMessages();
 
-  if (!property) {
+  const [property, setProperty] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+  const [formSuccess, setFormSuccess] = useState(false);
+  const [formError, setFormError] = useState("");
+
+  // Form state
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
+
+  useEffect(() => {
+    setMounted(true);
+    const loadProperty = async () => {
+      if (params.id) {
+        try {
+          const data = await fetchProperty(params.id as string);
+          setProperty(data);
+        } catch (err) {
+          setError("Failed to load property");
+          console.error("Error loading property:", err);
+        }
+      }
+    };
+
+    loadProperty();
+  }, [params.id]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormError("");
+    setFormSuccess(false);
+
+    // Validation
+    if (!formData.name || !formData.email || !formData.message) {
+      setFormError("Please fill in all required fields");
+      return;
+    }
+
+    try {
+      await createMessage({
+        title: formData.name,
+        email: formData.email,
+        subject: `Property Inquiry: ${property?.title}`,
+        message: `${formData.message}\n\nPhone: ${formData.phone}\n\nProperty: ${property?.title} (ID: ${property?.id})`,
+        relatedPropertyId: property?.id,
+      });
+
+      setFormSuccess(true);
+      setFormData({ name: "", email: "", phone: "", message: "" });
+
+      // Reset success message after 5 seconds
+      setTimeout(() => setFormSuccess(false), 5000);
+    } catch (err: any) {
+      setFormError(err.message || "Failed to send inquiry");
+    }
+  };
+
+  // Don't render until mounted (prevents hydration issues)
+  if (!mounted) {
+    return (
+      <div className="bg-grey min-h-screen p-8">
+        <Skeleton className="h-[70vh] w-full mb-8" />
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-8">
+            <Skeleton className="h-96 w-full" />
+            <Skeleton className="h-64 w-full" />
+          </div>
+          <div>
+            <Skeleton className="h-[500px] w-full" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (propertyLoading) {
+    return (
+      <div className="bg-grey min-h-screen p-8">
+        <Skeleton className="h-[70vh] w-full mb-8" />
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-8">
+            <Skeleton className="h-96 w-full" />
+            <Skeleton className="h-64 w-full" />
+          </div>
+          <div>
+            <Skeleton className="h-[500px] w-full" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !property) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-grey">
-        <p className="text-black text-xl">Property Not Found</p>
+        <div className="text-center">
+          <p className="text-black text-xl mb-4">
+            {error || "Property Not Found"}
+          </p>
+          <button
+            onClick={() => router.push("/search")}
+            className="text-primary hover:underline"
+          >
+            Back to Properties
+          </button>
+        </div>
       </div>
     );
   }
 
   const settings = {
     dots: true,
-    infinite: true,
+    infinite: property.images.length > 1,
     speed: 600,
     slidesToShow: 1,
     slidesToScroll: 1,
     arrows: false,
-    autoplay: true,
+    autoplay: property.images.length > 1,
   };
 
   return (
@@ -38,7 +147,7 @@ export default function PropertyDetail() {
       {/* HERO */}
       <section className="relative h-[70vh] min-h-[600px] overflow-hidden">
         <Image
-          src={property.images[0]?.img}
+          src={property.images[0]?.img || "/placeholder.jpg"}
           alt={property.title}
           fill
           priority
@@ -52,7 +161,8 @@ export default function PropertyDetail() {
           <div className="max-w-7xl mx-auto px-6 lg:px-12 pb-16 w-full">
             <div className="max-w-3xl">
               <p className="text-secondary text-xs tracking-[0.18em] uppercase mb-4">
-                {property.status} • {property.type}
+                {property.status === "FOR_SALE" ? "For Sale" : "For Rent"} •{" "}
+                {property.type}
               </p>
 
               <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-light text-white leading-[1.05] mb-5">
@@ -90,7 +200,7 @@ export default function PropertyDetail() {
                   <p className="text-xs uppercase tracking-[0.15em] text-white/50 mb-1">
                     Area
                   </p>
-                  <p className="text-2xl font-semibold">{property.area} sqft</p>
+                  <p className="text-2xl font-semibold">{property.area}</p>
                 </div>
               </div>
             </div>
@@ -103,25 +213,27 @@ export default function PropertyDetail() {
         {/* LEFT CONTENT */}
         <div className="w-full lg:w-2/3">
           {/* GALLERY */}
-          <div className="bg-white  rounded-3xl p-5 shadow-sm mb-8">
-            <div className="relative overflow-hidden rounded-2xl slider-container">
-              <Slider {...settings}>
-                {property.images.map((image: any, index: number) => (
-                  <div key={index}>
-                    <div className="">
-                      <Image
-                        src={image.img}
-                        alt={`${property.title} image ${index + 1}`}
-                        width={800}
-                        height={500}
-                        className="rounded-lg w-full h-[400px] object-cover"
-                      />
+          {property.images.length > 0 && (
+            <div className="bg-white rounded-3xl p-5 shadow-sm mb-8">
+              <div className="relative overflow-hidden rounded-2xl slider-container">
+                <Slider {...settings}>
+                  {property.images.map((image: any, index: number) => (
+                    <div key={index}>
+                      <div className="">
+                        <Image
+                          src={image.img}
+                          alt={`${property.title} image ${index + 1}`}
+                          width={800}
+                          height={500}
+                          className="rounded-lg w-full h-[400px] object-cover"
+                        />
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </Slider>
+                  ))}
+                </Slider>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* HIGHLIGHTS */}
           <div className="bg-white rounded-3xl p-8 shadow-sm mb-8">
@@ -145,7 +257,7 @@ export default function PropertyDetail() {
               <div>
                 <MdSquareFoot className="text-primary text-xl mb-3" />
                 <p className="text-grey2 text-sm">Area</p>
-                <p className="text-xl font-semibold">{property.area} sqft</p>
+                <p className="text-xl font-semibold">{property.area}</p>
               </div>
 
               <div>
@@ -177,7 +289,7 @@ export default function PropertyDetail() {
             <div className="h-[350px] rounded-2xl overflow-hidden">
               <iframe
                 className="w-full h-full"
-                src="https://maps.google.com/maps?q=accra&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                src={`https://maps.google.com/maps?q=${encodeURIComponent(property.location)}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
                 loading="lazy"
               />
             </div>
@@ -195,38 +307,66 @@ export default function PropertyDetail() {
               Request More Details
             </h3>
 
-            <form className="space-y-4">
+            {formSuccess && (
+              <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
+                Thank you! Your inquiry has been sent successfully.
+              </div>
+            )}
+
+            {formError && (
+              <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                {formError}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-4">
               <input
                 type="text"
-                placeholder="Your Name"
+                placeholder="Your Name *"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="w-full rounded-md border border-black/10 px-4 py-3 text-sm outline-none focus:border-secondary"
+                required
               />
 
               <input
                 type="email"
-                placeholder="Your Email"
+                placeholder="Your Email *"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="w-full rounded-md border border-black/10 px-4 py-3 text-sm outline-none focus:border-secondary"
+                required
               />
 
               <input
                 type="tel"
                 placeholder="Phone Number"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 className="w-full rounded-md border border-black/10 px-4 py-3 text-sm outline-none focus:border-secondary"
               />
 
               <textarea
                 rows={5}
-                placeholder="I'd like to schedule a private tour..."
+                placeholder="I'd like to schedule a private tour... *"
+                value={formData.message}
+                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 className="w-full rounded-xl border border-black/10 px-4 py-3 outline-none resize-none focus:border-secondary"
+                required
               />
 
-              <button className="w-full bg-primary text-white py-4 rounded-xl font-medium hover:opacity-90 transition">
-                Send Inquiry
+              <button
+                type="submit"
+                disabled={messageLoading}
+                className="w-full bg-primary text-white py-4 rounded-xl font-medium hover:opacity-90 transition disabled:opacity-60 flex items-center justify-center gap-2"
+              >
+                {messageLoading && <Loader2 className="w-4 h-4 animate-spin" />}
+                {messageLoading ? "Sending..." : "Send Inquiry"}
               </button>
             </form>
 
-            <div className="border-t border-black/5  pt-6">
-              <button className="w-full border border-primary text-primary py-3  rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-primary hover:text-white transition">
+            <div className="border-t border-black/5 pt-6">
+              <button className="w-full border border-primary text-primary py-3 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-primary hover:text-white transition">
                 <FaPhoneAlt />
                 Call Agent
               </button>
@@ -235,7 +375,20 @@ export default function PropertyDetail() {
         </div>
       </div>
 
-      <Carousel title="Similar Properties" />
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-16">
+        <div className="mb-10">
+          <div className="flex items-center gap-3 mb-2.5">
+            <span className="block w-6 h-px bg-secondary" />
+            <span className="text-secondary text-[11px] font-medium tracking-[0.14em] uppercase">
+              You might also like
+            </span>
+          </div>
+          <h2 className="font-serif text-3xl sm:text-4xl font-light text-gray-900">
+            Similar Properties
+          </h2>
+        </div>
+        <SimilarProperties currentProperty={property} limit={3} />
+      </div>
     </div>
   );
 }

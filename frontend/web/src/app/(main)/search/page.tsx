@@ -1,16 +1,37 @@
 "use client";
-import React, { useMemo, useState } from "react";
-import { properties } from "@/constants/properties";
-import { FaSearch, FaSlidersH } from "react-icons/fa";
+import React, { useEffect, useState, useMemo } from "react";
+import { FaSearch, FaSlidersH, Filter } from "react-icons/fa";
+import { useSearchParams } from "next/navigation";
+import { useProperties } from "@/hooks/useProperty";
 import PropertyCardTwo from "../components/searchPropertyCard";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Property } from "@/types/property";
+import { Button } from "@/components/ui/button";
 
 function Page() {
+  const searchParams = useSearchParams();
+  const { properties, loading, error, fetchProperties } = useProperties();
+
   const [searchQuery, setSearchQuery] = useState("");
-  const [status, setStatus] = useState("All");
+  const [status, setStatus] = useState<string>("All");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [bedrooms, setBedrooms] = useState("Any");
+  const [bathrooms, setBathrooms] = useState("Any");
+  const [propertyType, setPropertyType] = useState("All");
   const [sortBy, setSortBy] = useState("latest");
+  const [mounted, setMounted] = useState(false);
+
+  // Initialize filters from URL params
+  useEffect(() => {
+    setMounted(true);
+    setSearchQuery(searchParams.get("search") || "");
+    setStatus(searchParams.get("status") || "All");
+    setMinPrice(searchParams.get("minPrice") || "");
+    setMaxPrice(searchParams.get("maxPrice") || "");
+    setBedrooms(searchParams.get("bedrooms") || "Any");
+    setPropertyType(searchParams.get("type") || "All");
+  }, [searchParams]);
 
   const parsePrice = (price: string) =>
     Number(String(price).replace(/[^\d]/g, "")) || 0;
@@ -18,12 +39,12 @@ function Page() {
   const filteredProperties = useMemo(() => {
     let filtered = properties.filter((property) => {
       const matchesSearch =
+        !searchQuery ||
         property.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         property.location.toLowerCase().includes(searchQuery.toLowerCase());
 
       const matchesStatus =
-        status === "All" ||
-        property.status.toLowerCase() === status.toLowerCase();
+        status === "All" || property.status === status;
 
       const propertyPrice = parsePrice(property.price);
       const matchesMin = !minPrice || propertyPrice >= Number(minPrice);
@@ -32,32 +53,67 @@ function Page() {
       const matchesBedrooms =
         bedrooms === "Any" || property.bedrooms >= Number(bedrooms);
 
+      const matchesBathrooms =
+        bathrooms === "Any" || property.bathrooms >= Number(bathrooms);
+
+      const matchesType =
+        propertyType === "All" || property.type === propertyType;
+
       return (
         matchesSearch &&
         matchesStatus &&
         matchesMin &&
         matchesMax &&
-        matchesBedrooms
+        matchesBedrooms &&
+        matchesBathrooms &&
+        matchesType
       );
     });
 
+    // Sorting
     if (sortBy === "price-low") {
-      filtered = [...filtered].sort(
+      return [...filtered].sort(
         (a, b) => parsePrice(a.price) - parsePrice(b.price)
       );
     }
 
     if (sortBy === "price-high") {
-      filtered = [...filtered].sort(
+      return [...filtered].sort(
         (a, b) => parsePrice(b.price) - parsePrice(a.price)
       );
     }
 
-    return filtered;
-  }, [searchQuery, status, minPrice, maxPrice, bedrooms, sortBy]);
+    // Default: latest (by ID or created date)
+    return [...filtered].sort((a, b) => b.id - a.id);
+  }, [properties, searchQuery, status, minPrice, maxPrice, bedrooms, bathrooms, propertyType, sortBy]);
+
+  useEffect(() => {
+    fetchProperties();
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="bg-grey min-h-screen">
+        <section className="bg-primary-dark pt-28 pb-12 px-6 lg:px-12">
+          <div className="max-w-7xl mx-auto">
+            <Skeleton className="h-20 w-64 mb-4" />
+            <Skeleton className="h-12 w-full max-w-2xl" />
+          </div>
+        </section>
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 py-14">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+            {[1, 2, 3, 4].map((i) => (
+              <Skeleton key={i} className="h-96 w-full" />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-grey min-h-screen">
+      {/* Hero */}
       <section className="bg-primary-dark pt-28 pb-12 px-6 lg:px-12">
         <div className="max-w-7xl mx-auto">
           <p className="text-secondary text-xs tracking-[0.18em] uppercase mb-4">
@@ -80,82 +136,199 @@ function Page() {
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-14 grid lg:grid-cols-[1fr] gap-10">
-        {/* Filters */}
-        {/* <aside className="bg-white rounded-3xl p-6 shadow-sm h-fit sticky top-28">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-14 grid lg:grid-cols-[280px_1fr] gap-10">
+        {/* Sidebar Filters */}
+        <aside className="bg-white rounded-3xl p-6 shadow-sm h-fit sticky top-28">
           <div className="flex items-center gap-3 mb-6">
-            <FaSlidersH className="text-secondary" />
+            <Filter className="text-secondary" />
             <h2 className="font-serif text-2xl text-black">Filters</h2>
           </div>
 
           <div className="space-y-5">
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              className="w-full rounded-xl border border-grey1 px-4 py-3"
-            >
-              <option>All</option>
-              <option>sale</option>
-              <option>rent</option>
-            </select>
-
-            <div className="grid grid-cols-2 gap-3">
-              <input
-                type="number"
-                placeholder="Min"
-                value={minPrice}
-                onChange={(e) => setMinPrice(e.target.value)}
-                className="rounded-xl border border-grey1 px-4 py-3"
-              />
-              <input
-                type="number"
-                placeholder="Max"
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(e.target.value)}
-                className="rounded-xl border border-grey1 px-4 py-3"
-              />
+            {/* Status */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Property Status
+              </label>
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                <option value="All">All Properties</option>
+                <option value="FOR_SALE">For Sale</option>
+                <option value="FOR_RENT">For Rent</option>
+              </select>
             </div>
 
-            <select
-              value={bedrooms}
-              onChange={(e) => setBedrooms(e.target.value)}
-              className="w-full rounded-xl border border-grey1 px-4 py-3"
-            >
-              <option>Any</option>
-              <option value="1">1+ Bedrooms</option>
-              <option value="2">2+ Bedrooms</option>
-              <option value="3">3+ Bedrooms</option>
-              <option value="4">4+ Bedrooms</option>
-            </select>
+            {/* Property Type */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Property Type
+              </label>
+              <select
+                value={propertyType}
+                onChange={(e) => setPropertyType(e.target.value)}
+                className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                <option value="All">All Types</option>
+                <option value="HOUSE">House</option>
+                <option value="CONDO">Condo</option>
+                <option value="APARTMENT">Apartment</option>
+              </select>
+            </div>
 
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="w-full rounded-xl border border-grey1 px-4 py-3"
+            {/* Price Range */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Price Range
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                <input
+                  type="number"
+                  placeholder="Min"
+                  value={minPrice}
+                  onChange={(e) => setMinPrice(e.target.value)}
+                  className="rounded-xl border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+                <input
+                  type="number"
+                  placeholder="Max"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(e.target.value)}
+                  className="rounded-xl border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
+            </div>
+
+            {/* Bedrooms */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Bedrooms
+              </label>
+              <select
+                value={bedrooms}
+                onChange={(e) => setBedrooms(e.target.value)}
+                className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                <option value="Any">Any</option>
+                <option value="1">1+ Bedrooms</option>
+                <option value="2">2+ Bedrooms</option>
+                <option value="3">3+ Bedrooms</option>
+                <option value="4">4+ Bedrooms</option>
+              </select>
+            </div>
+
+            {/* Bathrooms */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Bathrooms
+              </label>
+              <select
+                value={bathrooms}
+                onChange={(e) => setBathrooms(e.target.value)}
+                className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                <option value="Any">Any</option>
+                <option value="1">1+ Bathrooms</option>
+                <option value="2">2+ Bathrooms</option>
+                <option value="3">3+ Bathrooms</option>
+                <option value="4">4+ Bathrooms</option>
+              </select>
+            </div>
+
+            {/* Sort */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Sort By
+              </label>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                <option value="latest">Latest Listings</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+              </select>
+            </div>
+
+            {/* Reset Filters */}
+            <Button
+              onClick={() => {
+                setSearchQuery("");
+                setStatus("All");
+                setMinPrice("");
+                setMaxPrice("");
+                setBedrooms("Any");
+                setBathrooms("Any");
+                setPropertyType("All");
+                setSortBy("latest");
+              }}
+              variant="outline"
+              className="w-full"
             >
-              <option value="latest">Latest</option>
-              <option value="price-low">Price: Low to High</option>
-              <option value="price-high">Price: High to Low</option>
-            </select>
+              Reset Filters
+            </Button>
           </div>
-        </aside> */}
+        </aside>
 
         {/* Results */}
         <main>
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700">
+              {error}
+              <button
+                onClick={() => fetchProperties()}
+                className="ml-4 underline"
+              >
+                Retry
+              </button>
+            </div>
+          )}
+
           <div className="mb-8">
             <p className="text-secondary text-xs tracking-[0.18em] uppercase mb-2">
               Search Results
             </p>
-            <h2 className="font-serif text-4xl font-light text-black">
-              {filteredProperties.length} Properties Found
-            </h2>
+            <div className="flex items-center justify-between">
+              <h2 className="font-serif text-4xl font-light text-black">
+                {filteredProperties.length} Properties Found
+              </h2>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-            {filteredProperties.map((property) => (
-              <PropertyCardTwo key={property.id} property={property} />
-            ))}
-          </div>
+          {loading ? (
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+              {[1, 2, 3, 4].map((i) => (
+                <Skeleton key={i} className="h-96 w-full" />
+              ))}
+            </div>
+          ) : filteredProperties.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="text-gray-600 text-lg mb-4">No properties found matching your criteria.</p>
+              <Button
+                onClick={() => {
+                  setSearchQuery("");
+                  setStatus("All");
+                  setMinPrice("");
+                  setMaxPrice("");
+                  setBedrooms("Any");
+                  setBathrooms("Any");
+                  setPropertyType("All");
+                }}
+                className="bg-primary"
+              >
+                Clear Filters
+              </Button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+              {filteredProperties.map((property) => (
+                <PropertyCardTwo key={property.id} property={property} />
+              ))}
+            </div>
+          )}
         </main>
       </div>
     </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   FaPhone,
   FaMobileAlt,
@@ -8,8 +8,49 @@ import {
   FaMapMarkerAlt,
   FaClock,
 } from "react-icons/fa";
+import { useMessages } from "@/hooks/useMessage";
+import { Loader2 } from "lucide-react";
 
 const ContactPage = () => {
+  const { createMessage, loading } = useMessages();
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setSuccess(false);
+
+    // Validation
+    if (!formData.name || !formData.email || !formData.message) {
+      setError("Please fill in all required fields");
+      return;
+    }
+
+    try {
+      await createMessage({
+        title: formData.name,
+        email: formData.email,
+        subject: "Contact Form Submission",
+        message: `${formData.message}\n\nPhone: ${formData.phone}`,
+      });
+
+      setSuccess(true);
+      setFormData({ name: "", email: "", phone: "", message: "" });
+
+      // Reset success message after 5 seconds
+      setTimeout(() => setSuccess(false), 5000);
+    } catch (err: any) {
+      setError(err.message || "Failed to send message");
+    }
+  };
+
   return (
     <div className="bg-grey min-h-screen">
       {/* Hero */}
@@ -29,13 +70,13 @@ const ContactPage = () => {
           </p>
 
           <h1 className="font-serif text-5xl md:text-6xl font-light text-white leading-tight mb-5">
-            Let’s discuss your
+            Let's discuss your
             <br />
             next property move
           </h1>
 
           <p className="text-white/70 text-lg max-w-2xl font-light">
-            Whether you’re buying, selling, investing, or simply exploring your
+            Whether you're buying, selling, investing, or simply exploring your
             options, our team is ready to guide you with confidence.
           </p>
         </div>
@@ -53,38 +94,65 @@ const ContactPage = () => {
               Send us a message
             </h2>
 
-            <form className="space-y-6">
+            {/* Success Message */}
+            {success && (
+              <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700">
+                Thank you! Your message has been sent successfully. We'll get back to you soon.
+              </div>
+            )}
+
+            {/* Error Message */}
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700">
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <input
                   type="text"
-                  placeholder="Your Name"
+                  placeholder="Your Name *"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="w-full rounded-xl border border-grey1 px-4 py-3 outline-none focus:border-primary"
+                  required
                 />
 
                 <input
                   type="email"
-                  placeholder="Email Address"
+                  placeholder="Email Address *"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="w-full rounded-xl border border-grey1 px-4 py-3 outline-none focus:border-primary"
+                  required
                 />
               </div>
 
               <input
                 type="tel"
                 placeholder="Phone Number"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 className="w-full rounded-xl border border-grey1 px-4 py-3 outline-none focus:border-primary"
               />
 
               <textarea
                 rows={6}
-                placeholder="Tell us about your property needs..."
+                placeholder="Tell us about your property needs... *"
+                value={formData.message}
+                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 className="w-full rounded-xl border border-grey1 px-4 py-3 outline-none resize-none focus:border-primary"
+                required
               />
 
               <button
                 type="submit"
-                className="w-full bg-primary hover:bg-primary-dark text-white rounded-xl py-4 font-medium transition"
+                disabled={loading}
+                className="w-full bg-primary hover:bg-primary-dark text-white rounded-xl py-4 font-medium transition disabled:opacity-60 flex items-center justify-center gap-2"
               >
-                Book Consultation
+                {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+                {loading ? "Sending..." : "Book Consultation"}
               </button>
             </form>
           </div>
@@ -172,9 +240,12 @@ const ContactPage = () => {
             investment consultations, and premium listing inquiries.
           </p>
 
-          <button className="bg-secondary text-black px-8 py-3 rounded-xl font-medium hover:opacity-90 transition">
+          <a
+            href="tel:+233240000000"
+            className="bg-secondary text-black px-8 py-3 rounded-xl font-medium hover:opacity-90 transition inline-block"
+          >
             Call an Advisor Now
-          </button>
+          </a>
         </section>
       </div>
     </div>
