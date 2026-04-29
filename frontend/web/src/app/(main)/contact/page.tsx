@@ -214,28 +214,6 @@ const ContactPage = () => {
           />
         </div>
 
-        {/* Extra CTA */}
-        <section className="mt-20 bg-white rounded-3xl p-10 md:p-14 shadow-sm text-center">
-          <p className="text-secondary text-xs tracking-[0.18em] uppercase mb-4">
-            Quick Response
-          </p>
-
-          <h2 className="font-serif text-4xl font-light text-black mb-4">
-            Need urgent property assistance?
-          </h2>
-
-          <p className="text-grey2 max-w-2xl mx-auto mb-8">
-            Our advisors are available to support urgent property viewings,
-            investment consultations, and premium listing inquiries.
-          </p>
-
-          <a
-            href="tel:+233240000000"
-            className="bg-secondary text-black px-8 py-3 rounded-xl font-medium hover:opacity-90 transition inline-block"
-          >
-            Call an Advisor Now
-          </a>
-        </section>
       </div>
     </div>
   );

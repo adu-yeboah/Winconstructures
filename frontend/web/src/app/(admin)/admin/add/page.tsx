@@ -1,16 +1,21 @@
 'use client';
-import React, { useState, useRef } from 'react';
-import { PlusCircle, Trash2, ArrowRight, Save, Upload, X, Image as ImageIcon } from 'lucide-react';
+import React, { useState } from 'react';
+import { PlusCircle, Trash2, ArrowRight, Save, Upload, X, ImageIcon, Loader2 } from 'lucide-react';
 import { Property } from '@/types/property';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { useProperties } from '@/hooks/useProperty';
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 const steps = ['Basic Info', 'Details', 'Images', 'Review'];
 
 const AddProperty: React.FC = () => {
+  const router = useRouter();
+  const { createProperty, loading } = useProperties();
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState<Property>({
-    id: 0, images: [{ img: '' }], title: '', description: '',
+    id: 0, images: [], title: '', description: '',
     location: '', price: '', bedrooms: 1, bathrooms: 1, area: '', status: 'FOR_SALE', type: 'HOUSE',
     featured: false, viewCount: 0, listedById: 0, listedBy: undefined, createdAt: new Date(), updatedAt: new Date(),
   });
@@ -64,8 +69,65 @@ const AddProperty: React.FC = () => {
     e.preventDefault();
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    try {
+      // Filter out empty images
+      const validImages = formData.images.filter(img => img.img && img.img.trim() !== '');
+
+      const propertyData = {
+        ...formData,
+        images: validImages
+      };
+
+      await createProperty(propertyData);
+      toast.success('Property published successfully!');
+      router.push('/admin/properties');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to publish property');
+    }
+  };
+
+  const nextStep = () => {
+    // Validation before proceeding
+    if (step === 0) {
+      if (!formData.title || !formData.description || !formData.location) {
+        toast.error('Please fill in all required fields');
+        return;
+      }
+    } else if (step === 1) {
+      if (!formData.price || !formData.area || !formData.bedrooms || !formData.bathrooms) {
+        toast.error('Please fill in all required fields');
+        return;
+      }
+    } else if (step === 2) {
+      const hasValidImage = formData.images.some(img => img.img && img.img.trim() !== '');
+      if (!hasValidImage) {
+        toast.error('Please add at least one property image');
+        return;
+      }
+    }
+    if (step < steps.length - 1) {
+      setStep(step + 1);
+    }
+  };
+
+  const prevStep = () => {
+    if (step > 0) {
+      setStep(step - 1);
+    }
+  };
+
+  const canProceed = () => {
+    if (step === 0) {
+      return formData.title && formData.description && formData.location;
+    } else if (step === 1) {
+      return formData.price && formData.area && formData.bedrooms && formData.bathrooms;
+    } else if (step === 2) {
+      return formData.images.some(img => img.img && img.img.trim() !== '');
+    }
+    return true;
   };
 
   const fieldClass = "w-full border border-gray-200 rounded-lg px-3 py-2.5 text-[13px] text-gray-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all ";
@@ -106,181 +168,274 @@ const AddProperty: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-5">
         <form onSubmit={handleSubmit} className="space-y-4">
 
-          <Card className="rounded-xl border border-gray-100 shadow-none">
-            <CardHeader className="px-5 py-3.5 border-b border-gray-100 space-y-0">
-              <p className="text-[13px] font-medium text-gray-900">Basic Information</p>
-            </CardHeader>
-            <CardContent className="p-5 space-y-4">
-              <div>
-                <label htmlFor="title" className={labelClass}>Property Title *</label>
-                <input id="title" type="text" value={formData.title} onChange={handleChange} placeholder="e.g. Oakwood Luxury Villa" className={fieldClass} required />
-              </div>
-              <div>
-                <label htmlFor="description" className={labelClass}>Description</label>
-                <textarea id="description" value={formData.description} onChange={handleChange} placeholder="Describe the property — highlights, features, amenities..." rows={4} className={fieldClass} />
-              </div>
-              <div>
-                <label htmlFor="location" className={labelClass}>Location *</label>
-                <input id="location" type="text" value={formData.location} onChange={handleChange} placeholder="e.g. East Legon, Accra" className={fieldClass} required />
-              </div>
-            </CardContent>
-          </Card>
+          {/* Step 1: Basic Info */}
+          {step === 0 && (
+            <>
+              <Card className="rounded-xl border border-gray-100 shadow-none">
+                <CardHeader className="px-5 py-3.5 border-b border-gray-100 space-y-0">
+                  <p className="text-[13px] font-medium text-gray-900">Basic Information</p>
+                </CardHeader>
+                <CardContent className="p-5 space-y-4">
+                  <div>
+                    <label htmlFor="title" className={labelClass}>Property Title *</label>
+                    <input id="title" name="title" type="text" value={formData.title} onChange={handleChange} placeholder="e.g. Oakwood Luxury Villa" className={fieldClass} required />
+                  </div>
+                  <div>
+                    <label htmlFor="description" className={labelClass}>Description</label>
+                    <textarea id="description" name="description" value={formData.description} onChange={handleChange} placeholder="Describe the property — highlights, features, amenities..." rows={4} className={fieldClass} />
+                  </div>
+                  <div>
+                    <label htmlFor="location" className={labelClass}>Location *</label>
+                    <input id="location" name="location" type="text" value={formData.location} onChange={handleChange} placeholder="e.g. East Legon, Accra" className={fieldClass} required />
+                  </div>
+                </CardContent>
+              </Card>
 
-          <Card className="rounded-xl border border-gray-100 shadow-none">
-            <CardHeader className="px-5 py-3.5 border-b border-gray-100 space-y-0">
-              <p className="text-[13px] font-medium text-gray-900">Pricing & Specifications</p>
-            </CardHeader>
-            <CardContent className="p-5">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="price" className={labelClass}>Price *</label>
-                  <input id="price" type="text" value={formData.price} onChange={handleChange} placeholder="e.g. $480,000" className={fieldClass} required />
-                </div>
-                <div>
-                  <label htmlFor="area" className={labelClass}>Area (sq ft) *</label>
-                  <input id="area" type="text" value={formData.area} onChange={handleChange} placeholder="e.g. 2,400" className={fieldClass} required />
-                </div>
-                <div>
-                  <label htmlFor="bedrooms" className={labelClass}>Bedrooms</label>
-                  <input id="bedrooms" type="number" value={formData.bedrooms} onChange={handleChange} min="1" className={fieldClass} />
-                </div>
-                <div>
-                  <label htmlFor="bathrooms" className={labelClass}>Bathrooms</label>
-                  <input id="bathrooms" type="number" value={formData.bathrooms} onChange={handleChange} min="1" className={fieldClass} />
-                </div>
+              <div className="flex justify-end gap-3 pt-2">
+                <Button type="button" onClick={nextStep} disabled={!canProceed()} className="h-9 bg-primary hover:bg-primary-dark text-white text-[13px] gap-2">
+                  Next Step <ArrowRight className="w-3.5 h-3.5" />
+                </Button>
               </div>
-            </CardContent>
-          </Card>
+            </>
+          )}
 
-          <Card className="rounded-xl border border-gray-100 shadow-none">
-            <CardHeader className="px-5 py-3.5 border-b border-gray-100 space-y-0">
-              <p className="text-[13px] font-medium text-gray-900">Property Images</p>
-            </CardHeader>
-            <CardContent className="p-5">
-              {/* Drag and Drop Zone */}
-              <div
-                onDrop={handleDrop}
-                onDragOver={handleDragOver}
-                className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary transition-colors cursor-pointer mb-4"
-              >
-                <input
-                  type="file"
-                  id="image-upload"
-                  multiple
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                />
-                <label htmlFor="image-upload" className="cursor-pointer">
-                  <div className="flex flex-col items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-primary-light flex items-center justify-center">
-                      <Upload className="w-6 h-6 text-primary" />
+          {/* Step 2: Details */}
+          {step === 1 && (
+            <>
+              <Card className="rounded-xl border border-gray-100 shadow-none">
+                <CardHeader className="px-5 py-3.5 border-b border-gray-100 space-y-0">
+                  <p className="text-[13px] font-medium text-gray-900">Pricing & Specifications</p>
+                </CardHeader>
+                <CardContent className="p-5">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="price" className={labelClass}>Price *</label>
+                      <input id="price" name="price" type="text" value={formData.price} onChange={handleChange} placeholder="e.g. $480,000" className={fieldClass} required />
                     </div>
                     <div>
-                      <p className="text-[13px] font-medium text-gray-900">
-                        Drag & drop images here, or click to select
-                      </p>
-                      <p className="text-[11px] text-tertiary mt-1">
-                        PNG, JPG, GIF up to 10MB each
-                      </p>
+                      <label htmlFor="area" className={labelClass}>Area (sq ft) *</label>
+                      <input id="area" name="area" type="text" value={formData.area} onChange={handleChange} placeholder="e.g. 2,400" className={fieldClass} required />
+                    </div>
+                    <div>
+                      <label htmlFor="bedrooms" className={labelClass}>Bedrooms</label>
+                      <input id="bedrooms" name="bedrooms" type="number" value={formData.bedrooms} onChange={handleChange} min="1" className={fieldClass} />
+                    </div>
+                    <div>
+                      <label htmlFor="bathrooms" className={labelClass}>Bathrooms</label>
+                      <input id="bathrooms" name="bathrooms" type="number" value={formData.bathrooms} onChange={handleChange} min="1" className={fieldClass} />
                     </div>
                   </div>
-                </label>
-              </div>
+                </CardContent>
+              </Card>
 
-              {/* Image Preview Grid */}
-              {formData.images.length > 0 && (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
-                  {formData.images.map((img, idx) => (
-                    <div key={idx} className="relative group">
-                      <div className="aspect-square rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
-                        {img.img ? (
-                          <img
-                            src={img.img}
-                            alt={`Property image ${idx + 1}`}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <ImageIcon className="w-8 h-8 text-gray-400" />
-                          </div>
-                        )}
+              <div className="flex justify-between gap-3 pt-2">
+                <Button type="button" onClick={prevStep} variant="outline" className="h-9 text-[13px] border-gray-200 gap-2">
+                  Previous
+                </Button>
+                <Button type="button" onClick={nextStep} disabled={!canProceed()} className="h-9 bg-primary hover:bg-primary-dark text-white text-[13px] gap-2">
+                  Next Step <ArrowRight className="w-3.5 h-3.5" />
+                </Button>
+              </div>
+            </>
+          )}
+
+          {/* Step 3: Images */}
+          {step === 2 && (
+            <>
+              <Card className="rounded-xl border border-gray-100 shadow-none">
+                <CardHeader className="px-5 py-3.5 border-b border-gray-100 space-y-0">
+                  <p className="text-[13px] font-medium text-gray-900">Property Images</p>
+                </CardHeader>
+                <CardContent className="p-5">
+                  {/* Drag and Drop Zone */}
+                  <div
+                    onDrop={handleDrop}
+                    onDragOver={handleDragOver}
+                    className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary transition-colors cursor-pointer mb-4"
+                  >
+                    <input
+                      type="file"
+                      id="image-upload"
+                      multiple
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                    <label htmlFor="image-upload" className="cursor-pointer">
+                      <div className="flex flex-col items-center gap-3">
+                        <div className="w-12 h-12 rounded-full bg-primary-light flex items-center justify-center">
+                          <Upload className="w-6 h-6 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-[13px] font-medium text-gray-900">
+                            Drag & drop images here, or click to select
+                          </p>
+                          <p className="text-[11px] text-tertiary mt-1">
+                            PNG, JPG, GIF up to 10MB each
+                          </p>
+                        </div>
                       </div>
+                    </label>
+                  </div>
+
+                  {/* Image Preview Grid */}
+                  {formData.images.length > 0 && (
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+                      {formData.images.map((img, idx) => (
+                        <div key={idx} className="relative group">
+                          <div className="aspect-square rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
+                            {img.img ? (
+                              <img
+                                src={img.img}
+                                alt={`Property image ${idx + 1}`}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <ImageIcon className="w-8 h-8 text-gray-400" />
+                              </div>
+                            )}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setFormData((p) => ({ ...p, images: p.images.filter((_, i) => i !== idx) }))}
+                            className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                          <div className="absolute bottom-2 left-2 bg-black/70 text-white text-[10px] px-2 py-1 rounded">
+                            #{idx + 1}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* URL Input Option */}
+                  <div className="border-t border-gray-200 pt-4">
+                    <p className="text-[11px] font-medium text-tertiary uppercase tracking-wider mb-3">
+                      Or add image URLs manually
+                    </p>
+                    <div className="flex gap-2">
+                      <input
+                        type="url"
+                        placeholder="Paste image URL here..."
+                        className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-[13px] outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && e.currentTarget.value) {
+                            setFormData((p) => ({
+                              ...p,
+                              images: [...p.images, { img: e.currentTarget.value }]
+                            }));
+                            e.currentTarget.value = '';
+                          }
+                        }}
+                      />
                       <button
                         type="button"
-                        onClick={() => setFormData((p) => ({ ...p, images: p.images.filter((_, i) => i !== idx) }))}
-                        className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                        onClick={() => {
+                          const input = document.querySelector('input[type="url"]') as HTMLInputElement;
+                          if (input?.value) {
+                            setFormData((p) => ({
+                              ...p,
+                              images: [...p.images, { img: input.value }]
+                            }));
+                            input.value = '';
+                          }
+                        }}
+                        className="px-4 py-2 bg-primary text-white rounded-lg text-[13px] font-medium hover:bg-primary-dark transition-colors"
                       >
-                        <X className="w-4 h-4" />
+                        Add
                       </button>
-                      <div className="absolute bottom-2 left-2 bg-black/70 text-white text-[10px] px-2 py-1 rounded">
-                        #{idx + 1}
-                      </div>
                     </div>
-                  ))}
-                </div>
-              )}
+                  </div>
 
-              {/* URL Input Option */}
-              <div className="border-t border-gray-200 pt-4">
-                <p className="text-[11px] font-medium text-tertiary uppercase tracking-wider mb-3">
-                  Or add image URLs manually
-                </p>
-                <div className="flex gap-2">
-                  <input
-                    type="url"
-                    placeholder="Paste image URL here..."
-                    className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-[13px] outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && e.currentTarget.value) {
-                        setFormData((p) => ({
-                          ...p,
-                          images: [...p.images, { img: e.currentTarget.value }]
-                        }));
-                        e.currentTarget.value = '';
-                      }
-                    }}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const input = document.querySelector('input[type="url"]') as HTMLInputElement;
-                      if (input?.value) {
-                        setFormData((p) => ({
-                          ...p,
-                          images: [...p.images, { img: input.value }]
-                        }));
-                        input.value = '';
-                      }
-                    }}
-                    className="px-4 py-2 bg-primary text-white rounded-lg text-[13px] font-medium hover:bg-primary-dark transition-colors"
-                  >
-                    Add
-                  </button>
-                </div>
+                  {/* Add More Button */}
+                  {formData.images.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => document.getElementById('image-upload')?.click()}
+                      className="mt-4 flex items-center gap-1.5 text-[12px] text-primary font-medium hover:underline"
+                    >
+                      <PlusCircle className="w-3.5 h-3.5" /> Add more images
+                    </button>
+                  )}
+                </CardContent>
+              </Card>
+
+              <div className="flex justify-between gap-3 pt-2">
+                <Button type="button" onClick={prevStep} variant="outline" className="h-9 text-[13px] border-gray-200 gap-2">
+                  Previous
+                </Button>
+                <Button type="button" onClick={nextStep} disabled={!canProceed()} className="h-9 bg-primary hover:bg-primary-dark text-white text-[13px] gap-2">
+                  Next Step <ArrowRight className="w-3.5 h-3.5" />
+                </Button>
               </div>
+            </>
+          )}
 
-              {/* Add More Button */}
-              {formData.images.length > 0 && (
-                <button
-                  type="button"
-                  onClick={() => document.getElementById('image-upload')?.click()}
-                  className="mt-4 flex items-center gap-1.5 text-[12px] text-primary font-medium hover:underline"
-                >
-                  <PlusCircle className="w-3.5 h-3.5" /> Add more images
-                </button>
-              )}
-            </CardContent>
-          </Card>
+          {/* Step 4: Review */}
+          {step === 3 && (
+            <>
+              <Card className="rounded-xl border border-gray-100 shadow-none">
+                <CardHeader className="px-5 py-3.5 border-b border-gray-100 space-y-0">
+                  <p className="text-[13px] font-medium text-gray-900">Review & Publish</p>
+                </CardHeader>
+                <CardContent className="p-5 space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-[10px] text-tertiary uppercase tracking-wider mb-1">Title</p>
+                      <p className="text-[13px] font-medium">{formData.title}</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-tertiary uppercase tracking-wider mb-1">Location</p>
+                      <p className="text-[13px] font-medium">{formData.location}</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-tertiary uppercase tracking-wider mb-1">Price</p>
+                      <p className="text-[13px] font-medium">{formData.price}</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-tertiary uppercase tracking-wider mb-1">Size</p>
+                      <p className="text-[13px] font-medium">{formData.area}</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-tertiary uppercase tracking-wider mb-1">Bedrooms</p>
+                      <p className="text-[13px] font-medium">{formData.bedrooms}</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-tertiary uppercase tracking-wider mb-1">Bathrooms</p>
+                      <p className="text-[13px] font-medium">{formData.bathrooms}</p>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-tertiary uppercase tracking-wider mb-1">Description</p>
+                    <p className="text-[13px] text-gray-700 line-clamp-3">{formData.description}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-tertiary uppercase tracking-wider mb-2">Images ({formData.images.length})</p>
+                    <div className="grid grid-cols-4 gap-2">
+                      {formData.images.slice(0, 4).map((img, idx) => (
+                        <div key={idx} className="aspect-square rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
+                          {img.img && <img src={img.img} alt={`Preview ${idx + 1}`} className="w-full h-full object-cover" />}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
 
-          <div className="flex justify-end gap-3 pt-2">
-            <Button type="button" variant="outline" className="h-9 text-[13px] border-gray-200 gap-2">
-              <Save className="w-3.5 h-3.5" /> Save Draft
-            </Button>
-            <Button type="submit" className="h-9 bg-primary hover:bg-primary-dark text-white text-[13px] gap-2">
-              Publish Listing <ArrowRight className="w-3.5 h-3.5" />
-            </Button>
-          </div>
+              <div className="flex justify-between gap-3 pt-2">
+                <Button type="button" onClick={prevStep} variant="outline" className="h-9 text-[13px] border-gray-200 gap-2">
+                  Previous
+                </Button>
+                <Button type="submit" disabled={loading} className="h-9 bg-primary hover:bg-primary-dark text-white text-[13px] gap-2">
+                  {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+                  {loading ? 'Publishing...' : 'Publish Listing'}
+                </Button>
+              </div>
+            </>
+          )}
         </form>
 
         {/* Right sidebar */}
@@ -292,15 +447,19 @@ const AddProperty: React.FC = () => {
             <CardContent className="p-5 space-y-4">
               <div>
                 <label htmlFor="status" className={labelClass}>Status *</label>
-                <select id="status" value={formData.status} onChange={handleChange} className={fieldClass}>
-                  <option>For Sale</option><option>For Rent</option>
+                <select id="status" name="status" value={formData.status} onChange={handleChange} className={fieldClass}>
+                  <option value="FOR_SALE">For Sale</option>
+                  <option value="FOR_RENT">For Rent</option>
                 </select>
               </div>
               <div>
                 <label htmlFor="type" className={labelClass}>Property Type *</label>
-                <select id="type" value={formData.type} onChange={handleChange} className={fieldClass}>
-                  <option>House</option><option>Condo</option><option>Apartment</option>
-                  <option>Townhouse</option><option>Land</option>
+                <select id="type" name="type" value={formData.type} onChange={handleChange} className={fieldClass}>
+                  <option value="HOUSE">House</option>
+                  <option value="CONDO">Condo</option>
+                  <option value="APARTMENT">Apartment</option>
+                  <option value="TOWNHOUSE">Townhouse</option>
+                  <option value="LAND">Land</option>
                 </select>
               </div>
             </CardContent>
@@ -309,14 +468,18 @@ const AddProperty: React.FC = () => {
           <Card className="rounded-xl border-0 bg-primary shadow-none">
             <CardContent className="p-5">
               <p className="text-[12px] text-white/70 leading-relaxed mb-4">
-                All fields marked * are required. Save as draft to continue later.
+                All fields marked * are required. Complete all steps to publish your listing.
               </p>
-              <Button className="w-full bg-white text-primary hover:bg-white/90 h-9 text-[13px] gap-2 shadow-none">
-                <ArrowRight className="w-3.5 h-3.5" /> Publish Listing
-              </Button>
-              <Button variant="ghost" className="w-full mt-2 text-white/70 hover:text-white hover:bg-white/10 h-9 text-[13px]">
-                Save as Draft
-              </Button>
+              <div className="bg-white/10 rounded-lg p-3 mb-3">
+                <p className="text-[11px] text-white font-medium mb-1">Progress</p>
+                <div className="w-full bg-white/20 rounded-full h-2">
+                  <div
+                    className="bg-white h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${((step + 1) / steps.length) * 100}%` }}
+                  ></div>
+                </div>
+                <p className="text-[10px] text-white/70 mt-1">Step {step + 1} of {steps.length}</p>
+              </div>
             </CardContent>
           </Card>
         </div>

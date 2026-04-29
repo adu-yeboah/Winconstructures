@@ -2,8 +2,12 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock, FaPaperPlane } from 'react-icons/fa';
+import { useMessages } from '@/hooks/useMessage';
+import { Loader2 } from 'lucide-react';
+import { toast } from 'react-toastify';
 
 const ContactSection: React.FC = () => {
+  const { createMessage, loading } = useMessages();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -19,10 +23,22 @@ const ContactSection: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
-    // Add your form submission logic here
+
+    try {
+      await createMessage({
+        title: formData.name,
+        email: formData.email,
+        subject: "Homepage Contact Form",
+        message: `${formData.message}\n\nPhone: ${formData.phone}`,
+      });
+
+      setFormData({ name: '', email: '', phone: '', message: '' });
+      toast.success('Message sent successfully! We\'ll get back to you within 24 hours.');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to send message. Please try again.');
+    }
   };
 
   const fadeIn = {
@@ -194,10 +210,20 @@ const ContactSection: React.FC = () => {
 
                   <button
                     type="submit"
-                    className="w-full bg-secondary hover:bg-secondary/90 text-white py-3 px-6 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2"
+                    disabled={loading}
+                    className="w-full bg-secondary hover:bg-secondary/90 text-white py-3 px-6 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    <span>Send Message</span>
-                    <FaPaperPlane className="text-sm" />
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Sending...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Send Message</span>
+                        <FaPaperPlane className="text-sm" />
+                      </>
+                    )}
                   </button>
                 </form>
               </div>

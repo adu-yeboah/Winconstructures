@@ -11,24 +11,37 @@ interface PropertyCardProps {
 const PropertyCard: FC<PropertyCardProps> = ({ property }) => {
   const { title, price, bedrooms, bathrooms, area, images, status, location } = property;
   const [saved, setSaved] = useState(false);
+  const [imageError, setImageError] = useState(false);
+
+  const handleImageError = () => {
+    setImageError(true);
+  };
 
   return (
     <Link
       href={`/properties/${property.id}`}
-      className="group bg-white rounded-xl overflow-hidden border border-gray-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(31,77,58,0.10)]"
+      className="group bg-white rounded-xl overflow-hidden border border-gray-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(31,77,58,0.10)] h-full flex flex-col"
     >
       {/* Image */}
-      <div className="relative h-52 overflow-hidden bg-gray-100">
-        <Image
-          src={images[0]?.img || '/placeholder.jpg'}
-          alt={title}
-          fill
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          loading="lazy"
-          placeholder="blur"
-          blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
-        />
+      <div className="relative h-64 overflow-hidden bg-gray-100 shrink-0">
+        {!imageError && images[0]?.img ? (
+          <Image
+            src={images[0].img}
+            alt={title}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            loading="lazy"
+            onError={handleImageError}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+            <svg className="w-16 h-16 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 22V12h6v10" />
+            </svg>
+          </div>
+        )}
 
         {/* Badge */}
         <span
@@ -57,7 +70,7 @@ const PropertyCard: FC<PropertyCardProps> = ({ property }) => {
       </div>
 
       {/* Body */}
-      <div className="p-4 sm:p-5">
+      <div className="p-4 sm:p-5 flex-1 flex flex-col">
         {/* Location */}
         {location && (
           <div className="flex items-center gap-1.5 text-tertiary text-xs mb-1.5">
@@ -70,14 +83,14 @@ const PropertyCard: FC<PropertyCardProps> = ({ property }) => {
         )}
 
         {/* Title */}
-        <h3 className="text-sm sm:text-base font-medium text-gray-900 mb-4 truncate">
+        <h3 className="text-sm sm:text-base font-medium text-gray-900 mb-4 line-clamp-2 min-h-[40px]">
           {title}
         </h3>
 
         <div className="h-px bg-gray-100 mb-4" />
 
         {/* Footer */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mt-auto">
           <p className="font-serif text-xl sm:text-2xl font-semibold text-primary leading-none">
             {price}
             <span className="font-sans text-xs font-normal text-tertiary ml-1">

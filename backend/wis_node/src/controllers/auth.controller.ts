@@ -68,3 +68,55 @@ export const Login = asyncHandler(
     }
   },
 );
+
+export const RefreshToken = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const { refreshToken } = req.body;
+
+    try {
+      // Validate required fields
+      if (!refreshToken) {
+        res.status(400).json({ detail: "Refresh token is required" });
+        return;
+      }
+
+      // Verify refresh token
+      const decoded = jwt.verify(
+        refreshToken,
+        process.env.JWT_REFRESH_SECRET as string,
+      ) as { email: string; role: string };
+
+      // Generate new access token
+      const accessToken = jwt.sign(
+        { email: decoded.email, role: decoded.role },
+        process.env.JWT_SECRET as string,
+        { expiresIn: "1h" },
+      );
+
+      // Generate new refresh token
+      const newRefreshToken = jwt.sign(
+        { email: decoded.email, role: decoded.role },
+        process.env.JWT_REFRESH_SECRET as string,
+        { expiresIn: "7d" },
+      );
+
+      // Return successful response with new tokens
+      res.status(200).json({
+        accessToken,
+        refreshToken: newRefreshToken,
+      });
+    } catch (error) {
+      if (error instanceof jwt.TokenExpiredError) {
+        res.status(401).json({ detail: "Refresh token expired" });
+        return;
+      }
+      if (error instanceof jwt.JsonWebTokenError) {
+        res.status(401).json({ detail: "Invalid refresh token" });
+        return;
+      }
+      res
+        .status(500)
+        .json({ detail: `Server error: ${(error as Error).message}` });
+    }
+  },
+);

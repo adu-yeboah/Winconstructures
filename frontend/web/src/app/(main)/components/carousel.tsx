@@ -1,8 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+import React, { useEffect, useState, useCallback } from "react";
+import useEmblaCarousel from 'embla-carousel-react';
 import PropertyCard from "./propertyCard";
 import { useRouter } from "next/navigation";
 import { useProperties } from "@/hooks/useProperty";
@@ -26,6 +24,54 @@ export default function Carousel({
   const router = useRouter();
   const { properties, loading, error, fetchProperties } = useProperties();
   const [mounted, setMounted] = useState(false);
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: true,
+    align: 'start',
+    slidesToScroll: 1,
+    containScroll: 'trimSnaps',
+  });
+
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [canScrollPrev, setCanScrollPrev] = useState(false);
+  const [canScrollNext, setCanScrollNext] = useState(false);
+
+  const scrollPrev = useCallback(() => {
+    if (emblaApi) emblaApi.scrollPrev();
+  }, [emblaApi]);
+
+  const scrollNext = useCallback(() => {
+    if (emblaApi) emblaApi.scrollNext();
+  }, [emblaApi]);
+
+  const scrollTo = useCallback((index: number) => {
+    if (emblaApi) emblaApi.scrollTo(index);
+  }, [emblaApi]);
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+    setCanScrollPrev(emblaApi.canScrollPrev());
+    setCanScrollNext(emblaApi.canScrollNext());
+  }, [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+
+    onSelect();
+    emblaApi.on('select', onSelect);
+    emblaApi.on('reInit', onSelect);
+
+    // Handle resize
+    const handleResize = () => {
+      if (emblaApi) {
+        emblaApi.reInit();
+        onSelect();
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [emblaApi, onSelect]);
 
   useEffect(() => {
     setMounted(true);
@@ -36,25 +82,16 @@ export default function Carousel({
     }
   }, [featuredOnly]);
 
-  const settings = {
-    infinite: true,
-    speed: 600,
-    slidesToShow: 3,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 5000,
-    pauseOnHover: true,
-    arrows: false,
-    dots: true,
-    dotsClass: "slick-dots !bottom-[-36px]",
-    responsive: [
-      { breakpoint: 1024, settings: { slidesToShow: 2 } },
-      {
-        breakpoint: 640,
-        settings: { slidesToShow: 1, centerMode: true, centerPadding: "20px" },
-      },
-    ],
-  };
+  // Auto-play functionality
+  useEffect(() => {
+    if (!emblaApi || loading) return;
+
+    const autoplay = setInterval(() => {
+      emblaApi.scrollNext();
+    }, 5000);
+
+    return () => clearInterval(autoplay);
+  }, [emblaApi, loading]);
 
   // Don't render until mounted (prevents hydration issues)
   if (!mounted) {
@@ -112,7 +149,9 @@ export default function Carousel({
     return (
       <section className="py-16 sm:py-20 px-4 sm:px-6 md:px-10 max-w-7xl mx-auto">
         <div className="text-center">
-          <p className="text-gray-600">No properties available at the moment.</p>
+          <p className="text-gray-600">
+            No properties available at the moment.
+          </p>
         </div>
       </section>
     );
@@ -169,14 +208,52 @@ export default function Carousel({
           ))}
         </div>
       ) : (
-        <div className="pb-12">
-          <Slider {...settings}>
-            {properties.map((property) => (
-              <div key={property.id} className="px-2.5">
-                <PropertyCard property={property} />
-              </div>
+        <div className="relative">
+          {/* Navigation Arrows */}
+          <button
+            onClick={scrollPrev}
+            disabled={!canScrollPrev}
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 z-10 w-12 h-12 bg-white rounded-full shadow-lg items-center justify-center hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all md:flex hidden"
+          >
+            <svg className="w-6 h-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          <button
+            onClick={scrollNext}
+            disabled={!canScrollNext}
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 z-10 w-12 h-12 bg-white rounded-full shadow-lg items-center justify-center hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all md:flex hidden"
+          >
+            <svg className="w-6 h-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          {/* Embla Carousel */}
+          <div className="overflow-hidden" ref={emblaRef}>
+            <div className="flex gap-6">
+              {properties.map((property) => (
+                <div key={property.id} className="flex-[0_0_100%] md:flex-[0_0_33.333%] lg:flex-[0_0_33.333%] min-w-0">
+                  <PropertyCard property={property} />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Dots */}
+          <div className="flex justify-center gap-2 mt-6">
+            {properties.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => scrollTo(index)}
+                className={`w-2 h-2 rounded-full transition-all ${
+                  index === selectedIndex ? 'bg-primary w-6' : 'bg-gray-300'
+                }`}
+                aria-label={`Go to slide ${index + 1}`}
+              />
             ))}
-          </Slider>
+          </div>
         </div>
       )}
 
