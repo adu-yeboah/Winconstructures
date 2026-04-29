@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import { Poppins, Geist } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import { cn } from "@/lib/utils";
+import { AuthProvider } from "@/context/authContext";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -14,8 +17,8 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "Wisconstructures",
   description: "Modern real estate platform",
-   icons: {
-    icon: '/logo.png',
+  icons: {
+    icon: "/logo.png",
   },
 };
 
@@ -25,7 +28,7 @@ type RootLayoutProps = {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en" className={cn("font-sans", geist.variable)} >
+    <html lang="en" className={cn("font-sans", geist.variable)}>
       <body className={poppins.className}>
         <NextTopLoader
           color="#d4af37"
@@ -42,7 +45,20 @@ export default function RootLayout({ children }: RootLayoutProps) {
           zIndex={1600}
           showAtBottom={false}
         />
-        {children}
+        
+        <AuthProvider>{children}</AuthProvider>
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </body>
     </html>
   );

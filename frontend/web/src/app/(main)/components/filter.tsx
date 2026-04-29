@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import { FaMapMarkerAlt, FaSearch, FaChevronDown, FaSliders } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaSearch, FaChevronDown, FaSlidersH } from 'react-icons/fa';
 import { useProperties } from '@/hooks/useProperty';
 import { useRouter } from 'next/navigation';
 
@@ -232,7 +232,7 @@ const PropertySearchFilter: React.FC<PropertySearchFilterProps> = ({
         disabled={loading}
         className="w-full bg-secondary hover:bg-secondary-dark text-white py-3 px-6 rounded-lg font-semibold transition-colors duration-200 shadow-md hover:shadow-lg disabled:opacity-50 flex items-center justify-center gap-2"
       >
-        <FaSliders className="w-4 h-4" />
+        <FaSlidersH className="w-4 h-4" />
         {loading ? 'Searching...' : 'Search Properties'}
       </button>
     </form>

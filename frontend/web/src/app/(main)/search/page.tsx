@@ -1,6 +1,6 @@
 "use client";
-import React, { useEffect, useState, useMemo } from "react";
-import { FaSearch, FaSlidersH, Filter } from "react-icons/fa";
+import React, { useEffect, useState, useMemo, Suspense } from "react";
+import { FaSearch, FaSlidersH, FaFilter } from "react-icons/fa";
 import { useSearchParams } from "next/navigation";
 import { useProperties } from "@/hooks/useProperty";
 import PropertyCardTwo from "../components/searchPropertyCard";
@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Property } from "@/types/property";
 import { Button } from "@/components/ui/button";
 
-function Page() {
+function SearchContent() {
   const searchParams = useSearchParams();
   const { properties, loading, error, fetchProperties } = useProperties();
 
@@ -140,7 +140,7 @@ function Page() {
         {/* Sidebar Filters */}
         <aside className="bg-white rounded-3xl p-6 shadow-sm h-fit sticky top-28">
           <div className="flex items-center gap-3 mb-6">
-            <Filter className="text-secondary" />
+            <FaFilter className="text-secondary" />
             <h2 className="font-serif text-2xl text-black">Filters</h2>
           </div>
 
@@ -332,6 +332,27 @@ function Page() {
         </main>
       </div>
     </div>
+  );
+}
+
+function Page() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 p-8">
+        <div className="max-w-7xl mx-auto">
+          <Skeleton className="h-20 w-full mb-8" />
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <Skeleton className="h-96 w-full" />
+            <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Skeleton className="h-80 w-full" />
+              <Skeleton className="h-80 w-full" />
+            </div>
+          </div>
+        </div>
+      </div>
+    }>
+      <SearchContent />
+    </Suspense>
   );
 }
 

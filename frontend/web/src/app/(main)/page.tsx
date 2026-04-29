@@ -21,12 +21,6 @@ const Home = () => {
         {/* Hero Content */}
         <section className="relative z-10 flex flex-col justify-center flex-1 px-6 lg:px-12 pt-32 pb-48">
           <div className="max-w-2xl animate-fade-up">
-            {/* Eyebrow */}
-            <div className="flex items-center gap-3 mb-5">
-              <span className="text-secondary text-xs font-medium tracking-[0.14em] uppercase">
-                Premium Real Estate
-              </span>
-            </div>
 
             {/* Title */}
             <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-light text-white leading-[1.08] tracking-tight mb-5">

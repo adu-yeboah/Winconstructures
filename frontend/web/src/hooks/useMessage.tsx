@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import messageService from '@/service/messageService';
 import { Message } from '@/types/messages';
+import { toast } from 'react-toastify';
 
 export const useMessages = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -50,10 +51,12 @@ export const useMessages = () => {
     try {
       const data = await messageService.create(messageData);
       setMessages((prev) => [...prev, data]);
+      toast.success('Message sent successfully!');
       return data;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to create message';
       setError(errorMessage);
+      toast.error(errorMessage);
       throw err;
     } finally {
       setLoading(false);
@@ -69,10 +72,12 @@ export const useMessages = () => {
       setMessages((prev) =>
         prev.map((msg) => (msg.id === id ? data : msg))
       );
+      toast.success('Message updated successfully!');
       return data;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to update message';
       setError(errorMessage);
+      toast.error(errorMessage);
       throw err;
     } finally {
       setLoading(false);
@@ -86,9 +91,11 @@ export const useMessages = () => {
     try {
       await messageService.delete(id);
       setMessages((prev) => prev.filter((msg) => msg.id !== id));
+      toast.success('Message deleted successfully!');
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to delete message';
       setError(errorMessage);
+      toast.error(errorMessage);
       throw err;
     } finally {
       setLoading(false);

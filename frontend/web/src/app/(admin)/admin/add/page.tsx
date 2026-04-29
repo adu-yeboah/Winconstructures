@@ -11,7 +11,8 @@ const AddProperty: React.FC = () => {
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState<Property>({
     id: 0, images: [{ img: '' }], title: '', description: '',
-    location: '', price: '', bedrooms: 1, bathrooms: 1, area: '', status: 'For Sale', type: 'House',
+    location: '', price: '', bedrooms: 1, bathrooms: 1, area: '', status: 'FOR_SALE', type: 'HOUSE',
+    featured: false, viewCount: 0, listedById: 0, listedBy: undefined, createdAt: new Date(), updatedAt: new Date(),
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {

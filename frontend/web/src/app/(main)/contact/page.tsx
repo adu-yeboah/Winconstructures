@@ -10,6 +10,7 @@ import {
 } from "react-icons/fa";
 import { useMessages } from "@/hooks/useMessage";
 import { Loader2 } from "lucide-react";
+import { toast } from "react-toastify";
 
 const ContactPage = () => {
   const { createMessage, loading } = useMessages();
@@ -19,17 +20,16 @@ const ContactPage = () => {
     phone: "",
     message: "",
   });
-  const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    setSuccess(false);
 
     // Validation
     if (!formData.name || !formData.email || !formData.message) {
       setError("Please fill in all required fields");
+      toast.error("Please fill in all required fields");
       return;
     }
 
@@ -41,11 +41,7 @@ const ContactPage = () => {
         message: `${formData.message}\n\nPhone: ${formData.phone}`,
       });
 
-      setSuccess(true);
       setFormData({ name: "", email: "", phone: "", message: "" });
-
-      // Reset success message after 5 seconds
-      setTimeout(() => setSuccess(false), 5000);
     } catch (err: any) {
       setError(err.message || "Failed to send message");
     }
@@ -93,13 +89,6 @@ const ContactPage = () => {
             <h2 className="font-serif text-4xl font-light text-black mb-8">
               Send us a message
             </h2>
-
-            {/* Success Message */}
-            {success && (
-              <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700">
-                Thank you! Your message has been sent successfully. We'll get back to you soon.
-              </div>
-            )}
 
             {/* Error Message */}
             {error && (

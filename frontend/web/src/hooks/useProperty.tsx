@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import propertyService from '@/service/propertyService';
 import { Property } from '@/types/property';
+import { toast } from 'react-toastify';
 
 export const useProperties = () => {
   const [properties, setProperties] = useState<Property[]>([]);
@@ -51,10 +52,12 @@ export const useProperties = () => {
     try {
       const data = await propertyService.create(propertyData);
       setProperties((prev) => [...prev, data]);
+      toast.success('Property created successfully!');
       return data;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to create property';
       setError(errorMessage);
+      toast.error(errorMessage);
       throw err;
     } finally {
       setLoading(false);
@@ -70,10 +73,12 @@ export const useProperties = () => {
       setProperties((prev) =>
         prev.map((prop) => (prop.id === id ? data : prop))
       );
+      toast.success('Property updated successfully!');
       return data;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to update property';
       setError(errorMessage);
+      toast.error(errorMessage);
       throw err;
     } finally {
       setLoading(false);
@@ -87,9 +92,11 @@ export const useProperties = () => {
     try {
       await propertyService.delete(id);
       setProperties((prev) => prev.filter((prop) => prop.id !== id));
+      toast.success('Property deleted successfully!');
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to delete property';
       setError(errorMessage);
+      toast.error(errorMessage);
       throw err;
     } finally {
       setLoading(false);

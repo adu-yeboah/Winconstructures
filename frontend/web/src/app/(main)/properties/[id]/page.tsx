@@ -21,7 +21,6 @@ export default function PropertyDetail() {
   const [property, setProperty] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
-  const [formSuccess, setFormSuccess] = useState(false);
   const [formError, setFormError] = useState("");
 
   // Form state
@@ -52,7 +51,6 @@ export default function PropertyDetail() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError("");
-    setFormSuccess(false);
 
     // Validation
     if (!formData.name || !formData.email || !formData.message) {
@@ -69,11 +67,7 @@ export default function PropertyDetail() {
         relatedPropertyId: property?.id,
       });
 
-      setFormSuccess(true);
       setFormData({ name: "", email: "", phone: "", message: "" });
-
-      // Reset success message after 5 seconds
-      setTimeout(() => setFormSuccess(false), 5000);
     } catch (err: any) {
       setFormError(err.message || "Failed to send inquiry");
     }
@@ -306,12 +300,6 @@ export default function PropertyDetail() {
             <h3 className="font-serif text-2xl font-light text-black mb-6">
               Request More Details
             </h3>
-
-            {formSuccess && (
-              <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
-                Thank you! Your inquiry has been sent successfully.
-              </div>
-            )}
 
             {formError && (
               <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">

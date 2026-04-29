@@ -1,3 +1,4 @@
+"use client";
 import { loginService, logoutService, isAuthenticated, getAccessToken } from '@/service/authServices';
 import { AuthContextType, User } from '@/types/auth';
 import React, { createContext, useState, useEffect, useCallback } from 'react';

@@ -33,7 +33,7 @@ const PropertyCard: FC<PropertyCardProps> = ({ property }) => {
         {/* Badge */}
         <span
           className={`absolute top-3 left-3 px-2.5 py-1 rounded text-[11px] font-medium tracking-widest uppercase ${
-            status === 'For Rent'
+            status === 'FOR_RENT'
               ? 'bg-secondary text-primary-dark'
               : 'bg-primary text-white'
           }`}
@@ -81,7 +81,7 @@ const PropertyCard: FC<PropertyCardProps> = ({ property }) => {
           <p className="font-serif text-xl sm:text-2xl font-semibold text-primary leading-none">
             {price}
             <span className="font-sans text-xs font-normal text-tertiary ml-1">
-              {status === 'For Rent' ? '/ mo' : '/ sale'}
+              {status === 'FOR_RENT' ? '/ mo' : '/ sale'}
             </span>
           </p>
 
