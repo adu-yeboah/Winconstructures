@@ -210,7 +210,7 @@ const MessagesPage: React.FC = () => {
             placeholder="Search messages..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="border-0 bg-transparent text-[13px] py-2 outline-none w-44 font-[DM_Sans]"
+            className="border-0 bg-transparent text-[13px] py-2 outline-none w-44 "
           />
         </div>
       </div>

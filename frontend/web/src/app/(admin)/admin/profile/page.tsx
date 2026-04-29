@@ -3,26 +3,28 @@ import React, { useState } from 'react';
 import { Save, Camera, Bell, Trash2, Mail, Phone, MapPin } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/hooks/auth';
 
 interface ProfileData {
   firstName: string; lastName: string; email: string;
   phone: string; location: string; bio: string;
 }
 
-const activities = [
-  { icon: 'add',    text: 'Added Oakwood Villa listing',      time: 'Today, 9:41 AM' },
-  { icon: 'msg',    text: 'Replied to Alice Johnson',          time: 'Yesterday, 3:22 PM' },
-  { icon: 'delete', text: 'Removed Palm Court listing',        time: 'Mar 26, 2026' },
-  { icon: 'edit',   text: 'Updated Meridian Heights price',    time: 'Mar 24, 2026' },
-];
-
 export default function ProfilePage() {
+  const { user } = useAuth();
   const [profile, setProfile] = useState<ProfileData>({
-    firstName: 'Admin', lastName: 'User', email: 'admin@wiscon.com',
-    phone: '+233 20 000 0000', location: 'Accra, Ghana',
-    bio: 'Property management professional with 10+ years in Ghanaian real estate.',
+    firstName: user?.firstName || 'Admin',
+    lastName: user?.lastName || 'User',
+    email: user?.email || 'admin@winconstructures.com',
+    phone: '',
+    location: '',
+    bio: '',
   });
-  const [notifications, setNotifications] = useState({ inquiries: true, updates: true, weekly: false });
+  const [notifications, setNotifications] = useState({
+    inquiries: true,
+    updates: true,
+    weekly: true
+  });
   const [passwords, setPasswords] = useState({ current: '', newPwd: '', confirm: '' });
 
   const fieldClass = "w-full border border-gray-200 rounded-lg px-3 py-2.5 text-[13px] text-gray-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all";
@@ -194,20 +196,8 @@ export default function ProfilePage() {
             <CardHeader className="px-5 py-3.5 border-b border-gray-100 space-y-0">
               <p className="text-[13px] font-medium text-gray-900">Recent Activity</p>
             </CardHeader>
-            <CardContent className="px-5 py-3">
-              {activities.map((a, i) => (
-                <div key={i} className={`flex items-start gap-3 py-3 ${i < activities.length - 1 ? 'border-b border-gray-50' : ''}`}>
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
-                    a.icon === 'add' ? 'bg-primary-light' : a.icon === 'msg' ? 'bg-secondary-light' : a.icon === 'delete' ? 'bg-red-50' : 'bg-primary-light'
-                  }`}>
-                    <Bell className={`w-3.5 h-3.5 ${a.icon === 'delete' ? 'text-red-500' : a.icon === 'msg' ? 'text-amber-600' : 'text-primary'}`} />
-                  </div>
-                  <div>
-                    <p className="text-[13px] text-gray-800 leading-snug">{a.text}</p>
-                    <p className="text-[11px] text-tertiary mt-0.5">{a.time}</p>
-                  </div>
-                </div>
-              ))}
+            <CardContent className="px-5 py-8 text-center">
+              <p className="text-[13px] text-tertiary">No recent activity to display.</p>
             </CardContent>
           </Card>
 

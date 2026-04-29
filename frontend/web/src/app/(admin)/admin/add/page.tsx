@@ -1,6 +1,6 @@
 'use client';
-import React, { useState } from 'react';
-import { PlusCircle, Trash2, ArrowRight, Save } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { PlusCircle, Trash2, ArrowRight, Save, Upload, X, Image as ImageIcon } from 'lucide-react';
 import { Property } from '@/types/property';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -23,17 +23,52 @@ const AddProperty: React.FC = () => {
     }));
   };
 
-  const handleImageChange = (index: number, value: string) => {
-    const imgs = [...formData.images];
-    imgs[index] = { img: value };
-    setFormData((prev) => ({ ...prev, images: imgs }));
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      Array.from(files).forEach(file => {
+        if (file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setFormData((p) => ({
+              ...p,
+              images: [...p.images, { img: reader.result as string }]
+            }));
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const files = e.dataTransfer.files;
+    if (files) {
+      Array.from(files).forEach(file => {
+        if (file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setFormData((p) => ({
+              ...p,
+              images: [...p.images, { img: reader.result as string }]
+            }));
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
   };
 
-  const fieldClass = "w-full border border-gray-200 rounded-lg px-3 py-2.5 text-[13px] text-gray-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all font-[DM_Sans]";
+  const fieldClass = "w-full border border-gray-200 rounded-lg px-3 py-2.5 text-[13px] text-gray-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all ";
   const labelClass = "block text-[10px] font-medium uppercase tracking-[0.07em] text-tertiary mb-1.5";
 
   return (
@@ -122,35 +157,119 @@ const AddProperty: React.FC = () => {
               <p className="text-[13px] font-medium text-gray-900">Property Images</p>
             </CardHeader>
             <CardContent className="p-5">
-              <div className="space-y-2.5 mb-3">
-                {formData.images.map((img, idx) => (
-                  <div key={idx} className="flex items-center gap-2">
-                    <input
-                      type="url"
-                      value={img.img}
-                      onChange={(e) => handleImageChange(idx, e.target.value)}
-                      placeholder="Paste image URL here..."
-                      className={fieldClass}
-                    />
-                    {formData.images.length > 1 && (
+              {/* Drag and Drop Zone */}
+              <div
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+                className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary transition-colors cursor-pointer mb-4"
+              >
+                <input
+                  type="file"
+                  id="image-upload"
+                  multiple
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
+                <label htmlFor="image-upload" className="cursor-pointer">
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="w-12 h-12 rounded-full bg-primary-light flex items-center justify-center">
+                      <Upload className="w-6 h-6 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-[13px] font-medium text-gray-900">
+                        Drag & drop images here, or click to select
+                      </p>
+                      <p className="text-[11px] text-tertiary mt-1">
+                        PNG, JPG, GIF up to 10MB each
+                      </p>
+                    </div>
+                  </div>
+                </label>
+              </div>
+
+              {/* Image Preview Grid */}
+              {formData.images.length > 0 && (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+                  {formData.images.map((img, idx) => (
+                    <div key={idx} className="relative group">
+                      <div className="aspect-square rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
+                        {img.img ? (
+                          <img
+                            src={img.img}
+                            alt={`Property image ${idx + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <ImageIcon className="w-8 h-8 text-gray-400" />
+                          </div>
+                        )}
+                      </div>
                       <button
                         type="button"
                         onClick={() => setFormData((p) => ({ ...p, images: p.images.filter((_, i) => i !== idx) }))}
-                        className="w-8 h-9 rounded-lg border border-red-200 bg-red-50 flex items-center justify-center hover:bg-red-100 transition-colors shrink-0"
+                        className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
                       >
-                        <Trash2 className="w-3.5 h-3.5 text-red-500" />
+                        <X className="w-4 h-4" />
                       </button>
-                    )}
-                  </div>
-                ))}
+                      <div className="absolute bottom-2 left-2 bg-black/70 text-white text-[10px] px-2 py-1 rounded">
+                        #{idx + 1}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* URL Input Option */}
+              <div className="border-t border-gray-200 pt-4">
+                <p className="text-[11px] font-medium text-tertiary uppercase tracking-wider mb-3">
+                  Or add image URLs manually
+                </p>
+                <div className="flex gap-2">
+                  <input
+                    type="url"
+                    placeholder="Paste image URL here..."
+                    className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-[13px] outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && e.currentTarget.value) {
+                        setFormData((p) => ({
+                          ...p,
+                          images: [...p.images, { img: e.currentTarget.value }]
+                        }));
+                        e.currentTarget.value = '';
+                      }
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const input = document.querySelector('input[type="url"]') as HTMLInputElement;
+                      if (input?.value) {
+                        setFormData((p) => ({
+                          ...p,
+                          images: [...p.images, { img: input.value }]
+                        }));
+                        input.value = '';
+                      }
+                    }}
+                    className="px-4 py-2 bg-primary text-white rounded-lg text-[13px] font-medium hover:bg-primary-dark transition-colors"
+                  >
+                    Add
+                  </button>
+                </div>
               </div>
-              <button
-                type="button"
-                onClick={() => setFormData((p) => ({ ...p, images: [...p.images, { img: '' }] }))}
-                className="flex items-center gap-1.5 text-[12px] text-primary font-medium hover:underline"
-              >
-                <PlusCircle className="w-3.5 h-3.5" /> Add another image
-              </button>
+
+              {/* Add More Button */}
+              {formData.images.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => document.getElementById('image-upload')?.click()}
+                  className="mt-4 flex items-center gap-1.5 text-[12px] text-primary font-medium hover:underline"
+                >
+                  <PlusCircle className="w-3.5 h-3.5" /> Add more images
+                </button>
+              )}
             </CardContent>
           </Card>
 

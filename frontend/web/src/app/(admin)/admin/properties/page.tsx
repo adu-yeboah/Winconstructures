@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useMemo, useState, useCallback, useEffect } from "react";
 import Image from "next/image";
 import DataTable, { TableColumn } from "react-data-table-component";
 import Link from "next/link";
@@ -10,8 +10,9 @@ import {
   RotateCcw, ChevronDown,
 } from "lucide-react";
 
-import { data } from "@/constants/properties";
-import { Product } from "@/types/property";
+import { Property } from "@/types/property";
+import { useProperties } from "@/hooks/useProperty";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -19,26 +20,30 @@ import {
   Select, SelectTrigger, SelectContent, SelectItem, SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 
 export default function Products() {
   const router = useRouter();
+  const { properties, loading, fetchProperties, deleteProperty } = useProperties();
+  const [mounted, setMounted] = useState(false);
 
   const [search, setSearch]           = useState("");
   const [typeFilter, setTypeFilter]   = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [priceFilter, setPriceFilter] = useState("all");
-  const [selectedRows, setSelectedRows] = useState<Product[]>([]);
+  const [selectedRows, setSelectedRows] = useState<Property[]>([]);
   const [toggleCleared, setToggleCleared] = useState(false);
-  const [properties, setProperties]   = useState<Product[]>(data);
 
-  //  Filtering 
+  useEffect(() => {
+    setMounted(true);
+    fetchProperties();
+  }, []);
+
+  //  Filtering
   const filteredData = useMemo(() => {
     return properties.filter((p) => {
       const matchesSearch =
-        p.name.toLowerCase().includes(search.toLowerCase()) ||
+        p.title.toLowerCase().includes(search.toLowerCase()) ||
         p.location?.toLowerCase().includes(search.toLowerCase()) ||
         p.price.toString().includes(search);
 
@@ -46,14 +51,14 @@ export default function Products() {
         typeFilter === "all" || p.type === typeFilter;
 
       const matchesStatus =
-        statusFilter === "all" ||
-        (statusFilter === "available" ? p.stock > 0 : p.stock === 0);
+        statusFilter === "all" || p.status === statusFilter;
 
+      const priceNum = parseInt(p.price.replace(/[^0-9]/g, ''));
       const matchesPrice =
         priceFilter === "all" ||
-        (priceFilter === "low"  && Number(p.amount) < 100000) ||
-        (priceFilter === "mid"  && Number(p.amount) >= 100000 && Number(p.amount) < 400000) ||
-        (priceFilter === "high" && Number(p.amount) >= 400000);
+        (priceFilter === "low"  && priceNum < 200000) ||
+        (priceFilter === "mid"  && priceNum >= 200000 && priceNum < 500000) ||
+        (priceFilter === "high" && priceNum >= 500000);
 
       return matchesSearch && matchesType && matchesStatus && matchesPrice;
     });
@@ -64,30 +69,44 @@ export default function Products() {
     setStatusFilter("all"); setPriceFilter("all");
   };
 
-  //  Row Actions 
-  const handleDelete = useCallback((id: string | number) => {
-    setProperties((prev) => prev.filter((p) => p.id !== id));
-  }, []);
+  //  Row Actions
+  const handleDelete = useCallback(async (id: string | number) => {
+    await deleteProperty(id);
+    setToggleCleared((t) => !t);
+  }, [deleteProperty]);
 
-  const handleBulkDelete = useCallback(() => {
-    const ids = new Set(selectedRows.map((r) => r.id));
-    setProperties((prev) => prev.filter((p) => !ids.has(p.id)));
+  const handleBulkDelete = useCallback(async () => {
+    for (const row of selectedRows) {
+      await deleteProperty(row.id);
+    }
     setSelectedRows([]);
     setToggleCleared((t) => !t);
-  }, [selectedRows]);
+  }, [selectedRows, deleteProperty]);
 
-  //  Columns 
-  const columns: TableColumn<Product>[] = [
+  if (!mounted || loading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <Skeleton className="h-10 w-48" />
+          <Skeleton className="h-10 w-32" />
+        </div>
+        <Skeleton className="h-96 w-full" />
+      </div>
+    );
+  }
+
+  //  Columns
+  const columns: TableColumn<Property>[] = [
     {
       name: "Property",
-      selector: (row) => row.name,
+      selector: (row) => row.title,
       sortable: true,
       grow: 2,
       cell: (row) => (
         <div className="flex items-center gap-3 py-2">
           <div className="relative h-11 w-16 rounded-lg overflow-hidden bg-primary-light shrink-0">
-            {row.image ? (
-              <Image src={row.image} alt={row.name} fill className="object-cover" />
+            {row.images?.[0]?.img ? (
+              <Image src={row.images[0].img} alt={row.title} fill className="object-cover" />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
                 <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -97,53 +116,52 @@ export default function Products() {
             )}
           </div>
           <div className="min-w-0">
-            <p className="font-medium text-gray-900 text-[13px] truncate max-w-[160px]">{row.name}</p>
-            <p className="text-[11px] text-tertiary mt-0.5">{row.orders ?? 0} inquiries</p>
+            <p className="font-medium text-gray-900 text-[13px] truncate max-w-[160px]">{row.title}</p>
+            <p className="text-[11px] text-tertiary mt-0.5">{row.location}</p>
           </div>
         </div>
       ),
     },
     {
       name: "Type",
-      selector: (row: Product) => row.type ?? "",
+      selector: (row: Property) => row.type ?? "",
       sortable: true,
-      cell: (row: Product) => (
+      cell: (row: Property) => (
         <span className={`px-2.5 py-1 rounded-full text-[11px] font-medium ${
-          row.type === "sale"
+          row.type === "HOUSE"
             ? "bg-primary-light text-primary"
-            : "bg-secondary-light text-amber-700"
+            : row.type === "CONDO"
+            ? "bg-secondary-light text-amber-700"
+            : "bg-blue-100 text-blue-700"
         }`}>
-          {row.type === "sale" ? "For Sale" : "For Rent"}
+          {row.type}
         </span>
       ),
     },
     {
       name: "Price",
-      selector: (row: Product) => row.price,
+      selector: (row: Property) => row.price,
       sortable: true,
-      cell: (row: Product) => (
+      cell: (row: Property) => (
         <span className="font-serif text-[17px] font-semibold text-primary leading-none">
           {row.price}
-          {row.type === "rent" && (
-            <span className="font-sans text-[11px] font-normal text-tertiary ml-0.5">/mo</span>
-          )}
         </span>
       ),
     },
     {
       name: "Location",
-      selector: (row: Product) => row.location ?? "",
+      selector: (row: Property) => row.location ?? "",
       sortable: true,
-      cell: (row: Product) => (
+      cell: (row: Property) => (
         <span className="text-[12px] text-tertiary">{row.location}</span>
       ),
     },
     {
       name: "Beds / Baths",
-      selector: (row: Product) => `${row.bedrooms} bd · ${row.bathrooms} ba`,
+      selector: (row: Property) => `${row.bedrooms} bd · ${row.bathrooms} ba`,
       sortable: true,
 
-      cell: (row: Product) => (
+      cell: (row: Property) => (
         <span className="text-[12px] text-tertiary">
           {row.bedrooms} bd · {row.bathrooms} ba
         </span>
@@ -151,15 +169,15 @@ export default function Products() {
     },
     {
       name: "Status",
-      selector: (row: Product) => row.stock,
+      selector: (row: Property) => row.status,
       sortable: true,
-      cell: (row: Product) => (
+      cell: (row: Property) => (
         <span className={`px-2.5 py-1 rounded-full text-[11px] font-medium ${
-          row.stock > 0
+          row.status === "FOR_SALE"
             ? "bg-primary-light text-primary"
-            : "bg-red-50 text-red-600"
+            : "bg-secondary-light text-amber-700"
         }`}>
-          {row.stock > 0 ? "Available" : "Sold / Leased"}
+          {row.status === "FOR_SALE" ? "For Sale" : "For Rent"}
         </span>
       ),
     },

@@ -1,17 +1,48 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { ArrowLeft, Archive, Trash2, Send, Paperclip, Home } from 'lucide-react';
-import { messages } from '@/constants/messages';
+import { useMessages } from '@/hooks/useMessage';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function MessageDetailPage() {
   const { id } = useParams();
   const router = useRouter();
-  const message = messages.find(m => m.id.toString() === id);
+  const { fetchMessage, deleteMessage, updateMessage } = useMessages();
+  const [message, setMessage] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [reply, setReply] = useState('');
   const [replies, setReplies] = useState<string[]>([]);
+
+  useEffect(() => {
+    const loadMessage = async () => {
+      if (id) {
+        try {
+          const messageId = Array.isArray(id) ? id[0] : id;
+          const data = await fetchMessage(messageId);
+          setMessage(data);
+        } catch (error) {
+          console.error('Failed to load message:', error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+    loadMessage();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="max-w-4xl mx-auto space-y-5">
+        <Skeleton className="h-20 w-full" />
+        <Skeleton className="h-40 w-full" />
+        <Skeleton className="h-60 w-full" />
+      </div>
+    );
+  }
 
   if (!message) return <p className="p-8 text-[13px] text-tertiary">Message not found.</p>;
 
@@ -116,7 +147,7 @@ export default function MessageDetailPage() {
                   onChange={e => setReply(e.target.value)}
                   placeholder="Write your reply..."
                   rows={4}
-                  className="w-full px-4 py-3 text-[13px] text-gray-900 resize-none outline-none font-[DM_Sans] border-none"
+                  className="w-full px-4 py-3 text-[13px] text-gray-900 resize-none outline-none  border-none"
                 />
                 <div className="px-4 py-3 border-t border-gray-100 flex items-center justify-between">
                   <div className="flex gap-1.5">
@@ -176,21 +207,25 @@ export default function MessageDetailPage() {
             </CardContent>
           </Card>
 
-          <Card className="rounded-xl border border-gray-100 shadow-none">
-            <CardHeader className="px-5 py-3.5 border-b border-gray-100 space-y-0">
-              <p className="text-[13px] font-medium text-gray-900">Related Property</p>
-            </CardHeader>
-            <CardContent className="p-4">
-              <div className="h-16 rounded-lg bg-primary-light flex items-center justify-center mb-3">
-                <Home className="w-6 h-6 text-primary" />
-              </div>
-              <p className="text-[13px] font-medium text-gray-900 mb-1">Oakwood Luxury Villa</p>
-              <p className="text-[12px] text-tertiary mb-3">East Legon · $480,000</p>
-              <Button variant="outline" size="sm" className="w-full border-gray-200 text-[12px] h-8">
-                View Listing
-              </Button>
-            </CardContent>
-          </Card>
+          {message.relatedProperty && (
+            <Card className="rounded-xl border border-gray-100 shadow-none">
+              <CardHeader className="px-5 py-3.5 border-b border-gray-100 space-y-0">
+                <p className="text-[13px] font-medium text-gray-900">Related Property</p>
+              </CardHeader>
+              <CardContent className="p-4">
+                <div className="h-16 rounded-lg bg-primary-light flex items-center justify-center mb-3">
+                  <Home className="w-6 h-6 text-primary" />
+                </div>
+                <p className="text-[13px] font-medium text-gray-900 mb-1">{message.relatedProperty.title}</p>
+                <p className="text-[12px] text-tertiary mb-3">{message.relatedProperty.location} · {message.relatedProperty.price}</p>
+                <Link href={`/properties/${message.relatedProperty.id}`}>
+                  <Button variant="outline" size="sm" className="w-full border-gray-200 text-[12px] h-8">
+                    View Listing
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </div>
