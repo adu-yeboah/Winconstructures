@@ -6,6 +6,7 @@ import prisma, { initializeDatabase } from './config/database.prisma';
 import propertyRoute from "./routes/propertyRoute"
 import authRoute from "./routes/auth.routes"
 import messageRoute from "./routes/message.routes"
+import analyticsRoute from "./routes/analytics.routes"
 
 
 dotenv.config();
@@ -56,6 +57,7 @@ app.get('/', (_req: Request, res: Response) => {
 app.use('/api/auth', authRoute);
 app.use("/api/property", propertyRoute)
 app.use("/api/message", messageRoute)
+app.use("/api/analytics", analyticsRoute)
 
 // Graceful shutdown
 process.on('SIGINT', async () => {

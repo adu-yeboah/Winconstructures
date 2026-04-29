@@ -14,31 +14,39 @@ import {
   Cell,
 } from "recharts"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
-import { LucideIcon, Home, DollarSign, Users, Key, MessageSquare } from "lucide-react"
+import { LucideIcon, Home, DollarSign, Users, MessageSquare, Eye, TrendingUp } from "lucide-react"
 import { RecentPropertiesTable } from "../components/recentPropertiesTable"
 import { WidgetCard } from "../components/Widgets"
-import { useProperties } from "@/hooks/useProperty"
-import { useMessages } from "@/hooks/useMessage"
+import { useAnalytics } from "@/hooks/useAnalytics"
 import { Skeleton } from "@/components/ui/skeleton"
+import { toast } from "react-toastify"
 
 export default function RealEstateDashboard() {
-  const { properties, loading: propertiesLoading, fetchProperties } = useProperties()
-  const { messages, loading: messagesLoading, fetchMessages, getNewLeads } = useMessages()
+  const { getDashboardStats, loading: analyticsLoading } = useAnalytics()
   const [mounted, setMounted] = useState(false)
+  const [analytics, setAnalytics] = useState<any>(null)
 
   useEffect(() => {
     setMounted(true)
     // Load data on mount
-    fetchProperties()
-    fetchMessages({ status: 'NEW_LEAD' })
+    const loadData = async () => {
+      try {
+        const stats = await getDashboardStats()
+        setAnalytics(stats)
+      } catch (error) {
+        toast.error('Failed to load dashboard data')
+        console.error('Dashboard load error:', error)
+      }
+    }
+    loadData()
   }, [])
 
   // Don't render until mounted (prevents hydration issues)
-  if (!mounted) {
+  if (!mounted || analyticsLoading) {
     return (
       <div className="flex flex-col gap-6 w-full">
         <div className="flex justify-between flex-wrap gap-4 w-full">
-          {[1, 2, 3].map((i) => (
+          {[1, 2, 3, 4].map((i) => (
             <Skeleton key={i} className="h-32 flex-1" />
           ))}
         </div>
@@ -52,15 +60,16 @@ export default function RealEstateDashboard() {
     )
   }
 
-  // Calculate real stats from data
-  const totalProperties = properties.length
-  const featuredProperties = properties.filter(p => p.featured).length
-  const forSaleProperties = properties.filter(p => p.status === 'FOR_SALE').length
-  const forRentProperties = properties.filter(p => p.status === 'FOR_RENT').length
-  const newLeads = messages.filter(m => m.status === 'NEW_LEAD').length
-  const unreadMessages = messages.filter(m => !m.read).length
+  // Use real analytics data
+  const totalProperties = analytics?.overview?.totalProperties || 0
+  const totalMessages = analytics?.overview?.totalMessages || 0
+  const totalViews = analytics?.overview?.totalViews || 0
+  const featuredProperties = analytics?.overview?.featuredProperties || 0
+  const avgViews = analytics?.overview?.avgViewsPerProperty || 0
+  const forSaleProperties = analytics?.properties?.byStatus?.forSale || 0
+  const forRentProperties = analytics?.properties?.byStatus?.forRent || 0
 
-  // Stats Cards Data - using real data
+  // Stats Cards Data - using real analytics
   const widgetsData = [
     {
       icon: Home,
@@ -71,17 +80,24 @@ export default function RealEstateDashboard() {
     },
     {
       icon: MessageSquare,
-      title: "New Leads",
-      figure: newLeads,
+      title: "Total Messages",
+      figure: totalMessages,
       link: "/admin/messages",
       linkText: "View Messages"
     },
     {
-      icon: Key,
-      title: "Featured",
-      figure: featuredProperties,
+      icon: Eye,
+      title: "Total Views",
+      figure: totalViews,
       link: "/admin/properties",
-      linkText: "Manage"
+      linkText: "Analytics"
+    },
+    {
+      icon: TrendingUp,
+      title: "Avg Views/Property",
+      figure: avgViews,
+      link: "/admin/properties",
+      linkText: "Details"
     },
   ]
 
@@ -107,11 +123,11 @@ export default function RealEstateDashboard() {
 
   const occupancyData = [
     { month: "Jan", occupancy: (forSaleProperties / totalProperties) * 100 || 0 },
-    { month: "Feb", occupancy: ((forSaleProperties + 5) / (totalProperties + 10)) * 100 || 0 },
-    { month: "Mar", occupancy: ((forSaleProperties + 8) / (totalProperties + 12)) * 100 || 0 },
-    { month: "Apr", occupancy: ((forSaleProperties + 12) / (totalProperties + 15)) * 100 || 0 },
-    { month: "May", occupancy: ((forSaleProperties + 15) / (totalProperties + 18)) * 100 || 0 },
-    { month: "Jun", occupancy: ((forSaleProperties + 18) / (totalProperties + 20)) * 100 || 0 },
+    { month: "Feb", occupancy: ((forSaleProperties + forRentProperties) / totalProperties) * 100 || 0 },
+    { month: "Mar", occupancy: (forSaleProperties / totalProperties) * 100 || 0 },
+    { month: "Apr", occupancy: ((forSaleProperties + forRentProperties) / totalProperties) * 100 || 0 },
+    { month: "May", occupancy: (forSaleProperties / totalProperties) * 100 || 0 },
+    { month: "Jun", occupancy: ((forSaleProperties + forRentProperties) / totalProperties) * 100 || 0 },
   ]
 
   // Custom Tooltip
