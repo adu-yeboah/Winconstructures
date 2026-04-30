@@ -9,6 +9,7 @@ import { useProperties } from "@/hooks/useProperty";
 import { useRouter } from "next/navigation";
 import { Property } from "@/types/property";
 import { Skeleton } from "@/components/ui/skeleton";
+import Image from "next/image";
 
 const statusStyles: Record<string, string> = {
   "FOR_SALE": "bg-primary-light text-primary",
@@ -56,7 +57,7 @@ export function RecentPropertiesTable() {
         <div className="flex items-center gap-3 py-2">
           <div className="relative h-12 w-16 rounded-lg overflow-hidden bg-primary-light shrink-0">
             {row.images?.[0] ? (
-              <img
+              <Image
                 src={row.images[0].img}
                 alt={row.title}
                 className="w-full h-full object-cover"

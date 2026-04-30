@@ -8,6 +8,8 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useProperties } from '@/hooks/useProperty';
 import { Skeleton } from '@/components/ui/skeleton';
+import { toast } from 'react-toastify';
+import Image from 'next/image';
 
 export default function ProductDetails() {
   const params = useParams();
@@ -103,7 +105,7 @@ export default function ProductDetails() {
       setProperty(updated);
       setFormData(updated);
       alert("Property updated successfully!");
-    } catch (err: unknown) {
+    } catch (err: any) {
       const message = err instanceof Error ? err.message : 'An error occurred';
       toast.error(message);
       setError(err.message || "Failed to update property");
@@ -120,7 +122,7 @@ export default function ProductDetails() {
     try {
       await deleteProperty(params.id as string);
       router.push("/admin/properties");
-    } catch (err: unknown) {
+    } catch (err: any) {
       const message = err instanceof Error ? err.message : 'An error occurred';
       toast.error(message);
       setError(err.message || "Failed to delete property");
@@ -255,7 +257,7 @@ export default function ProductDetails() {
                     <div key={idx} className="relative group">
                       <div className="aspect-square rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
                         {imgObj.img ? (
-                          <img
+                          <Image
                             src={imgObj.img}
                             alt={`Property image ${idx + 1}`}
                             className="w-full h-full object-cover"
@@ -379,7 +381,7 @@ export default function ProductDetails() {
                     <input
                       name={f.name}
                       type={f.type}
-                      value={(formData as Record<string, unknown>)[f.name] as string}
+                      value={(formData as unknown as Record<string, unknown>)[f.name] as string}
                       onChange={handleChange}
                       min={f.type === "number" ? 1 : undefined}
                       className={fieldClass}

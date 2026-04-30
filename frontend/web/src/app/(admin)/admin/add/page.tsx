@@ -8,6 +8,7 @@ import { useProperties } from '@/hooks/useProperty';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import uploadService from '@/service/uploadService';
+import Image from 'next/image';
 
 const steps = ['Basic Info', 'Details', 'Images', 'Review'];
 
@@ -310,7 +311,7 @@ const AddProperty: React.FC = () => {
                         <div key={idx} className="relative group">
                           <div className="aspect-square rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
                             {img.img ? (
-                              <img
+                              <Image
                                 src={img.img}
                                 alt={`Property image ${idx + 1}`}
                                 className="w-full h-full object-cover"
@@ -454,7 +455,7 @@ const AddProperty: React.FC = () => {
                     <div className="grid grid-cols-4 gap-2">
                       {formData.images.slice(0, 4).map((img, idx) => (
                         <div key={idx} className="aspect-square rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
-                          {img.img && <img src={img.img} alt={`Preview ${idx + 1}`} className="w-full h-full object-cover" />}
+                          {img.img && <Image src={img.img} alt={`Preview ${idx + 1}`} className="w-full h-full object-cover" />}
                         </div>
                       ))}
                     </div>

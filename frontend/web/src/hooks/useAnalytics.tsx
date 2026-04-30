@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { getAccessToken } from '@/service/authServices';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
-export interface DashboardStats {
+interface DashboardStats {
   overview: {
     totalProperties: number;
     totalMessages: number;
@@ -34,8 +34,8 @@ export interface DashboardStats {
     }>;
   };
   trends: {
-    monthlyProperties: Array<{ month: string; count: number }>;
-    monthlyMessages: Array<{ month: string; count: number }>;
+    monthlyProperties: Array<any>;
+    monthlyMessages: Array<any>;
   };
   topProperties: Array<{
     id: number;
@@ -66,8 +66,8 @@ interface PropertyAnalytics {
 interface MessageStats {
   total: number;
   unread: number;
-  recent: Array<{ id: number; title: string; date: string }>;
-  dailyBreakdown: Array<{ date: string; count: number }>;
+  recent: Array<any>;
+  dailyBreakdown: Array<any>;
 }
 
 export const useAnalytics = () => {
@@ -91,9 +91,7 @@ export const useAnalytics = () => {
       });
 
       return response.data;
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'An error occurred';
-      throw new Error(message);
+    } catch (err: any) {
       const errorMessage = err.response?.data?.detail || 'Failed to fetch dashboard stats';
       setError(errorMessage);
       throw new Error(errorMessage);
@@ -122,9 +120,7 @@ export const useAnalytics = () => {
       );
 
       return response.data;
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'An error occurred';
-      throw new Error(message);
+    } catch (err: any) {
       const errorMessage = err.response?.data?.detail || 'Failed to fetch property analytics';
       setError(errorMessage);
       throw new Error(errorMessage);
@@ -153,9 +149,7 @@ export const useAnalytics = () => {
       );
 
       return response.data;
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'An error occurred';
-      throw new Error(message);
+    } catch (err: any) {
       const errorMessage = err.response?.data?.detail || 'Failed to fetch message stats';
       setError(errorMessage);
       throw new Error(errorMessage);

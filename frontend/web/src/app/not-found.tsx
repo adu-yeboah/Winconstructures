@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function NotFoundPage() {
   const router = useRouter();
@@ -9,7 +10,7 @@ export default function NotFoundPage() {
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4 text-center">
       {/* Animated Illustration */}
       <div className="w-64 h-64 mb-6 animate-bounce">
-        <img
+        <Image
           src="/not-found.png"
           alt="Page not found"
           className="w-full h-full object-contain"

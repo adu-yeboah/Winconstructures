@@ -12,35 +12,26 @@ interface SimilarPropertiesProps {
 export function SimilarProperties({ currentProperty, limit = 3 }: SimilarPropertiesProps) {
   const [similarProperties, setSimilarProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    const fetchSimilarProperties = async () => {
+      try {
+        setLoading(true);
+        const similar = await propertyService.getSimilarProperties(currentProperty.id, limit);
+        setSimilarProperties(similar);
+      } catch (error) {
+        console.error('Error fetching similar properties:', error);
+        setSimilarProperties([]);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchSimilarProperties();
   }, [currentProperty, limit]);
 
-  const fetchSimilarProperties = async () => {
-    try {
-      setLoading(true);
-      const similar = await propertyService.getSimilarProperties(currentProperty.id, limit);
-      setSimilarProperties(similar);
-    } catch (error) {
-      console.error('Error fetching similar properties:', error);
-      setSimilarProperties([]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  if (!mounted) {
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {[1, 2, 3].map((i) => (
-          <Skeleton key={i} className="h-80 w-full" />
-        ))}
-      </div>
-    );
-  }
+
+
 
   if (loading) {
     return (

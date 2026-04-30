@@ -21,17 +21,15 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Home, MessageSquare, Eye, TrendingUp } from "lucide-react"
 import { RecentPropertiesTable } from "../components/recentPropertiesTable"
 import { WidgetCard } from "../components/Widgets"
-import { useAnalytics, DashboardStats } from "@/hooks/useAnalytics"
+import { useAnalytics } from "@/hooks/useAnalytics"
 import { Skeleton } from "@/components/ui/skeleton"
 import { toast } from "react-toastify"
 
 export default function RealEstateDashboard() {
   const { getDashboardStats, loading: analyticsLoading } = useAnalytics()
-  const [mounted, setMounted] = useState(false)
-  const [analytics, setAnalytics] = useState<DashboardStats | null>(null)
+  const [analytics, setAnalytics] = useState<any | null>(null)
 
   useEffect(() => {
-    setMounted(true)
     // Load data on mount
     const loadData = async () => {
       try {
@@ -45,8 +43,7 @@ export default function RealEstateDashboard() {
     loadData()
   }, [])
 
-  // Don't render until mounted (prevents hydration issues)
-  if (!mounted || analyticsLoading) {
+  if (analyticsLoading) {
     return (
       <div className="flex flex-col gap-6 w-full">
         <div className="flex justify-between flex-wrap gap-4 w-full">
@@ -269,7 +266,7 @@ export default function RealEstateDashboard() {
             <p className="text-gray-500 text-sm text-center py-8">No properties data available</p>
           ) : (
             <div className="space-y-4">
-              {topProperties.map((property: { title: string; viewCount: number; id: number }, index: number) => (
+              {topProperties.map((property: { title: string; viewCount: number; id: number; location: string }, index: number) => (
                 <div key={property.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold">
@@ -298,7 +295,7 @@ export default function RealEstateDashboard() {
     const propertyTypes = analytics?.properties?.byType || []
     const COLORS = ['#1f4d3a', '#eab308', '#3b82f6', '#ef4444', '#8b5cf6']
 
-    const data = propertyTypes.map((item: { name: string; value: number }) => ({
+    const data = propertyTypes.map((item: { type: string; count: number }) => ({
       name: item.type,
       value: item.count,
     }))
@@ -319,12 +316,13 @@ export default function RealEstateDashboard() {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, percent }: { name: string; percent?: number }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  label={(props: any) => `${props.name || ''} ${((props.percent || 0) * 100).toFixed(0)}%`}
                   outerRadius={80}
                   fill="#8884d8"
                   dataKey="value"
                 >
-                  {data.map((entry: { name: string; value: number; color: string }, index: number) => (
+                  {data.map((entry: { name: string; value: number }, index: number) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -353,7 +351,7 @@ export default function RealEstateDashboard() {
             <p className="text-gray-500 text-sm text-center py-8">No messages available</p>
           ) : (
             <div className="space-y-3">
-              {recentMessages.map((message: { id: number; title: string; subject: string; date: string }) => (
+              {recentMessages.map((message: { id: number; title: string; subject: string; email: string; createdAt: string }) => (
                 <div key={message.id} className="p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                   <div className="flex justify-between items-start">
                     <div className="flex-1">

@@ -109,7 +109,7 @@ export default function ProfilePage() {
                     <label className={labelClass}>{label}</label>
                     <input
                       type="text"
-                      value={(profile as Record<string, string>)[key]}
+                      value={(profile as unknown as Record<string, string>)[key]}
                       onChange={(e) => setProfile(p => ({ ...p, [key]: e.target.value }))}
                       className={fieldClass}
                     />
