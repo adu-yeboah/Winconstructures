@@ -12,6 +12,41 @@ const apiClient = axios.create({
     timeout: 15000, // 15 seconds timeout
 });
 
+// Flag to prevent multiple refresh attempts
+let isRefreshing = false;
+let failedQueue: Array<{
+  resolve: (value?: any) => void;
+  reject: (reason?: any) => void;
+}> = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+
+  failedQueue = [];
+};
+
+// Helper function to clear auth and redirect
+const clearAuthAndRedirect = () => {
+  // Clear all auth-related storage
+  localStorage.removeItem('authToken');
+  localStorage.removeItem('refreshToken');
+  localStorage.removeItem('user');
+
+  // Dispatch custom event for auth context to listen to
+  window.dispatchEvent(new CustomEvent('auth:logout'));
+
+  // Redirect to login
+  if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
+    window.location.href = '/login';
+  }
+};
+
 // Request interceptor - Add auth token
 apiClient.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
@@ -36,6 +71,24 @@ apiClient.interceptors.response.use(
         if (error.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
 
+            // If already refreshing, add to queue
+            if (isRefreshing) {
+              return new Promise((resolve, reject) => {
+                failedQueue.push({ resolve, reject });
+              })
+              .then(token => {
+                if (originalRequest.headers) {
+                  originalRequest.headers.Authorization = `Bearer ${token}`;
+                }
+                return apiClient(originalRequest);
+              })
+              .catch(err => {
+                return Promise.reject(err);
+              });
+            }
+
+            isRefreshing = true;
+
             // Try to refresh token
             const refreshToken = localStorage.getItem('refreshToken');
             if (refreshToken) {
@@ -47,6 +100,8 @@ apiClient.interceptors.response.use(
                     const { accessToken } = response.data;
                     localStorage.setItem('authToken', accessToken);
 
+                    processQueue(null, accessToken);
+
                     // Retry original request with new token
                     if (originalRequest.headers) {
                         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
@@ -54,14 +109,25 @@ apiClient.interceptors.response.use(
                     return apiClient(originalRequest);
                 } catch (refreshError) {
                     // Refresh failed - Clear tokens and redirect to login
-                    localStorage.removeItem('authToken');
-                    localStorage.removeItem('refreshToken');
-                    window.location.href = '/login';
-                    return Promise.reject(refreshError);
+                    processQueue(refreshError, null);
+                    clearAuthAndRedirect();
+                    return Promise.reject({
+                      ...error,
+                      userMessage: 'Session expired. Please login again.',
+                      originalError: error
+                    });
+                } finally {
+                  isRefreshing = false;
                 }
             } else {
-                // No refresh token - Redirect to login
-                window.location.href = '/login';
+                // No refresh token - Clear and redirect
+                isRefreshing = false;
+                clearAuthAndRedirect();
+                return Promise.reject({
+                  ...error,
+                  userMessage: 'No authentication token found. Please login.',
+                  originalError: error
+                });
             }
         }
 
@@ -69,7 +135,9 @@ apiClient.interceptors.response.use(
         let errorMessage = 'An error occurred';
         if (error.response) {
             // Server responded with error status
-            errorMessage = (error.response.data as { detail?: string })?.detail || errorMessage;
+            errorMessage = (error.response.data as { detail?: string; message?: string })?.detail ||
+                          (error.response.data as { detail?: string; message?: string })?.message ||
+                          errorMessage;
         } else if (error.request) {
             // Request made but no response
             errorMessage = 'Network error - Please check your connection';

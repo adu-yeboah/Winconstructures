@@ -35,9 +35,9 @@ export function SimilarProperties({ currentProperty, limit = 3 }: SimilarPropert
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {[1, 2, 3].map((i) => (
-          <Skeleton key={i} className="h-80 w-full" />
+          <Skeleton key={i} className="h-72 sm:h-80 w-full rounded-2xl" />
         ))}
       </div>
     );
@@ -45,14 +45,14 @@ export function SimilarProperties({ currentProperty, limit = 3 }: SimilarPropert
 
   if (similarProperties.length === 0) {
     return (
-      <div className="text-center py-12">
-        <p className="text-gray-600">No similar properties available at the moment.</p>
+      <div className="text-center py-10 sm:py-12">
+        <p className="text-gray-600 text-sm sm:text-base">No similar properties available at the moment.</p>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
       {similarProperties.map((property) => (
         <PropertyCard key={property.id} property={property} />
       ))}

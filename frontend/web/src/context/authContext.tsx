@@ -38,6 +38,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     initializeAuth();
+
+    // Listen for logout events from apiClient
+    const handleLogoutEvent = () => {
+      setUser(null);
+      setError(null);
+      setLoading(false);
+    };
+
+    window.addEventListener('auth:logout', handleLogoutEvent);
+
+    return () => {
+      window.removeEventListener('auth:logout', handleLogoutEvent);
+    };
   }, []);
 
   // Login function

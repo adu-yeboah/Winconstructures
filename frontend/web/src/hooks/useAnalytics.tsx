@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { getAccessToken } from '@/service/authServices';
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+import apiClient from '@/service/apiClient';
+import { logoutService } from '@/service/authServices';
+import { useRouter } from 'next/navigation';
 
 interface DashboardStats {
   overview: {
@@ -73,27 +72,25 @@ interface MessageStats {
 export const useAnalytics = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const getDashboardStats = async (): Promise<DashboardStats> => {
     setLoading(true);
     setError(null);
 
     try {
-      const token = getAccessToken();
-      if (!token) {
-        throw new Error('No authentication token found. Please login again.');
-      }
-
-      const response = await axios.get(`${API_BASE_URL}/api/analytics/dashboard`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
+      const response = await apiClient.get<DashboardStats>('/analytics/dashboard');
       return response.data;
     } catch (err: any) {
-      const errorMessage = err.response?.data?.detail || 'Failed to fetch dashboard stats';
+      const errorMessage = err.response?.data?.detail || err.userMessage || 'Failed to fetch dashboard stats';
       setError(errorMessage);
+
+      // If unauthorized, logout and redirect
+      if (err.response?.status === 401 || errorMessage === 'Not authorized, token failed') {
+        await logoutService();
+        router.push('/login');
+      }
+
       throw new Error(errorMessage);
     } finally {
       setLoading(false);
@@ -105,24 +102,18 @@ export const useAnalytics = () => {
     setError(null);
 
     try {
-      const token = getAccessToken();
-      if (!token) {
-        throw new Error('No authentication token found. Please login again.');
-      }
-
-      const response = await axios.get(
-        `${API_BASE_URL}/api/analytics/property/${propertyId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
+      const response = await apiClient.get<PropertyAnalytics>(`/analytics/property/${propertyId}`);
       return response.data;
     } catch (err: any) {
-      const errorMessage = err.response?.data?.detail || 'Failed to fetch property analytics';
+      const errorMessage = err.response?.data?.detail || err.userMessage || 'Failed to fetch property analytics';
       setError(errorMessage);
+
+      // If unauthorized, logout and redirect
+      if (err.response?.status === 401) {
+        await logoutService();
+        router.push('/login');
+      }
+
       throw new Error(errorMessage);
     } finally {
       setLoading(false);
@@ -134,24 +125,18 @@ export const useAnalytics = () => {
     setError(null);
 
     try {
-      const token = getAccessToken();
-      if (!token) {
-        throw new Error('No authentication token found. Please login again.');
-      }
-
-      const response = await axios.get(
-        `${API_BASE_URL}/api/analytics/messages`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
+      const response = await apiClient.get<MessageStats>('/analytics/messages');
       return response.data;
     } catch (err: any) {
-      const errorMessage = err.response?.data?.detail || 'Failed to fetch message stats';
+      const errorMessage = err.response?.data?.detail || err.userMessage || 'Failed to fetch message stats';
       setError(errorMessage);
+
+      // If unauthorized, logout and redirect
+      if (err.response?.status === 401) {
+        await logoutService();
+        router.push('/login');
+      }
+
       throw new Error(errorMessage);
     } finally {
       setLoading(false);

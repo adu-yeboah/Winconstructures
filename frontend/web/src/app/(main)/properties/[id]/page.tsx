@@ -91,15 +91,15 @@ export default function PropertyDetail() {
   // Don't render until mounted (prevents hydration issues)
   if (!mounted) {
     return (
-      <div className="bg-grey min-h-screen p-8">
-        <Skeleton className="h-[70vh] w-full mb-8" />
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-8">
-            <Skeleton className="h-96 w-full" />
-            <Skeleton className="h-64 w-full" />
+      <div className="bg-grey min-h-screen p-4 sm:p-6 lg:p-8">
+        <Skeleton className="h-[50vh] sm:h-[60vh] lg:h-[70vh] w-full mb-6 sm:mb-8 rounded-3xl" />
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+          <div className="lg:col-span-2 space-y-6 sm:space-y-8">
+            <Skeleton className="h-72 sm:h-80 lg:h-96 w-full rounded-3xl" />
+            <Skeleton className="h-48 sm:h-56 lg:h-64 w-full rounded-3xl" />
           </div>
           <div>
-            <Skeleton className="h-[500px] w-full" />
+            <Skeleton className="h-[400px] sm:h-[450px] lg:h-[500px] w-full rounded-3xl" />
           </div>
         </div>
       </div>
@@ -108,15 +108,15 @@ export default function PropertyDetail() {
 
   if (propertyLoading) {
     return (
-      <div className="bg-grey min-h-screen p-8">
-        <Skeleton className="h-[70vh] w-full mb-8" />
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-8">
-            <Skeleton className="h-96 w-full" />
-            <Skeleton className="h-64 w-full" />
+      <div className="bg-grey min-h-screen p-4 sm:p-6 lg:p-8">
+        <Skeleton className="h-[50vh] sm:h-[60vh] lg:h-[70vh] w-full mb-6 sm:mb-8 rounded-3xl" />
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+          <div className="lg:col-span-2 space-y-6 sm:space-y-8">
+            <Skeleton className="h-72 sm:h-80 lg:h-96 w-full rounded-3xl" />
+            <Skeleton className="h-48 sm:h-56 lg:h-64 w-full rounded-3xl" />
           </div>
           <div>
-            <Skeleton className="h-[500px] w-full" />
+            <Skeleton className="h-[400px] sm:h-[450px] lg:h-[500px] w-full rounded-3xl" />
           </div>
         </div>
       </div>
@@ -125,14 +125,14 @@ export default function PropertyDetail() {
 
   if (error || !property) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-grey">
-        <div className="text-center">
-          <p className="text-black text-xl mb-4">
+      <div className="min-h-screen flex items-center justify-center bg-grey px-4">
+        <div className="text-center max-w-md">
+          <p className="text-black text-lg sm:text-xl mb-4">
             {error || "Property Not Found"}
           </p>
           <button
             onClick={() => router.push("/search")}
-            className="text-primary hover:underline"
+            className="text-primary hover:underline text-sm sm:text-base"
           >
             Back to Properties
           </button>
@@ -144,7 +144,7 @@ export default function PropertyDetail() {
   return (
     <div className="bg-grey min-h-screen overflow-hidden">
       {/* HERO */}
-      <section className="relative h-[70vh] min-h-[600px] overflow-hidden">
+      <section className="relative h-[50vh] sm:h-[60vh] md:h-[70vh] min-h-[400px] md:min-h-[500px] lg:min-h-[600px] overflow-hidden">
         <Image
           src={property.images[0]?.img || "/placeholder.jpg"}
           alt={property.title}
@@ -157,49 +157,49 @@ export default function PropertyDetail() {
         <div className="absolute inset-0 bg-gradient-to-t from-primary-dark via-black/20 to-transparent" />
 
         <div className="relative z-10 h-full flex items-end">
-          <div className="max-w-7xl mx-auto px-6 lg:px-12 pb-16 w-full">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pb-10 sm:pb-12 lg:pb-16 w-full">
             <div className="max-w-3xl">
-              <p className="text-secondary text-xs tracking-[0.18em] uppercase mb-4">
+              <p className="text-secondary text-[10px] sm:text-xs tracking-[0.15em] sm:tracking-[0.18em] uppercase mb-3 sm:mb-4">
                 {property.status === "FOR_SALE" ? "For Sale" : "For Rent"} •{" "}
                 {property.type}
               </p>
 
-              <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-light text-white leading-[1.05] mb-5">
+              <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-light text-white leading-[1.1] sm:leading-[1.08] md:leading-[1.05] mb-4 sm:mb-5">
                 {property.title}
               </h1>
 
-              <p className="flex items-center gap-2 text-white/80 text-base md:text-lg mb-8">
-                <FaMapMarkerAlt className="text-secondary" />
-                {property.location}
+              <p className="flex items-center gap-2 text-white/80 text-sm sm:text-base md:text-lg mb-6 sm:mb-8">
+                <FaMapMarkerAlt className="text-secondary text-xs sm:text-sm md:text-base" />
+                <span className="line-clamp-1">{property.location}</span>
               </p>
 
-              <div className="flex flex-wrap gap-8 text-white/90">
+              <div className="flex flex-wrap gap-4 sm:gap-6 md:gap-8 text-white/90">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.15em] text-white/50 mb-1">
+                  <p className="text-[10px] sm:text-xs uppercase tracking-[0.12em] sm:tracking-[0.15em] text-white/50 mb-1">
                     Price
                   </p>
-                  <p className="text-2xl font-semibold">{property.price}</p>
+                  <p className="text-lg sm:text-xl md:text-2xl font-semibold">{property.price}</p>
                 </div>
 
                 <div>
-                  <p className="text-xs uppercase tracking-[0.15em] text-white/50 mb-1">
+                  <p className="text-[10px] sm:text-xs uppercase tracking-[0.12em] sm:tracking-[0.15em] text-white/50 mb-1">
                     Bedrooms
                   </p>
-                  <p className="text-2xl font-semibold">{property.bedrooms}</p>
+                  <p className="text-lg sm:text-xl md:text-2xl font-semibold">{property.bedrooms}</p>
                 </div>
 
                 <div>
-                  <p className="text-xs uppercase tracking-[0.15em] text-white/50 mb-1">
+                  <p className="text-[10px] sm:text-xs uppercase tracking-[0.12em] sm:tracking-[0.15em] text-white/50 mb-1">
                     Bathrooms
                   </p>
-                  <p className="text-2xl font-semibold">{property.bathrooms}</p>
+                  <p className="text-lg sm:text-xl md:text-2xl font-semibold">{property.bathrooms}</p>
                 </div>
 
                 <div>
-                  <p className="text-xs uppercase tracking-[0.15em] text-white/50 mb-1">
+                  <p className="text-[10px] sm:text-xs uppercase tracking-[0.12em] sm:tracking-[0.15em] text-white/50 mb-1">
                     Area
                   </p>
-                  <p className="text-2xl font-semibold">{property.area}</p>
+                  <p className="text-lg sm:text-xl md:text-2xl font-semibold">{property.area}</p>
                 </div>
               </div>
             </div>
@@ -208,13 +208,13 @@ export default function PropertyDetail() {
       </section>
 
       {/* MAIN CONTENT */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-14 flex flex-row justify-between gap-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-8 sm:py-12 lg:py-14 flex flex-col lg:flex-row justify-between gap-6 sm:gap-8 lg:gap-10">
         {/* LEFT CONTENT */}
         <div className="w-full lg:w-2/3">
           {/* GALLERY */}
           {property.images.length > 0 && (
-            <div className="bg-white rounded-3xl p-5 shadow-sm mb-8">
-              <div className="relative overflow-hidden rounded-2xl">
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-sm mb-6 sm:mb-8">
+              <div className="relative overflow-hidden rounded-xl sm:rounded-2xl">
                 <div className="overflow-hidden" ref={emblaRef}>
                   <div className="flex">
                     {property.images.map((image: { img: string }, index: number) => (
@@ -225,7 +225,7 @@ export default function PropertyDetail() {
                             alt={`${property.title} image ${index + 1}`}
                             width={800}
                             height={500}
-                            className="rounded-lg w-full h-[400px] object-cover"
+                            className="rounded-lg w-full h-[250px] sm:h-[300px] md:h-[350px] lg:h-[400px] object-cover"
                           />
                         </div>
                       </div>
@@ -236,7 +236,7 @@ export default function PropertyDetail() {
 
               {/* Dots */}
               {property.images.length > 1 && (
-                <div className="flex justify-center gap-2 mt-4">
+                <div className="flex justify-center gap-2 mt-3 sm:mt-4">
                   {property.images.map((_img: unknown, index: number) => (
                     <button
                       key={index}
@@ -251,57 +251,57 @@ export default function PropertyDetail() {
           )}
 
           {/* HIGHLIGHTS */}
-          <div className="bg-white rounded-3xl p-8 shadow-sm mb-8">
-            <h2 className="font-serif text-3xl font-light text-black mb-6">
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 lg:p-8 shadow-sm mb-6 sm:mb-8">
+            <h2 className="font-serif text-2xl sm:text-2xl md:text-3xl font-light text-black mb-4 sm:mb-6">
               Property Highlights
             </h2>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
               <div>
-                <FaBed className="text-primary text-xl mb-3" />
-                <p className="text-grey2 text-sm">Bedrooms</p>
-                <p className="text-xl font-semibold">{property.bedrooms}</p>
+                <FaBed className="text-primary text-lg sm:text-xl mb-2 sm:mb-3" />
+                <p className="text-grey2 text-xs sm:text-sm">Bedrooms</p>
+                <p className="text-lg sm:text-xl font-semibold">{property.bedrooms}</p>
               </div>
 
               <div>
-                <FaBath className="text-primary text-xl mb-3" />
-                <p className="text-grey2 text-sm">Bathrooms</p>
-                <p className="text-xl font-semibold">{property.bathrooms}</p>
+                <FaBath className="text-primary text-lg sm:text-xl mb-2 sm:mb-3" />
+                <p className="text-grey2 text-xs sm:text-sm">Bathrooms</p>
+                <p className="text-lg sm:text-xl font-semibold">{property.bathrooms}</p>
               </div>
 
               <div>
-                <MdSquareFoot className="text-primary text-xl mb-3" />
-                <p className="text-grey2 text-sm">Area</p>
-                <p className="text-xl font-semibold">{property.area}</p>
+                <MdSquareFoot className="text-primary text-lg sm:text-xl mb-2 sm:mb-3" />
+                <p className="text-grey2 text-xs sm:text-sm">Area</p>
+                <p className="text-lg sm:text-xl font-semibold">{property.area}</p>
               </div>
 
               <div>
-                <FaMapMarkerAlt className="text-primary text-xl mb-3" />
-                <p className="text-grey2 text-sm">Type</p>
-                <p className="text-xl font-semibold">{property.type}</p>
+                <FaMapMarkerAlt className="text-primary text-lg sm:text-xl mb-2 sm:mb-3" />
+                <p className="text-grey2 text-xs sm:text-sm">Type</p>
+                <p className="text-lg sm:text-xl font-semibold">{property.type}</p>
               </div>
             </div>
           </div>
 
           {/* DESCRIPTION */}
-          <div className="bg-white rounded-3xl p-8 shadow-sm mb-8">
-            <h2 className="font-serif text-3xl font-light text-black mb-6">
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 lg:p-8 shadow-sm mb-6 sm:mb-8">
+            <h2 className="font-serif text-2xl sm:text-2xl md:text-3xl font-light text-black mb-4 sm:mb-6">
               Description
             </h2>
 
-            <p className="text-grey2 leading-8">
+            <p className="text-grey2 text-sm sm:text-base leading-6 sm:leading-7 md:leading-8">
               {property.description ||
                 `An exceptional ${property.type.toLowerCase()} designed with refined finishes, spacious interiors, and premium architecture.`}
             </p>
           </div>
 
           {/* MAP */}
-          <div className="bg-white rounded-3xl p-8 shadow-sm mb-16">
-            <h2 className="font-serif text-3xl font-light text-black mb-6">
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 lg:p-8 shadow-sm mb-12 sm:mb-16">
+            <h2 className="font-serif text-2xl sm:text-2xl md:text-3xl font-light text-black mb-4 sm:mb-6">
               Location
             </h2>
 
-            <div className="h-[350px] rounded-2xl overflow-hidden">
+            <div className="h-[250px] sm:h-[300px] md:h-[350px] rounded-xl sm:rounded-2xl overflow-hidden">
               <iframe
                 className="w-full h-full"
                 src={`https://maps.google.com/maps?q=${encodeURIComponent(property.location)}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
@@ -313,28 +313,28 @@ export default function PropertyDetail() {
 
         {/* RIGHT CONTACT */}
         <div className="w-full lg:w-1/3 lg:sticky lg:top-28 h-fit">
-          <div className="bg-white rounded-xl p-8 shadow-sm">
-            <p className="text-secondary text-xs tracking-[0.18em] uppercase mb-1">
+          <div className="bg-white rounded-xl sm:rounded-2xl p-5 sm:p-6 lg:p-8 shadow-sm">
+            <p className="text-secondary text-[10px] sm:text-xs tracking-[0.15em] sm:tracking-[0.18em] uppercase mb-1">
               Schedule a viewing
             </p>
 
-            <h3 className="font-serif text-2xl font-light text-black mb-6">
+            <h3 className="font-serif text-xl sm:text-2xl font-light text-black mb-4 sm:mb-6">
               Request More Details
             </h3>
 
             {formError && (
-              <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+              <div className="mb-4 p-3 sm:p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-xs sm:text-sm">
                 {formError}
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
               <input
                 type="text"
                 placeholder="Your Name *"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full rounded-md border border-black/10 px-4 py-3 text-sm outline-none focus:border-secondary"
+                className="w-full rounded-md border border-black/10 px-3 sm:px-4 py-2.5 sm:py-3 text-sm outline-none focus:border-secondary focus:ring-2 focus:ring-primary/20"
                 required
               />
 
@@ -343,7 +343,7 @@ export default function PropertyDetail() {
                 placeholder="Your Email *"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full rounded-md border border-black/10 px-4 py-3 text-sm outline-none focus:border-secondary"
+                className="w-full rounded-md border border-black/10 px-3 sm:px-4 py-2.5 sm:py-3 text-sm outline-none focus:border-secondary focus:ring-2 focus:ring-primary/20"
                 required
               />
 
@@ -352,7 +352,7 @@ export default function PropertyDetail() {
                 placeholder="Phone Number"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full rounded-md border border-black/10 px-4 py-3 text-sm outline-none focus:border-secondary"
+                className="w-full rounded-md border border-black/10 px-3 sm:px-4 py-2.5 sm:py-3 text-sm outline-none focus:border-secondary focus:ring-2 focus:ring-primary/20"
               />
 
               <textarea
@@ -360,23 +360,23 @@ export default function PropertyDetail() {
                 placeholder="I'd like to schedule a private tour... *"
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                className="w-full rounded-xl border border-black/10 px-4 py-3 outline-none resize-none focus:border-secondary"
+                className="w-full rounded-xl border border-black/10 px-3 sm:px-4 py-2.5 sm:py-3 outline-none resize-none focus:border-secondary focus:ring-2 focus:ring-primary/20 text-sm"
                 required
               />
 
               <button
                 type="submit"
                 disabled={messageLoading}
-                className="w-full bg-primary text-white py-4 rounded-xl font-medium hover:opacity-90 transition disabled:opacity-60 flex items-center justify-center gap-2"
+                className="w-full bg-primary text-white py-3 sm:py-4 rounded-xl font-medium hover:opacity-90 transition disabled:opacity-60 flex items-center justify-center gap-2 text-sm sm:text-base"
               >
                 {messageLoading && <Loader2 className="w-4 h-4 animate-spin" />}
                 {messageLoading ? "Sending..." : "Send Inquiry"}
               </button>
             </form>
 
-            <div className="border-t border-black/5 pt-6">
-              <button className="w-full border border-primary text-primary py-3 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-primary hover:text-white transition">
-                <FaPhoneAlt />
+            <div className="border-t border-black/5 pt-4 sm:pt-6 mt-4 sm:mt-6">
+              <button className="w-full border border-primary text-primary py-2.5 sm:py-3 rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-primary hover:text-white transition text-sm sm:text-base">
+                <FaPhoneAlt className="text-sm sm:text-base" />
                 Call Agent
               </button>
             </div>
@@ -384,15 +384,15 @@ export default function PropertyDetail() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-16">
-        <div className="mb-10">
-          <div className="flex items-center gap-3 mb-2.5">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-10 sm:py-12 lg:py-16">
+        <div className="mb-8 sm:mb-10">
+          <div className="flex items-center gap-3 mb-2 sm:mb-2.5">
             <span className="block w-6 h-px bg-secondary" />
-            <span className="text-secondary text-[11px] font-medium tracking-[0.14em] uppercase">
+            <span className="text-secondary text-[10px] sm:text-[11px] font-medium tracking-[0.12em] sm:tracking-[0.14em] uppercase">
               You might also like
             </span>
           </div>
-          <h2 className="font-serif text-3xl sm:text-4xl font-light text-gray-900">
+          <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-light text-gray-900">
             Similar Properties
           </h2>
         </div>
