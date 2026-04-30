@@ -4,12 +4,12 @@ import {
   getPropertyAnalytics,
   getMessageStats
 } from "../controllers/analytics.controller";
-import { authenticateToken } from "../middleware/authMiddleware";
+import { protect } from "../middleware/authMiddleware";
 
 const router = Router();
 
 // All analytics routes require authentication
-router.use(authenticateToken);
+router.use(protect);
 
 // Dashboard overview stats
 router.get("/dashboard", getDashboardStats);

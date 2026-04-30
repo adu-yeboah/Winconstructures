@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { getAccessToken } from '@/service/authServices';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -78,7 +79,11 @@ export const useAnalytics = () => {
     setError(null);
 
     try {
-      const token = localStorage.getItem('accessToken');
+      const token = getAccessToken();
+      if (!token) {
+        throw new Error('No authentication token found. Please login again.');
+      }
+
       const response = await axios.get(`${API_BASE_URL}/api/analytics/dashboard`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -100,7 +105,11 @@ export const useAnalytics = () => {
     setError(null);
 
     try {
-      const token = localStorage.getItem('accessToken');
+      const token = getAccessToken();
+      if (!token) {
+        throw new Error('No authentication token found. Please login again.');
+      }
+
       const response = await axios.get(
         `${API_BASE_URL}/api/analytics/property/${propertyId}`,
         {
@@ -125,7 +134,11 @@ export const useAnalytics = () => {
     setError(null);
 
     try {
-      const token = localStorage.getItem('accessToken');
+      const token = getAccessToken();
+      if (!token) {
+        throw new Error('No authentication token found. Please login again.');
+      }
+
       const response = await axios.get(
         `${API_BASE_URL}/api/analytics/messages`,
         {

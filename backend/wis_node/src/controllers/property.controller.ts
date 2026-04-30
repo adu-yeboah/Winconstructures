@@ -506,7 +506,7 @@ export const getSimilarProperties = asyncHandler(async (req: Request, res: Respo
             area: item.property.area,
             status: item.property.status,
             type: item.property.type,
-            images: item.property.images.map(img => ({ img: img.img })),
+            images: item.property.images.map((img: any) => ({ img: img.img })),
             featured: item.property.featured,
             viewCount: item.property.viewCount,
             listedById: item.property.listedById,

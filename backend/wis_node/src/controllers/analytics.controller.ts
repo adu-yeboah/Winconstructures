@@ -31,15 +31,15 @@ export const getDashboardStats = asyncHandler(
       });
 
       // Get total messages count
-      const totalMessages = await prisma.message.count();
+      const totalMessages = await prisma.inquiry.count();
 
       // Get recent messages (last 7 days)
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-      const recentMessages = await prisma.message.count({
+      const recentMessages = await prisma.inquiry.count({
         where: {
-          createdAt: {
+          date: {
             gte: sevenDaysAgo
           }
         }
@@ -99,26 +99,26 @@ export const getDashboardStats = asyncHandler(
       // Get messages per month for the last 6 months
       const monthlyMessageData = await prisma.$queryRaw`
         SELECT
-          DATE_FORMAT(createdAt, '%Y-%m') as month,
+          DATE_FORMAT(date, '%Y-%m') as month,
           COUNT(*) as count
-        FROM Message
-        WHERE createdAt >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
-        GROUP BY DATE_FORMAT(createdAt, '%Y-%m')
+        FROM Inquiry
+        WHERE date >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+        GROUP BY DATE_FORMAT(date, '%Y-%m')
         ORDER BY month DESC
       `;
 
       // Get recent messages
-      const latestMessages = await prisma.message.findMany({
+      const latestMessages = await prisma.inquiry.findMany({
         take: 5,
         orderBy: {
-          createdAt: 'desc'
+          date: 'desc'
         },
         select: {
           id: true,
           title: true,
           email: true,
           subject: true,
-          createdAt: true
+          date: true
         }
       });
 
@@ -143,7 +143,10 @@ export const getDashboardStats = asyncHandler(
         },
         messages: {
           total: totalMessages,
-          recent: recentMessages
+          recent: latestMessages.map(msg => ({
+            ...msg,
+            createdAt: msg.date // Map 'date' to 'createdAt' for frontend compatibility
+          }))
         },
         trends: {
           monthlyProperties: monthlyPropertyData,
@@ -185,10 +188,9 @@ export const getPropertyAnalytics = asyncHandler(
       const views = property.viewCount || 0;
 
       // Get messages related to this property (if you have that relationship)
-      const relatedMessages = await prisma.message.findMany({
+      const relatedMessages = await prisma.inquiry.findMany({
         where: {
-          // Assuming you might add a propertyId field to messages later
-          // For now, this might be empty
+          relatedPropertyId: propertyId
         }
       });
 
@@ -231,14 +233,14 @@ export const getMessageStats = asyncHandler(
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-      const recentMessages = await prisma.message.findMany({
+      const recentMessages = await prisma.inquiry.findMany({
         where: {
-          createdAt: {
+          date: {
             gte: thirtyDaysAgo
           }
         },
         orderBy: {
-          createdAt: 'desc'
+          date: 'desc'
         }
       });
 
@@ -248,11 +250,11 @@ export const getMessageStats = asyncHandler(
       // Get messages per day for last 30 days
       const dailyMessages = await prisma.$queryRaw`
         SELECT
-          DATE(createdAt) as date,
+          DATE(date) as date,
           COUNT(*) as count
-        FROM Message
-        WHERE createdAt >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-        GROUP BY DATE(createdAt)
+        FROM Inquiry
+        WHERE date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+        GROUP BY DATE(date)
         ORDER BY date DESC
       `;
 
