@@ -42,8 +42,9 @@ const ContactPage = () => {
       });
 
       setFormData({ name: "", email: "", phone: "", message: "" });
-    } catch (err: any) {
-      setError(err.message || "Failed to send message");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to send message';
+      setError(message);
     }
   };
 
@@ -66,13 +67,13 @@ const ContactPage = () => {
           </p>
 
           <h1 className="font-serif text-5xl md:text-6xl font-light text-white leading-tight mb-5">
-            Let's discuss your
+            Let&apos;s discuss your
             <br />
             next property move
           </h1>
 
           <p className="text-white/70 text-lg max-w-2xl font-light">
-            Whether you're buying, selling, investing, or simply exploring your
+            Whether you&apos;re buying, selling, investing, or simply exploring your
             options, our team is ready to guide you with confidence.
           </p>
         </div>

@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
-import Image from 'next/image';
 import { useAuth } from '@/hooks/auth';
 import { toast } from 'react-toastify';
 
@@ -169,7 +168,7 @@ export default function LoginPage() {
        
 
         <p className="text-[12px] text-tertiary text-center mt-6">
-          Don't have an account?{' '}
+          Don&apos;t have an account?{' '}
           <span className="text-primary font-medium cursor-pointer hover:underline">
             Contact your administrator
           </span>

@@ -7,12 +7,13 @@ import { useMessages } from '@/hooks/useMessage';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Message } from '@/types/messages';
 
 export default function MessageDetailPage() {
   const { id } = useParams();
   const router = useRouter();
-  const { fetchMessage, deleteMessage, updateMessage } = useMessages();
-  const [message, setMessage] = useState<any>(null);
+  const { fetchMessage } = useMessages();
+  const [message, setMessage] = useState<Message | null>(null);
   const [loading, setLoading] = useState(true);
   const [reply, setReply] = useState('');
   const [replies, setReplies] = useState<string[]>([]);
@@ -32,6 +33,7 @@ export default function MessageDetailPage() {
       }
     };
     loadMessage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   if (loading) {

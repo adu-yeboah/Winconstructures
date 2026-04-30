@@ -6,7 +6,6 @@ import React, { useState, useEffect } from 'react';
 import { Save, Trash2, Plus, X, ArrowLeft, Loader2, Upload, ImageIcon } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import Image from 'next/image';
 import { useProperties } from '@/hooks/useProperty';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -37,6 +36,7 @@ export default function ProductDetails() {
     };
 
     loadProperty();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.id]);
 
   const handleChange = (
@@ -103,7 +103,9 @@ export default function ProductDetails() {
       setProperty(updated);
       setFormData(updated);
       alert("Property updated successfully!");
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'An error occurred';
+      toast.error(message);
       setError(err.message || "Failed to update property");
     } finally {
       setSaving(false);
@@ -118,7 +120,9 @@ export default function ProductDetails() {
     try {
       await deleteProperty(params.id as string);
       router.push("/admin/properties");
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'An error occurred';
+      toast.error(message);
       setError(err.message || "Failed to delete property");
     }
   };
@@ -375,7 +379,7 @@ export default function ProductDetails() {
                     <input
                       name={f.name}
                       type={f.type}
-                      value={(formData as any)[f.name]}
+                      value={(formData as Record<string, unknown>)[f.name] as string}
                       onChange={handleChange}
                       min={f.type === "number" ? 1 : undefined}
                       className={fieldClass}

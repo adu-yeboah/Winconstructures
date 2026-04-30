@@ -1,11 +1,10 @@
 "use client";
 import React, { useEffect, useState, useMemo, Suspense } from "react";
-import { FaSearch, FaSlidersH, FaFilter } from "react-icons/fa";
+import { FaSearch, FaFilter } from "react-icons/fa";
 import { useSearchParams } from "next/navigation";
 import { useProperties } from "@/hooks/useProperty";
 import PropertyCardTwo from "../components/searchPropertyCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Property } from "@/types/property";
 import { Button } from "@/components/ui/button";
 
 function SearchContent() {
@@ -37,7 +36,7 @@ function SearchContent() {
     Number(String(price).replace(/[^\d]/g, "")) || 0;
 
   const filteredProperties = useMemo(() => {
-    let filtered = properties.filter((property) => {
+    const filtered = properties.filter((property) => {
       const matchesSearch =
         !searchQuery ||
         property.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -89,6 +88,7 @@ function SearchContent() {
 
   useEffect(() => {
     fetchProperties();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!mounted) {

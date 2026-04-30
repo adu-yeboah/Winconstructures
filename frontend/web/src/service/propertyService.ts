@@ -15,7 +15,7 @@ export interface CreatePropertyDto {
   featured?: boolean;
 }
 
-export interface UpdatePropertyDto extends Partial<CreatePropertyDto> {}
+export type UpdatePropertyDto = Partial<CreatePropertyDto>;
 
 export interface PropertyListResponse {
   properties: Property[];

@@ -25,7 +25,7 @@ const PropertySearchFilter: React.FC<PropertySearchFilterProps> = ({
   initialFilters = {}
 }) => {
   const router = useRouter();
-  const { fetchProperties, loading } = useProperties();
+  const { loading } = useProperties();
 
   const [filters, setFilters] = useState<PropertyFilters>({
     status: initialFilters.status || 'FOR_SALE',
@@ -142,7 +142,7 @@ const PropertySearchFilter: React.FC<PropertySearchFilterProps> = ({
         <div className="relative">
           <select
             value={filters.type || ''}
-            onChange={(e) => updateFilters({ type: e.target.value as any })}
+            onChange={(e) => updateFilters({ type: e.target.value as 'HOUSE' | 'CONDO' | 'APARTMENT' | undefined })}
             className="w-full border border-gray-300 rounded-lg px-4 py-3 pr-10 appearance-none focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent"
           >
             <option value="">Property type</option>

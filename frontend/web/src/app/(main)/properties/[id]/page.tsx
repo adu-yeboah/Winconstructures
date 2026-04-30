@@ -18,6 +18,7 @@ export default function PropertyDetail() {
   const { fetchProperty, loading: propertyLoading } = useProperties();
   const { createMessage, loading: messageLoading } = useMessages();
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [property, setProperty] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -29,6 +30,12 @@ export default function PropertyDetail() {
     email: "",
     phone: "",
     message: "",
+  });
+
+  // Initialize carousel hook BEFORE any conditional returns
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: false, // Will update dynamically when property loads
+    align: "start",
   });
 
   useEffect(() => {
@@ -47,6 +54,13 @@ export default function PropertyDetail() {
 
     loadProperty();
   }, [params.id]);
+
+  // Update carousel settings when property loads
+  useEffect(() => {
+    if (property && property.images.length > 1 && emblaApi) {
+      emblaApi.reInit({ loop: true, align: "start" });
+    }
+  }, [property, emblaApi]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,8 +82,9 @@ export default function PropertyDetail() {
       });
 
       setFormData({ name: "", email: "", phone: "", message: "" });
-    } catch (err: any) {
-      setFormError(err.message || "Failed to send inquiry");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to send inquiry';
+      setFormError(message);
     }
   };
 
@@ -125,11 +140,6 @@ export default function PropertyDetail() {
       </div>
     );
   }
-
-  const [emblaRef, emblaApi] = useEmblaCarousel({
-    loop: property.images.length > 1,
-    align: "start",
-  });
 
   return (
     <div className="bg-grey min-h-screen overflow-hidden">
@@ -207,7 +217,7 @@ export default function PropertyDetail() {
               <div className="relative overflow-hidden rounded-2xl">
                 <div className="overflow-hidden" ref={emblaRef}>
                   <div className="flex">
-                    {property.images.map((image: any, index: number) => (
+                    {property.images.map((image: { img: string }, index: number) => (
                       <div key={index} className="flex-[0_0_100%] min-w-0">
                         <div className="p-1">
                           <Image
@@ -227,7 +237,7 @@ export default function PropertyDetail() {
               {/* Dots */}
               {property.images.length > 1 && (
                 <div className="flex justify-center gap-2 mt-4">
-                  {property.images.map((_: any, index: number) => (
+                  {property.images.map((_img: unknown, index: number) => (
                     <button
                       key={index}
                       className="w-2 h-2 rounded-full bg-primary/30 hover:bg-primary transition-all"

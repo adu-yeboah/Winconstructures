@@ -19,8 +19,11 @@ export const loginService = async (credentials: LoginCredentials): Promise<Login
   try {
     const response = await apiClient.post<LoginResponse>('/auth/login', credentials);
     return response.data;
-  } catch (error: any) {
-    throw new Error(error.response?.data?.detail || error.message || 'Login failed');
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error('Login failed');
   }
 };
 
@@ -43,12 +46,15 @@ export const logoutService = async (): Promise<void> => {
 /**
  * Get current user profile
  */
-export const getCurrentUser = async (): Promise<any> => {
+export const getCurrentUser = async (): Promise<Record<string, unknown>> => {
   try {
     const response = await apiClient.get('/auth/me');
     return response.data;
-  } catch (error: any) {
-    throw new Error(error.response?.data?.detail || 'Failed to fetch user profile');
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error('Failed to fetch user profile');
   }
 };
 
@@ -59,7 +65,7 @@ export const refreshToken = async (refreshToken: string): Promise<{ accessToken:
   try {
     const response = await apiClient.post('/auth/refresh', { refreshToken });
     return response.data;
-  } catch (error: any) {
+  } catch {
     throw new Error('Session expired. Please login again');
   }
 };

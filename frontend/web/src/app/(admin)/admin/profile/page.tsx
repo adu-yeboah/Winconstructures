@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import { Save, Camera, Bell, Trash2, Mail, Phone, MapPin } from 'lucide-react';
+import { Save, Camera, Trash2, Mail, Phone, MapPin } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/auth';
@@ -109,7 +109,7 @@ export default function ProfilePage() {
                     <label className={labelClass}>{label}</label>
                     <input
                       type="text"
-                      value={(profile as any)[key]}
+                      value={(profile as Record<string, string>)[key]}
                       onChange={(e) => setProfile(p => ({ ...p, [key]: e.target.value }))}
                       className={fieldClass}
                     />
@@ -181,10 +181,10 @@ export default function ProfilePage() {
                     <p className="text-[11px] text-tertiary mt-0.5">{sub}</p>
                   </div>
                   <button
-                    onClick={() => setNotifications(n => ({...n, [key]: !(n as any)[key]}))}
-                    className={`relative w-9 h-5 rounded-full transition-colors ${(notifications as any)[key] ? 'bg-primary' : 'bg-gray-200'}`}
+                    onClick={() => setNotifications(n => ({...n, [key]: !(n as Record<string, boolean>)[key]}))}
+                    className={`relative w-9 h-5 rounded-full transition-colors ${(notifications as Record<string, boolean>)[key] ? 'bg-primary' : 'bg-gray-200'}`}
                   >
-                    <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${(notifications as any)[key] ? 'right-0.5' : 'left-0.5'}`} />
+                    <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${(notifications as Record<string, boolean>)[key] ? 'right-0.5' : 'left-0.5'}`} />
                   </button>
                 </div>
               ))}

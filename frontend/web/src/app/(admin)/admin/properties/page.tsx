@@ -6,8 +6,8 @@ import DataTable, { TableColumn } from "react-data-table-component";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
-  Search, SlidersHorizontal, Plus, Eye, Pencil, Trash2,
-  RotateCcw, ChevronDown,
+  Search, Plus, Eye, Pencil, Trash2,
+  RotateCcw,
 } from "lucide-react";
 
 import { Property } from "@/types/property";
@@ -37,6 +37,7 @@ export default function Products() {
   useEffect(() => {
     setMounted(true);
     fetchProperties();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   //  Filtering

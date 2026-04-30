@@ -17,6 +17,7 @@ const MessagesPage: React.FC = () => {
   useEffect(() => {
     setMounted(true);
     fetchMessages();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const filtered = messages.filter((m) => {
@@ -324,7 +325,7 @@ const MessagesPage: React.FC = () => {
               <div className="flex gap-2">
                 <select
                   value={selected.status}
-                  onChange={(e) => updateStatus(selected.id, e.target.value as any)}
+                  onChange={(e) => updateStatus(selected.id, e.target.value as 'NEW_LEAD' | 'CONTACTED' | 'CLOSED')}
                   className="text-[12px] border border-gray-200 rounded-lg px-3 py-2"
                 >
                   <option value="NEW_LEAD">New Lead</option>

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock, FaWhatsapp } from 'react-icons/fa';
+import { FaClock, FaWhatsapp } from 'react-icons/fa';
 import { useMessages } from '@/hooks/useMessage';
 import { Loader2, MapPin, Mail, Phone, Send } from 'lucide-react';
 import { toast } from 'react-toastify';
@@ -36,8 +36,9 @@ const ContactSection: React.FC = () => {
 
       setFormData({ name: '', email: '', phone: '', message: '' });
       toast.success('Message sent successfully! We\'ll get back to you within 24 hours.');
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to send message. Please try again.');
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Failed to send message. Please try again.';
+      toast.error(message);
     }
   };
 
@@ -94,13 +95,13 @@ const ContactSection: React.FC = () => {
         >
           
           <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-light text-gray-900 mb-6">
-            Let's Find Your{" "}
+            Let&apos;s Find Your{" "}
             <span className="text-secondary font-semibold italic">Perfect</span>{" "}
             Property
           </h2>
 
           <p className="text-gray-600 text-lg max-w-2xl mx-auto font-light">
-            Whether you're buying, selling, or investing, our dedicated team is here to guide you every step of the way.
+            Whether you&apos;re buying, selling, or investing, our dedicated team is here to guide you every step of the way.
           </p>
         </motion.div>
 
@@ -177,7 +178,7 @@ const ContactSection: React.FC = () => {
                   Send Us a Message
                 </h3>
                 <p className="text-gray-500 text-sm">
-                  Fill out the form below and we'll get back to you within 24 hours
+                  Fill out the form below and we&apos;ll get back to you within 24 hours
                 </p>
               </div>
 

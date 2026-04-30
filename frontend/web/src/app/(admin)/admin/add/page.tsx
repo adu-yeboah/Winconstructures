@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import { PlusCircle, Trash2, ArrowRight, Save, Upload, X, ImageIcon, Loader2 } from 'lucide-react';
+import { PlusCircle, ArrowRight, Save, Upload, X, ImageIcon, Loader2 } from 'lucide-react';
 import { Property } from '@/types/property';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -53,8 +53,9 @@ const AddProperty: React.FC = () => {
         }));
 
         toast.success(`Successfully uploaded ${uploadResults.length} image(s)`);
-      } catch (error: any) {
-        toast.error(error.message || 'Failed to upload images');
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : 'Failed to upload images';
+        toast.error(message);
       }
     }
   };
@@ -81,8 +82,9 @@ const AddProperty: React.FC = () => {
         }));
 
         toast.success(`Successfully uploaded ${uploadResults.length} image(s)`);
-      } catch (error: any) {
-        toast.error(error.message || 'Failed to upload images');
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : 'Failed to upload images';
+        toast.error(message);
       }
     }
   };
@@ -106,8 +108,9 @@ const AddProperty: React.FC = () => {
       await createProperty(propertyData);
       toast.success('Property published successfully!');
       router.push('/admin/properties');
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to publish property');
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Failed to publish property';
+      toast.error(message);
     }
   };
 

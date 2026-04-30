@@ -46,7 +46,7 @@ export interface CreatePropertyDto {
   featured?: boolean;
 }
 
-export interface UpdatePropertyDto extends Partial<CreatePropertyDto> {}
+export type UpdatePropertyDto = Partial<CreatePropertyDto>;
 
 // Legacy type for backward compatibility
 export interface Product {

@@ -30,7 +30,27 @@ type RootLayoutProps = {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" className={cn("font-sans", geist.variable)}>
-      <body className={poppins.className}>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Suppress hydration warnings caused by browser extensions (Wappalyzer, etc.)
+              if (typeof window !== 'undefined') {
+                const originalError = console.error;
+                console.error = function(...args) {
+                  const msg = args[0]?.toString() || '';
+                  // Filter out browser extension hydration warnings
+                  if (msg.includes('Hydration') && (msg.includes('bis_register') || msg.includes('__processed_'))) {
+                    return;
+                  }
+                  originalError.apply(console, args);
+                };
+              }
+            `,
+          }}
+        />
+      </head>
+      <body className={poppins.className} suppressHydrationWarning>
         <NextTopLoader
           color="#d4af37"
           initialPosition={0.08}
