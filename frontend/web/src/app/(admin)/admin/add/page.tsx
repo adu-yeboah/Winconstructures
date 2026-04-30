@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useProperties } from '@/hooks/useProperty';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
+import uploadService from '@/service/uploadService';
 
 const steps = ['Basic Info', 'Details', 'Images', 'Review'];
 
@@ -28,40 +29,61 @@ const AddProperty: React.FC = () => {
     }));
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
-      Array.from(files).forEach(file => {
-        if (file.type.startsWith('image/')) {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            setFormData((p) => ({
-              ...p,
-              images: [...p.images, { img: reader.result as string }]
-            }));
-          };
-          reader.readAsDataURL(file);
-        }
-      });
+      const imageFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
+
+      if (imageFiles.length === 0) {
+        toast.error('Please select valid image files');
+        return;
+      }
+
+      try {
+        // Show uploading state
+        toast.info(`Uploading ${imageFiles.length} image(s)...`);
+
+        // Upload all images to Cloudinary
+        const uploadResults = await uploadService.uploadImages(imageFiles);
+
+        // Add uploaded image URLs to form data
+        setFormData((p) => ({
+          ...p,
+          images: [...p.images, ...uploadResults.map(result => ({ img: result.url }))]
+        }));
+
+        toast.success(`Successfully uploaded ${uploadResults.length} image(s)`);
+      } catch (error: any) {
+        toast.error(error.message || 'Failed to upload images');
+      }
     }
   };
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
     const files = e.dataTransfer.files;
     if (files) {
-      Array.from(files).forEach(file => {
-        if (file.type.startsWith('image/')) {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            setFormData((p) => ({
-              ...p,
-              images: [...p.images, { img: reader.result as string }]
-            }));
-          };
-          reader.readAsDataURL(file);
-        }
-      });
+      const imageFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
+
+      if (imageFiles.length === 0) {
+        toast.error('Please drop valid image files');
+        return;
+      }
+
+      try {
+        toast.info(`Uploading ${imageFiles.length} image(s)...`);
+
+        const uploadResults = await uploadService.uploadImages(imageFiles);
+
+        setFormData((p) => ({
+          ...p,
+          images: [...p.images, ...uploadResults.map(result => ({ img: result.url }))]
+        }));
+
+        toast.success(`Successfully uploaded ${uploadResults.length} image(s)`);
+      } catch (error: any) {
+        toast.error(error.message || 'Failed to upload images');
+      }
     }
   };
 
@@ -323,11 +345,17 @@ const AddProperty: React.FC = () => {
                         className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-[13px] outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                         onKeyDown={(e) => {
                           if (e.key === 'Enter' && e.currentTarget.value) {
-                            setFormData((p) => ({
-                              ...p,
-                              images: [...p.images, { img: e.currentTarget.value }]
-                            }));
-                            e.currentTarget.value = '';
+                            const url = e.currentTarget.value.trim();
+                            if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
+                              setFormData((p) => ({
+                                ...p,
+                                images: [...p.images, { img: url }]
+                              }));
+                              e.currentTarget.value = '';
+                              toast.success('Image URL added');
+                            } else {
+                              toast.error('Please enter a valid URL (must start with http:// or https://)');
+                            }
                           }
                         }}
                       />
@@ -336,11 +364,17 @@ const AddProperty: React.FC = () => {
                         onClick={() => {
                           const input = document.querySelector('input[type="url"]') as HTMLInputElement;
                           if (input?.value) {
-                            setFormData((p) => ({
-                              ...p,
-                              images: [...p.images, { img: input.value }]
-                            }));
-                            input.value = '';
+                            const url = input.value.trim();
+                            if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
+                              setFormData((p) => ({
+                                ...p,
+                                images: [...p.images, { img: url }]
+                              }));
+                              input.value = '';
+                              toast.success('Image URL added');
+                            } else {
+                              toast.error('Please enter a valid URL (must start with http:// or https://)');
+                            }
                           }
                         }}
                         className="px-4 py-2 bg-primary text-white rounded-lg text-[13px] font-medium hover:bg-primary-dark transition-colors"

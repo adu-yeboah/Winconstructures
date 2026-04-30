@@ -1,9 +1,9 @@
 "use client";
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock, FaPaperPlane } from 'react-icons/fa';
+import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock, FaWhatsapp } from 'react-icons/fa';
 import { useMessages } from '@/hooks/useMessage';
-import { Loader2 } from 'lucide-react';
+import { Loader2, MapPin, Mail, Phone, Send } from 'lucide-react';
 import { toast } from 'react-toastify';
 
 const ContactSection: React.FC = () => {
@@ -41,13 +41,39 @@ const ContactSection: React.FC = () => {
     }
   };
 
-  const fadeIn = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
-  };
+  const contactInfo = [
+    {
+      icon: <Phone className="w-5 h-5" />,
+      title: "Call Us",
+      details: ["+233 24 000 0000", "+233 55 000 0000"],
+      color: "bg-blue-500",
+      action: "tel:+2332400000000"
+    },
+    {
+      icon: <Mail className="w-5 h-5" />,
+      title: "Email Us",
+      details: ["info@winconstructures.com", "support@winconstructures.com"],
+      color: "bg-primary",
+      action: "mailto:info@winconstructures.com"
+    },
+    {
+      icon: <MapPin className="w-5 h-5" />,
+      title: "Visit Us",
+      details: ["East Legon, Accra", "Greater Accra, Ghana"],
+      color: "bg-secondary",
+      action: null
+    },
+    {
+      icon: <FaClock className="w-5 h-5" />,
+      title: "Working Hours",
+      details: ["Mon - Fri: 9:00 AM - 6:00 PM", "Sat: 10:00 AM - 2:00 PM"],
+      color: "bg-amber-500",
+      action: null
+    }
+  ];
 
   return (
-    <section className="relative min-h-screen flex flex-col overflow-hidden">
+    <section className="relative min-h-screen py-32 flex flex-col overflow-hidden">
       {/* Background */}
       <div
         className="absolute inset-0 bg-cover bg-center"
@@ -57,182 +83,194 @@ const ContactSection: React.FC = () => {
       />
       <div className="absolute inset-0 bg-primary-dark/60" />
 
-      {/* Content */}
-      <div className="relative z-10 flex flex-col justify-center flex-1 px-6 lg:px-12 py-20">
+      <div className="relative max-w-7xl mx-auto px-6 lg:px-12">
+        {/* Header */}
         <motion.div
-          initial="hidden"
-          whileInView="visible"
-          variants={fadeIn}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="max-w-6xl mx-auto w-full"
+          className="text-center mb-16"
         >
-          {/* Header */}
-          <div className="text-center mb-12">
-            {/* Eyebrow */}
-            <div className="flex items-center justify-center gap-3 mb-5">
-              <span className="block w-6 h-px bg-secondary" />
-              <span className="text-secondary text-xs font-medium tracking-[0.14em] uppercase">
-                Get in touch
-              </span>
-              <span className="block w-6 h-px bg-secondary" />
-            </div>
+          
+          <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-light text-gray-900 mb-6">
+            Let's Find Your{" "}
+            <span className="text-secondary font-semibold italic">Perfect</span>{" "}
+            Property
+          </h2>
 
-            {/* Title */}
-            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-light text-white leading-tight mb-4">
-              Let's find your{" "}
-              <em className="italic text-secondary">perfect</em>
-              <br />
-              property together
-            </h2>
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto font-light">
+            Whether you're buying, selling, or investing, our dedicated team is here to guide you every step of the way.
+          </p>
+        </motion.div>
 
-            <p className="text-white/65 text-lg max-w-2xl mx-auto font-light">
-              Our team is ready to assist you with all your real estate needs. Whether you're buying, selling, or just exploring options, we're here to help.
-            </p>
-          </div>
-
-          {/* Contact Card */}
-          <div className="bg-white rounded-xl shadow-2xl overflow-hidden">
-            <div className="flex flex-col lg:flex-row ">
-              {/* Left Side - Contact Info */}
-              <div className="lg:w-1/2 bg-secondary text-white p-10 lg:p-12">
-                <h3 className="font-serif text-2xl md:text-3xl font-light mb-6">Contact Information</h3>
-
-                <div className="space-y-8">
-                  
-                  <div className="flex items-start gap-4">
-                    <div className="bg-white/20 p-2.5 rounded-full shrink-0">
-                      <FaPhone className="text-base" />
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-semibold mb-1 tracking-wide">PHONE</h4>
-                      <p className="text-white/90 text-sm">(123) 456-7890</p>
-                      <p className="text-white/90 text-sm">(098) 765-4321</p>
+        {/* Main Content */}
+        <div className="grid lg:grid-cols-5 gap-8">
+          {/* Left Side - Contact Info Cards */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="lg:col-span-2 space-y-4"
+          >
+            {contactInfo.map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
+                whileHover={{ scale: 1.02, y: -2 }}
+                className={`bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all border border-gray-100 ${item.action ? 'cursor-pointer' : ''}`}
+                onClick={() => item.action && window.open(item.action, '_blank')}
+              >
+                <div className="flex items-start gap-4">
+                  <div className={`${item.color} p-3 rounded-xl shrink-0`}>
+                    <div className="text-white">
+                      {item.icon}
                     </div>
                   </div>
-
-                  <div className="flex items-start gap-4">
-                    <div className="bg-white/20 p-2.5 rounded-full shrink-0">
-                      <FaEnvelope className="text-base" />
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-semibold mb-1 tracking-wide">EMAIL</h4>
-                      <p className="text-white/90 text-sm">info@wisconstructures.com</p>
-                      <p className="text-white/90 text-sm">support@wisconstructures.com</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-4">
-                    <div className="bg-white/20 p-2.5 rounded-full shrink-0">
-                      <FaMapMarkerAlt className="text-base" />
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-semibold mb-1 tracking-wide">OFFICE</h4>
-                      <p className="text-white/90 text-sm">123 Real Estate Ave</p>
-                      <p className="text-white/90 text-sm">New York, NY 10001</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-4">
-                    <div className="bg-white/20 p-2.5 rounded-full shrink-0">
-                      <FaClock className="text-base" />
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-semibold mb-1 tracking-wide">HOURS</h4>
-                      <p className="text-white/90 text-sm">Monday - Friday: 9AM - 6PM</p>
-                      <p className="text-white/90 text-sm">Saturday: 10AM - 2PM</p>
-                    </div>
+                  <div className="flex-1">
+                    <h4 className="text-sm font-bold text-gray-900 mb-2 uppercase tracking-wide">
+                      {item.title}
+                    </h4>
+                    {item.details.map((detail, i) => (
+                      <p key={i} className="text-gray-600 text-sm mb-1">{detail}</p>
+                    ))}
                   </div>
                 </div>
+              </motion.div>
+            ))}
+
+            {/* WhatsApp Quick Contact */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 0.4 }}
+              className="bg-gradient-to-r from-green-500 to-green-600 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all"
+            >
+              <div className="flex items-center gap-4 text-white">
+                <div className="bg-white/20 p-3 rounded-xl">
+                  <FaWhatsapp className="text-3xl" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-lg mb-1">Quick Response</h4>
+                  <p className="text-white/90 text-sm">Chat with us on WhatsApp</p>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Right Side - Contact Form */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="lg:col-span-3"
+          >
+            <div className="bg-white rounded-2xl shadow-xl p-8 lg:p-10 border border-gray-100">
+              <div className="mb-8">
+                <h3 className="font-serif text-2xl md:text-3xl font-light text-gray-900 mb-2">
+                  Send Us a Message
+                </h3>
+                <p className="text-gray-500 text-sm">
+                  Fill out the form below and we'll get back to you within 24 hours
+                </p>
               </div>
 
-              {/* Right Side - Contact Form */}
-              <div className="lg:w-1/2 p-10 lg:p-12">
-                <h3 className="font-serif text-2xl md:text-3xl font-light mb-2 text-gray-900">Send us a message</h3>
-                <p className="text-gray-600 mb-8 font-light">We'll get back to you within 24 hours</p>
-
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  <div>
-                    <label htmlFor="name" className="block text-gray-700 mb-2 text-sm font-medium">Full Name</label>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label htmlFor="name" className="block text-gray-700 text-sm font-semibold">
+                      Full Name <span className="text-red-500">*</span>
+                    </label>
                     <input
                       type="text"
                       id="name"
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
-                      placeholder="Your name"
-                      className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all"
+                      placeholder="John Doe"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-gray-50 hover:bg-gray-100"
                       required
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div>
-                      <label htmlFor="email" className="block text-gray-700 mb-2 text-sm font-medium">Email</label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        placeholder="your@email.com"
-                        className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="phone" className="block text-gray-700 mb-2 text-sm font-medium">Phone</label>
-                      <input
-                        type="tel"
-                        id="phone"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        placeholder="(123) 456-7890"
-                        className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label htmlFor="message" className="block text-gray-700 mb-2 text-sm font-medium">Message</label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      value={formData.message}
+                  <div className="space-y-2">
+                    <label htmlFor="email" className="block text-gray-700 text-sm font-semibold">
+                      Email Address <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
                       onChange={handleChange}
-                      rows={4}
-                      placeholder="How can we help you?"
-                      className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent resize-none transition-all"
+                      placeholder="john@example.com"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-gray-50 hover:bg-gray-100"
                       required
-                    ></textarea>
+                    />
                   </div>
+                </div>
 
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full bg-secondary hover:bg-secondary/90 text-white py-3 px-6 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
-                  >
-                    {loading ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        <span>Sending...</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>Send Message</span>
-                        <FaPaperPlane className="text-sm" />
-                      </>
-                    )}
-                  </button>
-                </form>
-              </div>
+                <div className="space-y-2">
+                  <label htmlFor="phone" className="block text-gray-700 text-sm font-semibold">
+                    Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    placeholder="+233 XX XXX XXXX"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-gray-50 hover:bg-gray-100"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="message" className="block text-gray-700 text-sm font-semibold">
+                    Message <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    rows={5}
+                    placeholder="Tell us about your property needs..."
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none transition-all bg-gray-50 hover:bg-gray-100"
+                    required
+                  ></textarea>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white py-4 px-8 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl disabled:opacity-60 disabled:cursor-not-allowed transform hover:scale-[1.02]"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      <span>Sending...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Send Message</span>
+                      <Send className="w-5 h-5" />
+                    </>
+                  )}
+                </button>
+              </form>
             </div>
-          </div>
-        </motion.div>
-      </div>
+          </motion.div>
+        </div>
 
-     
+        
+      </div>
     </section>
   );
 };

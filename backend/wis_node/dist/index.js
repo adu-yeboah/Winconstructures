@@ -44,6 +44,8 @@ const propertyRoute_1 = __importDefault(require("./routes/propertyRoute"));
 const auth_routes_1 = __importDefault(require("./routes/auth.routes"));
 const message_routes_1 = __importDefault(require("./routes/message.routes"));
 const analytics_routes_1 = __importDefault(require("./routes/analytics.routes"));
+const settings_routes_1 = __importDefault(require("./routes/settings.routes"));
+const uploadRoute_1 = __importDefault(require("./routes/uploadRoute"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 8000;
@@ -85,6 +87,8 @@ app.use('/api/auth', auth_routes_1.default);
 app.use("/api/property", propertyRoute_1.default);
 app.use("/api/message", message_routes_1.default);
 app.use("/api/analytics", analytics_routes_1.default);
+app.use("/api/settings", settings_routes_1.default);
+app.use("/api/upload", uploadRoute_1.default);
 // Graceful shutdown
 process.on('SIGINT', async () => {
     console.log('\n Shutting down gracefully...');

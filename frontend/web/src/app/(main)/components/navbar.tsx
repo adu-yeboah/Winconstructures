@@ -56,25 +56,31 @@ const Navbar = () => {
         {/* Desktop Navigation */}
         <div className="hidden lg:flex items-center space-x-8">
           <ul className="flex space-x-6">
-            {navLinks.map((link) => (
-              <li key={link.name}>
-                <Link
-                  href={link.href}
-                  className={`text-sm font-medium transition-colors duration-200 relative group ${
-                    isScrolled
-                      ? "text-gray-700 hover:text-primary"
-                      : "text-white/80 hover:text-white"
-                  }`}
-                >
-                  {link.name}
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-secondary transition-all duration-300 group-hover:w-full"></span>
-                </Link>
-              </li>
-            ))}
+            {navLinks.map((link) => {
+              const isactive =
+                typeof window !== "undefined" &&
+                window.location.pathname === link.href;
+              return (
+                <li key={link.name}>
+                  <Link
+                    href={link.href}
+                    className={`text-sm font-medium hover:text-secondary transition-colors duration-200 relative group ${
+                      isactive ? "text-secondary" : ""
+                    } ${
+                      isScrolled
+                        ? "text-gray-700 hover:text-primary"
+                        : "text-white/80 hover:text-secondary"
+                    } ${isactive ? "text-secondary" : ""}`}
+                  >
+                    {link.name}
+                    {/* <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-secondary transition-all duration-300 group-hover:w-full"></span> */}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
 
           <div className="flex items-center space-x-6 ml-6">
-            
             <Link
               href="/contact"
               className="bg-primary text-white px-5 py-2.5 rounded-lg font-medium duration-200 shadow-md hover:shadow-lg"

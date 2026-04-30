@@ -7,6 +7,8 @@ import propertyRoute from "./routes/propertyRoute"
 import authRoute from "./routes/auth.routes"
 import messageRoute from "./routes/message.routes"
 import analyticsRoute from "./routes/analytics.routes"
+import settingsRoute from "./routes/settings.routes"
+import uploadRoute from "./routes/uploadRoute"
 
 
 dotenv.config();
@@ -58,6 +60,8 @@ app.use('/api/auth', authRoute);
 app.use("/api/property", propertyRoute)
 app.use("/api/message", messageRoute)
 app.use("/api/analytics", analyticsRoute)
+app.use("/api/settings", settingsRoute)
+app.use("/api/upload", uploadRoute)
 
 // Graceful shutdown
 process.on('SIGINT', async () => {

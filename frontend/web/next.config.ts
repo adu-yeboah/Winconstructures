@@ -11,6 +11,12 @@ const nextConfig: NextConfig = {
         port: '', // Leave empty unless a specific port is required
         pathname: '/**', // Allow all paths under this hostname
       },
+      {
+        protocol: 'https',
+        hostname: '**.cloudinary.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 };

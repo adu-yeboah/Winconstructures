@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import Slider from "react-slick";
+import useEmblaCarousel from "embla-carousel-react";
 import { useParams, useRouter } from "next/navigation";
 import { FaBath, FaBed, FaMapMarkerAlt, FaPhoneAlt } from "react-icons/fa";
 import { MdSquareFoot } from "react-icons/md";
@@ -126,15 +126,10 @@ export default function PropertyDetail() {
     );
   }
 
-  const settings = {
-    dots: true,
-    infinite: property.images.length > 1,
-    speed: 600,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    arrows: false,
-    autoplay: property.images.length > 1,
-  };
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: property.images.length > 1,
+    align: "start",
+  });
 
   return (
     <div className="bg-grey min-h-screen overflow-hidden">
@@ -209,23 +204,39 @@ export default function PropertyDetail() {
           {/* GALLERY */}
           {property.images.length > 0 && (
             <div className="bg-white rounded-3xl p-5 shadow-sm mb-8">
-              <div className="relative overflow-hidden rounded-2xl slider-container">
-                <Slider {...settings}>
-                  {property.images.map((image: any, index: number) => (
-                    <div key={index}>
-                      <div className="">
-                        <Image
-                          src={image.img}
-                          alt={`${property.title} image ${index + 1}`}
-                          width={800}
-                          height={500}
-                          className="rounded-lg w-full h-[400px] object-cover"
-                        />
+              <div className="relative overflow-hidden rounded-2xl">
+                <div className="overflow-hidden" ref={emblaRef}>
+                  <div className="flex">
+                    {property.images.map((image: any, index: number) => (
+                      <div key={index} className="flex-[0_0_100%] min-w-0">
+                        <div className="p-1">
+                          <Image
+                            src={image.img}
+                            alt={`${property.title} image ${index + 1}`}
+                            width={800}
+                            height={500}
+                            className="rounded-lg w-full h-[400px] object-cover"
+                          />
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </Slider>
+                    ))}
+                  </div>
+                </div>
               </div>
+
+              {/* Dots */}
+              {property.images.length > 1 && (
+                <div className="flex justify-center gap-2 mt-4">
+                  {property.images.map((_: any, index: number) => (
+                    <button
+                      key={index}
+                      className="w-2 h-2 rounded-full bg-primary/30 hover:bg-primary transition-all"
+                      onClick={() => emblaApi?.scrollTo(index)}
+                      aria-label={`Go to slide ${index + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
