@@ -27,8 +27,8 @@ export interface Message {
   read: boolean;
   date: string; // ISO date string
   status: MessageStatus;
-  relatedPropertyId?: number;
-  relatedProperty?: RelatedProperty;
+  relatedPropertyId?: number | null;
+  relatedProperty?: RelatedProperty | null;
   replies?: InquiryReply[];
   createdAt: Date;
   updatedAt: Date;
