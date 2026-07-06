@@ -4,7 +4,22 @@ import prisma from "../config/database.prisma";
 
 // Get All Properties
 export const getProperties = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const { status, type, featured, search } = req.query;
+
+    const where: any = {};
+    if (status) where.status = status as string;
+    if (type) where.type = type as string;
+    if (featured !== undefined) where.featured = featured === 'true';
+    if (search) {
+      where.OR = [
+        { title: { contains: search as string } },
+        { location: { contains: search as string } },
+        { description: { contains: search as string } }
+      ];
+    }
+
     const properties = await prisma.property.findMany({
+        where,
         include: {
           images: true,
           listedBy: {

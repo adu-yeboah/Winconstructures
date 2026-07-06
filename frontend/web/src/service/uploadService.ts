@@ -8,7 +8,7 @@ export interface UploadResult {
 }
 
 class UploadService {
-  private baseUrl = '/api/upload';
+  private baseUrl = '/upload';
 
   /**
    * Upload a single image to Cloudinary

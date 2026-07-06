@@ -12,28 +12,23 @@ export interface AuthResponse {
   data?: LoginResponse;
 }
 
-/**
- * Login user with email and password
- */
+import { mockUser } from './mockData';
+
 export const loginService = async (credentials: LoginCredentials): Promise<LoginResponse> => {
-  try {
-    const response = await apiClient.post<LoginResponse>('/auth/login', credentials);
-    return response.data;
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      throw error;
-    }
-    throw new Error('Login failed');
+  await new Promise(resolve => setTimeout(resolve, 500));
+  if (credentials.email === mockUser.email) {
+    return {
+      accessToken: 'mock-access-token',
+      refreshToken: 'mock-refresh-token',
+      detail: 'Login successful',
+      user: mockUser
+    };
   }
+  throw new Error('Invalid credentials');
 };
 
-/**
- * Logout user and clear tokens
- * Note: Backend doesn't have logout endpoint, so we just clear local storage
- */
 export const logoutService = async (): Promise<void> => {
   try {
-    // Clear tokens from local storage
     localStorage.removeItem('authToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
@@ -43,31 +38,17 @@ export const logoutService = async (): Promise<void> => {
   }
 };
 
-/**
- * Get current user profile
- */
 export const getCurrentUser = async (): Promise<Record<string, unknown>> => {
-  try {
-    const response = await apiClient.get('/auth/me');
-    return response.data;
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      throw error;
-    }
-    throw new Error('Failed to fetch user profile');
-  }
+  await new Promise(resolve => setTimeout(resolve, 300));
+  return { user: mockUser };
 };
 
-/**
- * Refresh access token
- */
 export const refreshToken = async (refreshToken: string): Promise<{ accessToken: string }> => {
-  try {
-    const response = await apiClient.post('/auth/refresh', { refreshToken });
-    return response.data;
-  } catch {
-    throw new Error('Session expired. Please login again');
+  await new Promise(resolve => setTimeout(resolve, 300));
+  if (refreshToken === 'mock-refresh-token') {
+    return { accessToken: 'new-mock-access-token' };
   }
+  throw new Error('Session expired. Please login again');
 };
 
 /**

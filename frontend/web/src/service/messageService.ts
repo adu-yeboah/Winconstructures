@@ -23,93 +23,79 @@ export interface MessageReplyDto {
   message: string;
 }
 
-class MessageService {
-  private baseUrl = '/message';
+import { mockMessages } from './mockData';
 
-  /**
-   * Get all messages (admin only)
-   */
+class MessageService {
+  private messages = [...mockMessages];
+
   async getAll(filters?: {
     status?: 'NEW_LEAD' | 'CONTACTED' | 'CLOSED';
     read?: boolean;
     unread?: boolean;
   }): Promise<Message[]> {
-    const params = new URLSearchParams();
+    let result = [...this.messages];
 
-    if (filters?.status) params.append('status', filters.status);
-    if (filters?.read !== undefined) params.append('read', filters.read.toString());
-    if (filters?.unread !== undefined) params.append('unread', filters.unread.toString());
+    if (filters?.status) result = result.filter(m => m.status === filters.status);
+    if (filters?.read !== undefined) result = result.filter(m => m.read === filters.read);
+    if (filters?.unread !== undefined) result = result.filter(m => m.read === !filters.unread);
 
-    const queryString = params.toString();
-    const url = queryString ? `${this.baseUrl}?${queryString}` : this.baseUrl;
-
-    const response = await apiClient.get<Message[]>(url);
-    return response.data;
+    await new Promise(resolve => setTimeout(resolve, 300));
+    return result;
   }
 
-  /**
-   * Get a single message by ID (admin only)
-   */
   async getById(id: string | number): Promise<Message> {
-    const response = await apiClient.get<Message>(`${this.baseUrl}/${id}`);
-    return response.data;
+    const msg = this.messages.find(m => m.id.toString() === id.toString());
+    if (!msg) throw new Error('Message not found');
+    await new Promise(resolve => setTimeout(resolve, 200));
+    return msg;
   }
 
-  /**
-   * Create a new message (public)
-   */
   async create(data: CreateMessageDto): Promise<Message> {
-    const response = await apiClient.post<Message>(this.baseUrl, data);
-    return response.data;
+    const newMsg: Message = {
+      ...data,
+      id: Math.max(0, ...this.messages.map(m => m.id)) + 1,
+      read: false,
+      date: new Date().toISOString(),
+      status: 'NEW_LEAD',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.messages.push(newMsg);
+    await new Promise(resolve => setTimeout(resolve, 400));
+    return newMsg;
   }
 
-  /**
-   * Update a message (admin only)
-   */
   async update(id: string | number, data: UpdateMessageDto): Promise<Message> {
-    const response = await apiClient.put<Message>(`${this.baseUrl}/${id}`, data);
-    return response.data;
+    const index = this.messages.findIndex(m => m.id.toString() === id.toString());
+    if (index === -1) throw new Error('Message not found');
+    
+    this.messages[index] = { ...this.messages[index], ...data, updatedAt: new Date() };
+    await new Promise(resolve => setTimeout(resolve, 300));
+    return this.messages[index];
   }
 
-  /**
-   * Delete a message (admin only)
-   */
   async delete(id: string | number): Promise<void> {
-    await apiClient.delete(`${this.baseUrl}/${id}`);
+    this.messages = this.messages.filter(m => m.id.toString() !== id.toString());
+    await new Promise(resolve => setTimeout(resolve, 300));
   }
 
-  /**
-   * Mark message as read
-   */
   async markAsRead(id: string | number): Promise<Message> {
     return this.update(id, { read: true });
   }
 
-  /**
-   * Mark message as unread
-   */
   async markAsUnread(id: string | number): Promise<Message> {
     return this.update(id, { read: false });
   }
 
-  /**
-   * Update message status
-   */
   async updateStatus(id: string | number, status: 'NEW_LEAD' | 'CONTACTED' | 'CLOSED'): Promise<Message> {
     return this.update(id, { status });
   }
 
-  /**
-   * Get unread messages count (admin only)
-   */
   async getUnreadCount(): Promise<number> {
     const messages = await this.getAll({ unread: true });
     return messages.length;
   }
 
-  /**
-   * Get new leads (admin only)
-   */
   async getNewLeads(): Promise<Message[]> {
     return this.getAll({ status: 'NEW_LEAD' });
   }

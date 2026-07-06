@@ -120,3 +120,24 @@ export const RefreshToken = asyncHandler(
     }
   },
 );
+
+export const GetCurrentUser = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    // req.user is set by the protect middleware
+    const user = (req as any).user;
+    
+    if (!user) {
+      res.status(401).json({ detail: "Not authorized" });
+      return;
+    }
+
+    res.status(200).json({
+      user: {
+        email: user.email,
+        role: user.role,
+        firstName: "Admin",
+        lastName: "User",
+      }
+    });
+  }
+);

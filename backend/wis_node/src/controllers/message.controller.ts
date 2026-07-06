@@ -4,7 +4,15 @@ import prisma from '../config/database.prisma';
 
 // Get all messages (inquiries)
 export const getMessages = asyncHandler(async (req: Request, res: Response) => {
+  const { status, read, unread } = req.query;
+
+  const where: any = {};
+  if (status) where.status = status as string;
+  if (read === 'true') where.read = true;
+  if (unread === 'true') where.read = false;
+
   const inquiries = await prisma.inquiry.findMany({
+    where,
     orderBy: { createdAt: 'desc' },
     include: {
       relatedProperty: {

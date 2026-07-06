@@ -24,99 +24,93 @@ export interface PropertyListResponse {
   pageSize: number;
 }
 
-class PropertyService {
-  private baseUrl = '/property';
+import { mockProperties } from './mockData';
 
-  /**
-   * Get all properties with optional filtering
-   */
+class PropertyService {
+  private properties = [...mockProperties];
+
   async getAll(filters?: {
     status?: 'FOR_SALE' | 'FOR_RENT';
     type?: 'HOUSE' | 'CONDO' | 'APARTMENT';
     featured?: boolean;
     search?: string;
   }): Promise<Property[]> {
-    const params = new URLSearchParams();
+    let result = [...this.properties];
 
-    if (filters?.status) params.append('status', filters.status);
-    if (filters?.type) params.append('type', filters.type);
-    if (filters?.featured !== undefined) params.append('featured', filters.featured.toString());
-    if (filters?.search) params.append('search', filters.search);
+    if (filters?.status) result = result.filter(p => p.status === filters.status);
+    if (filters?.type) result = result.filter(p => p.type === filters.type);
+    if (filters?.featured !== undefined) result = result.filter(p => p.featured === filters.featured);
+    if (filters?.search) {
+      const searchLower = filters.search.toLowerCase();
+      result = result.filter(p => 
+        p.title.toLowerCase().includes(searchLower) || 
+        p.location.toLowerCase().includes(searchLower) ||
+        p.description.toLowerCase().includes(searchLower)
+      );
+    }
 
-    const queryString = params.toString();
-    const url = queryString ? `${this.baseUrl}?${queryString}` : this.baseUrl;
-
-    const response = await apiClient.get<Property[]>(url);
-    return response.data;
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return result;
   }
 
-  /**
-   * Get a single property by ID
-   */
   async getById(id: string | number): Promise<Property> {
-    const response = await apiClient.get<Property>(`${this.baseUrl}/${id}`);
-    return response.data;
+    const prop = this.properties.find(p => p.id.toString() === id.toString());
+    if (!prop) throw new Error('Property not found');
+    await new Promise(resolve => setTimeout(resolve, 300));
+    return prop;
   }
 
-  /**
-   * Create a new property (admin only)
-   */
   async create(data: CreatePropertyDto): Promise<Property> {
-    const response = await apiClient.post<Property>(this.baseUrl, data);
-    return response.data;
+    const newProp: Property = {
+      ...data,
+      id: Math.max(...this.properties.map(p => p.id)) + 1,
+      viewCount: 0,
+      listedById: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      featured: data.featured || false
+    };
+    this.properties.push(newProp);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return newProp;
   }
 
-  /**
-   * Update an existing property (admin only)
-   */
   async update(id: string | number, data: UpdatePropertyDto): Promise<Property> {
-    const response = await apiClient.put<Property>(`${this.baseUrl}/${id}`, data);
-    return response.data;
+    const index = this.properties.findIndex(p => p.id.toString() === id.toString());
+    if (index === -1) throw new Error('Property not found');
+    
+    this.properties[index] = { ...this.properties[index], ...data, updatedAt: new Date() };
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return this.properties[index];
   }
 
-  /**
-   * Delete a property (admin only)
-   */
   async delete(id: string | number): Promise<void> {
-    await apiClient.delete(`${this.baseUrl}/${id}`);
+    this.properties = this.properties.filter(p => p.id.toString() !== id.toString());
+    await new Promise(resolve => setTimeout(resolve, 500));
   }
 
-  /**
-   * Get featured properties
-   */
   async getFeatured(): Promise<Property[]> {
     return this.getAll({ featured: true });
   }
 
-  /**
-   * Search properties
-   */
   async search(query: string): Promise<Property[]> {
     return this.getAll({ search: query });
   }
 
-  /**
-   * Get properties by status
-   */
   async getByStatus(status: 'FOR_SALE' | 'FOR_RENT'): Promise<Property[]> {
     return this.getAll({ status });
   }
 
-  /**
-   * Get properties by type
-   */
   async getByType(type: 'HOUSE' | 'CONDO' | 'APARTMENT'): Promise<Property[]> {
     return this.getAll({ type });
   }
 
-  /**
-   * Get similar properties
-   */
   async getSimilarProperties(propertyId: string | number, limit: number = 3): Promise<Property[]> {
-    const response = await apiClient.get(`${this.baseUrl}/${propertyId}/similar`, {
-      params: { limit }
-    });
-    return response.data;
+    const prop = await this.getById(propertyId);
+    let result = this.properties.filter(p => p.id.toString() !== propertyId.toString() && p.type === prop.type);
+    await new Promise(resolve => setTimeout(resolve, 300));
+    return result.slice(0, limit);
   }
 }
 
