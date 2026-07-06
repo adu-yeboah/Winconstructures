@@ -88,14 +88,14 @@ const ContactSection: React.FC = () => {
       />
       <div className="absolute inset-0 bg-primary-dark/75" />
       {/* Blueprint grid overlay — ties the "Structures" identity through the background */}
-      {/* <div
-        className="absolute inset-0 opacity-[0.06]"
+      <div
+        className="absolute inset-0 opacity-[0.02]"
         style={{
           backgroundImage:
             'linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)',
           backgroundSize: '56px 56px',
         }}
-      /> */}
+      />
 
       <div className="relative max-w-7xl mx-auto px-6 lg:px-12">
         {/* Header */}

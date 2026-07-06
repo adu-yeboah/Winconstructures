@@ -13,6 +13,8 @@ export default function NotFoundPage() {
         <Image
           src="/not-found.png"
           alt="Page not found"
+          width={256}
+          height={256}
           className="w-full h-full object-contain"
         />
       </div>
