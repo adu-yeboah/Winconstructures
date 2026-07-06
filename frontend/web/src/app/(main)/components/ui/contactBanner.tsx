@@ -3,8 +3,16 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaClock, FaWhatsapp } from 'react-icons/fa';
 import { useMessages } from '@/hooks/useMessage';
-import { Loader2, MapPin, Mail, Phone, Send } from 'lucide-react';
+import { Loader2, MapPin, Mail, Phone, Send, ArrowUpRight } from 'lucide-react';
 import { toast } from 'react-toastify';
+
+/** Small architectural registration mark — the section's recurring signature motif. */
+const CornerMarks: React.FC<{ className?: string }> = ({ className = "" }) => (
+  <>
+    <span className={`pointer-events-none absolute -top-px -left-px w-4 h-4 border-t-2 border-l-2 ${className}`} />
+    <span className={`pointer-events-none absolute -bottom-px -right-px w-4 h-4 border-b-2 border-r-2 ${className}`} />
+  </>
+);
 
 const ContactSection: React.FC = () => {
   const { createMessage, loading } = useMessages();
@@ -35,7 +43,7 @@ const ContactSection: React.FC = () => {
       });
 
       setFormData({ name: '', email: '', phone: '', message: '' });
-      toast.success('Message sent successfully! We\'ll get back to you within 24 hours.');
+      toast.success("Message sent. We'll reply within 24 hours.");
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Failed to send message. Please try again.';
       toast.error(message);
@@ -44,45 +52,50 @@ const ContactSection: React.FC = () => {
 
   const contactInfo = [
     {
-      icon: <Phone className="w-5 h-5" />,
-      title: "Call Us",
+      icon: <Phone className="w-[18px] h-[18px]" />,
+      title: "Call",
       details: ["+233 24 000 0000", "+233 55 000 0000"],
-      color: "bg-blue-500",
       action: "tel:+2332400000000"
     },
     {
-      icon: <Mail className="w-5 h-5" />,
-      title: "Email Us",
+      icon: <Mail className="w-[18px] h-[18px]" />,
+      title: "Email",
       details: ["info@winconstructures.com", "support@winconstructures.com"],
-      color: "bg-primary",
       action: "mailto:info@winconstructures.com"
     },
     {
-      icon: <MapPin className="w-5 h-5" />,
-      title: "Visit Us",
+      icon: <MapPin className="w-[18px] h-[18px]" />,
+      title: "Visit",
       details: ["East Legon, Accra", "Greater Accra, Ghana"],
-      color: "bg-secondary",
       action: null
     },
     {
-      icon: <FaClock className="w-5 h-5" />,
-      title: "Working Hours",
-      details: ["Mon - Fri: 9:00 AM - 6:00 PM", "Sat: 10:00 AM - 2:00 PM"],
-      color: "bg-amber-500",
+      icon: <FaClock className="w-[16px] h-[16px]" />,
+      title: "Hours",
+      details: ["Mon – Fri, 9:00 – 18:00", "Sat, 10:00 – 14:00"],
       action: null
     }
   ];
 
   return (
-    <section className="relative min-h-screen py-32 flex flex-col overflow-hidden">
+    <section id="contact" className="relative py-28 lg:py-36 overflow-hidden">
       {/* Background */}
       <div
-        className="absolute inset-0 bg-cover bg-center"
+        className="absolute inset-0 bg-cover bg-center scale-105"
         style={{
           backgroundImage: `url('https://uploads.prod01.sydney.platformos.com/instances/699/assets/modules/website/images/home/hero-image.webp?updated=1770343947')`,
         }}
       />
-      <div className="absolute inset-0 bg-primary-dark/60" />
+      <div className="absolute inset-0 bg-primary-dark/75" />
+      {/* Blueprint grid overlay — ties the "Structures" identity through the background */}
+      {/* <div
+        className="absolute inset-0 opacity-[0.06]"
+        style={{
+          backgroundImage:
+            'linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)',
+          backgroundSize: '56px 56px',
+        }}
+      /> */}
 
       <div className="relative max-w-7xl mx-auto px-6 lg:px-12">
         {/* Header */}
@@ -91,77 +104,84 @@ const ContactSection: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="mb-16 max-w-2xl"
         >
-          
-          <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-light text-gray-900 mb-6">
-            Let&apos;s Find Your{" "}
-            <span className="text-secondary font-semibold italic">Perfect</span>{" "}
-            Property
+          <div className="flex items-center gap-3 mb-5">
+            <span className="block w-8 h-px bg-secondary" />
+            
+          </div>
+
+          <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-light text-white leading-[1.1]">
+            Let&apos;s find your{" "}
+            <em className="not-italic text-secondary font-medium">perfect</em>{" "}
+            property
           </h2>
 
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto font-light">
-            Whether you&apos;re buying, selling, or investing, our dedicated team is here to guide you every step of the way.
+          <p className="text-white/60 text-base md:text-lg mt-5 font-light leading-relaxed">
+            Whether you&apos;re buying, selling, or investing, our team is ready
+            to guide you through every stage.
           </p>
         </motion.div>
 
         {/* Main Content */}
-        <div className="grid lg:grid-cols-5 gap-8">
+        <div className="grid lg:grid-cols-5 gap-6">
           {/* Left Side - Contact Info Cards */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="lg:col-span-2 space-y-4"
+            className="lg:col-span-2 grid sm:grid-cols-2 lg:grid-cols-1 gap-4"
           >
             {contactInfo.map((item, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-                whileHover={{ scale: 1.02, y: -2 }}
-                className={`bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all border border-gray-100 ${item.action ? 'cursor-pointer' : ''}`}
+                transition={{ duration: 0.4, delay: index * 0.08 }}
+                className={`relative bg-white/[0.06] backdrop-blur-sm rounded-sm p-6 border border-white/10 transition-colors duration-300 hover:bg-white/10 ${item.action ? 'cursor-pointer' : ''}`}
                 onClick={() => item.action && window.open(item.action, '_blank')}
               >
+                <CornerMarks className="border-secondary/50" />
                 <div className="flex items-start gap-4">
-                  <div className={`${item.color} p-3 rounded-xl shrink-0`}>
-                    <div className="text-white">
-                      {item.icon}
-                    </div>
+                  <div className="text-secondary shrink-0 mt-0.5">
+                    {item.icon}
                   </div>
-                  <div className="flex-1">
-                    <h4 className="text-sm font-bold text-gray-900 mb-2 uppercase tracking-wide">
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-[11px] font-medium text-white/50 mb-2 uppercase tracking-[0.14em]">
                       {item.title}
                     </h4>
                     {item.details.map((detail, i) => (
-                      <p key={i} className="text-gray-600 text-sm mb-1">{detail}</p>
+                      <p key={i} className="text-white text-sm font-light mb-0.5 truncate">{detail}</p>
                     ))}
                   </div>
+                  {item.action && (
+                    <ArrowUpRight className="w-4 h-4 text-white/30 shrink-0" />
+                  )}
                 </div>
               </motion.div>
             ))}
 
             {/* WhatsApp Quick Contact */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
+            <motion.a
+              href="https://wa.me/233240000000"
+              target="_blank"
+              rel="noopener noreferrer"
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: 0.4 }}
-              className="bg-gradient-to-r from-green-500 to-green-600 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all"
+              transition={{ duration: 0.4, delay: 0.32 }}
+              className="sm:col-span-2 lg:col-span-1 relative flex items-center gap-4 bg-secondary/90 hover:bg-secondary rounded-sm p-6 transition-colors duration-300 group"
             >
-              <div className="flex items-center gap-4 text-white">
-                <div className="bg-white/20 p-3 rounded-xl">
-                  <FaWhatsapp className="text-3xl" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-lg mb-1">Quick Response</h4>
-                  <p className="text-white/90 text-sm">Chat with us on WhatsApp</p>
-                </div>
+              <CornerMarks className="border-primary-dark/40" />
+              <FaWhatsapp className="text-2xl text-primary-dark shrink-0" />
+              <div className="flex-1">
+                <h4 className="font-medium text-sm text-primary-dark">Chat with us directly</h4>
+                <p className="text-primary-dark/70 text-xs font-light">Usually replies within minutes</p>
               </div>
-            </motion.div>
+              <ArrowUpRight className="w-4 h-4 text-primary-dark/60 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </motion.a>
           </motion.div>
 
           {/* Right Side - Contact Form */}
@@ -172,21 +192,22 @@ const ContactSection: React.FC = () => {
             transition={{ duration: 0.6 }}
             className="lg:col-span-3"
           >
-            <div className="bg-white rounded-2xl shadow-xl p-8 lg:p-10 border border-gray-100">
+            <div className="relative bg-white rounded-sm shadow-2xl p-8 lg:p-10">
+              <CornerMarks className="border-secondary" />
               <div className="mb-8">
                 <h3 className="font-serif text-2xl md:text-3xl font-light text-gray-900 mb-2">
-                  Send Us a Message
+                  Send us a message
                 </h3>
-                <p className="text-gray-500 text-sm">
-                  Fill out the form below and we&apos;ll get back to you within 24 hours
+                <p className="text-gray-500 text-sm font-light">
+                  Fill in the details below — we typically reply within 24 hours.
                 </p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label htmlFor="name" className="block text-gray-700 text-sm font-semibold">
-                      Full Name <span className="text-red-500">*</span>
+                    <label htmlFor="name" className="block text-gray-700 text-xs font-medium uppercase tracking-wide">
+                      Full name <span className="text-secondary">*</span>
                     </label>
                     <input
                       type="text"
@@ -195,14 +216,14 @@ const ContactSection: React.FC = () => {
                       value={formData.name}
                       onChange={handleChange}
                       placeholder="John Doe"
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-gray-50 hover:bg-gray-100"
+                      className="w-full px-0 py-3 border-0 border-b border-gray-200 focus:outline-none focus:border-primary transition-colors bg-transparent placeholder:text-gray-300"
                       required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="email" className="block text-gray-700 text-sm font-semibold">
-                      Email Address <span className="text-red-500">*</span>
+                    <label htmlFor="email" className="block text-gray-700 text-xs font-medium uppercase tracking-wide">
+                      Email address <span className="text-secondary">*</span>
                     </label>
                     <input
                       type="email"
@@ -211,15 +232,15 @@ const ContactSection: React.FC = () => {
                       value={formData.email}
                       onChange={handleChange}
                       placeholder="john@example.com"
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-gray-50 hover:bg-gray-100"
+                      className="w-full px-0 py-3 border-0 border-b border-gray-200 focus:outline-none focus:border-primary transition-colors bg-transparent placeholder:text-gray-300"
                       required
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="phone" className="block text-gray-700 text-sm font-semibold">
-                    Phone Number
+                  <label htmlFor="phone" className="block text-gray-700 text-xs font-medium uppercase tracking-wide">
+                    Phone number
                   </label>
                   <input
                     type="tel"
@@ -228,22 +249,22 @@ const ContactSection: React.FC = () => {
                     value={formData.phone}
                     onChange={handleChange}
                     placeholder="+233 XX XXX XXXX"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-gray-50 hover:bg-gray-100"
+                    className="w-full px-0 py-3 border-0 border-b border-gray-200 focus:outline-none focus:border-primary transition-colors bg-transparent placeholder:text-gray-300"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="message" className="block text-gray-700 text-sm font-semibold">
-                    Message <span className="text-red-500">*</span>
+                  <label htmlFor="message" className="block text-gray-700 text-xs font-medium uppercase tracking-wide">
+                    Message <span className="text-secondary">*</span>
                   </label>
                   <textarea
                     id="message"
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
-                    rows={5}
+                    rows={4}
                     placeholder="Tell us about your property needs..."
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none transition-all bg-gray-50 hover:bg-gray-100"
+                    className="w-full px-0 py-3 border-0 border-b border-gray-200 focus:outline-none focus:border-primary resize-none transition-colors bg-transparent placeholder:text-gray-300"
                     required
                   ></textarea>
                 </div>
@@ -251,17 +272,17 @@ const ContactSection: React.FC = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white py-4 px-8 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl disabled:opacity-60 disabled:cursor-not-allowed transform hover:scale-[1.02]"
+                  className="w-full sm:w-auto bg-primary-dark hover:bg-primary text-white py-4 px-10 rounded-sm font-medium text-sm tracking-wide transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      <span>Sending...</span>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Sending…</span>
                     </>
                   ) : (
                     <>
-                      <span>Send Message</span>
-                      <Send className="w-5 h-5" />
+                      <span>Send message</span>
+                      <Send className="w-4 h-4" />
                     </>
                   )}
                 </button>
@@ -269,8 +290,6 @@ const ContactSection: React.FC = () => {
             </div>
           </motion.div>
         </div>
-
-        
       </div>
     </section>
   );

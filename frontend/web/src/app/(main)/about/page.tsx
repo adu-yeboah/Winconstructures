@@ -10,6 +10,8 @@ import {
   FaUserTie,
 } from "react-icons/fa";
 
+import { mockSettings } from "@/service/mockData";
+
 const AboutUs: React.FC = () => {
   const teamMembers = [
     {
@@ -40,12 +42,12 @@ const AboutUs: React.FC = () => {
 
   const stats = [
     {
-      value: "12+",
+      value: `${mockSettings.about_years_experience}+`,
       label: "Years Experience",
       icon: <FaHome className="text-2xl text-secondary" />,
     },
     {
-      value: "1,250+",
+      value: `${mockSettings.about_properties_sold}+`,
       label: "Properties Sold",
       icon: <FaHandshake className="text-2xl text-secondary" />,
     },

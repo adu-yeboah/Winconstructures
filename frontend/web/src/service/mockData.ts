@@ -56,6 +56,60 @@ export const mockProperties: Property[] = [
     images: [{ img: 'https://images.unsplash.com/photo-1502672260266-1c1e52d15461?q=80&w=2080&auto=format&fit=crop' }],
     createdAt: new Date(),
     updatedAt: new Date()
+  },
+  {
+    id: 4,
+    title: 'Seaview Penthouse Osu',
+    description: 'Stunning penthouse with panoramic ocean views and top-tier amenities.',
+    location: 'Osu, Accra',
+    price: '$4,500/month',
+    bedrooms: 4,
+    bathrooms: 4,
+    area: '300 sq ft',
+    status: 'FOR_RENT' as PropertyStatus,
+    type: 'APARTMENT' as PropertyType,
+    featured: true,
+    viewCount: 512,
+    listedById: 1,
+    images: [{ img: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070&auto=format&fit=crop' }],
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    id: 5,
+    title: 'Family Home Spintex',
+    description: 'Spacious family house with a large compound, ideal for kids.',
+    location: 'Spintex, Accra',
+    price: '$250,000',
+    bedrooms: 4,
+    bathrooms: 3,
+    area: '350 sq ft',
+    status: 'FOR_SALE' as PropertyStatus,
+    type: 'HOUSE' as PropertyType,
+    featured: false,
+    viewCount: 220,
+    listedById: 1,
+    images: [{ img: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?q=80&w=2070&auto=format&fit=crop' }],
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    id: 6,
+    title: 'Executive Studio Labone',
+    description: 'Fully furnished executive studio for expats and professionals.',
+    location: 'Labone, Accra',
+    price: '$1,200/month',
+    bedrooms: 1,
+    bathrooms: 1,
+    area: '80 sq ft',
+    status: 'FOR_RENT' as PropertyStatus,
+    type: 'APARTMENT' as PropertyType,
+    featured: true,
+    viewCount: 400,
+    listedById: 1,
+    images: [{ img: 'https://images.unsplash.com/photo-1554995207-c18c203602cb?q=80&w=2070&auto=format&fit=crop' }],
+    createdAt: new Date(),
+    updatedAt: new Date()
   }
 ];
 
@@ -102,7 +156,10 @@ export const mockSettings = {
   site_name: 'Wincon Structures',
   site_tagline: 'Find Your Perfect Property',
   about_title: 'About Wincon Structures',
-  about_description: 'Wincon Structures is a leading real estate company dedicated to helping you find your perfect property.'
+  about_description: 'Wincon Structures is a leading real estate company dedicated to helping you find your perfect property.',
+  about_years_experience: '15',
+  about_happy_clients: '850',
+  about_properties_sold: '2500'
 };
 
 export const mockDashboardStats = {

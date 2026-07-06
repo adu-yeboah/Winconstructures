@@ -12,6 +12,8 @@ import { useMessages } from "@/hooks/useMessage";
 import { Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
 
+import { mockSettings } from "@/service/mockData";
+
 const ContactPage = () => {
   const { createMessage, loading } = useMessages();
   const [formData, setFormData] = useState({
@@ -162,15 +164,7 @@ const ContactPage = () => {
                 <FaPhone className="text-secondary mt-1" />
                 <div>
                   <p className="text-white">Phone</p>
-                  <p>+233 24 000 0000</p>
-                </div>
-              </div>
-
-              <div className="flex gap-4">
-                <FaMobileAlt className="text-secondary mt-1" />
-                <div>
-                  <p className="text-white">Mobile</p>
-                  <p>+233 55 000 0000</p>
+                  <p>{mockSettings.contact_phone}</p>
                 </div>
               </div>
 
@@ -178,7 +172,7 @@ const ContactPage = () => {
                 <FaEnvelope className="text-secondary mt-1" />
                 <div>
                   <p className="text-white">Email</p>
-                  <p>contact@winconstructures.com</p>
+                  <p>{mockSettings.contact_email}</p>
                 </div>
               </div>
 
@@ -186,11 +180,7 @@ const ContactPage = () => {
                 <FaMapMarkerAlt className="text-secondary mt-1" />
                 <div>
                   <p className="text-white">Location</p>
-                  <p>
-                    East Legon, Accra
-                    <br />
-                    Greater Accra, Ghana
-                  </p>
+                  <p>{mockSettings.contact_address}</p>
                 </div>
               </div>
 
