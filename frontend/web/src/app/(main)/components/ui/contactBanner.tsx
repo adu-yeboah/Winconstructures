@@ -83,10 +83,10 @@ const ContactSection: React.FC = () => {
       <div
         className="absolute inset-0 bg-cover bg-center scale-105"
         style={{
-          backgroundImage: `url('https://uploads.prod01.sydney.platformos.com/instances/699/assets/modules/website/images/home/hero-image.webp?updated=1770343947')`,
+          backgroundImage: `url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1350&q=80')`,
         }}
       />
-      <div className="absolute inset-0 bg-primary-dark/75" />
+      <div className="absolute inset-0 bg-primary-dark/85" />
       {/* Blueprint grid overlay — ties the "Structures" identity through the background */}
       <div
         className="absolute inset-0 opacity-[0.02]"

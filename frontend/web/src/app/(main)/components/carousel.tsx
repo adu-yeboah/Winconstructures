@@ -172,7 +172,7 @@ export default function Carousel({
   }
 
   return (
-    <section className="py-16 sm:py-20 px-4 sm:px-6 md:px-10 max-w-7xl mx-auto">
+    <section className="py-16 sm:py-20 max-w-7xl mx-auto">
       <SectionHeader />
 
       {/* Slider */}
@@ -209,9 +209,9 @@ export default function Carousel({
 
           {/* Embla Carousel */}
           <div className="overflow-hidden" ref={emblaRef}>
-            <div className="flex gap-6">
+            <div className="flex -mx-3">
               {properties.map((property) => (
-                <div key={property.id} className="flex-[0_0_100%] md:flex-[0_0_33.333%] lg:flex-[0_0_33.333%] min-w-0">
+                <div key={property.id} className="flex-[0_0_100%] px-3  md:flex-[0_0_33.333%] lg:flex-[0_0_33.333%] min-w-0">
                   <PropertyCard property={property} />
                 </div>
               ))}
@@ -224,7 +224,7 @@ export default function Carousel({
               <button
                 key={index}
                 onClick={() => scrollTo(index)}
-                className={`h-1.5 rounded-full transition-all ${index === selectedIndex ? 'bg-primary w-6' : 'bg-gray-200 w-1.5 hover:bg-gray-300'
+                className={`h-1.5 rounded-full transition-all ${index === selectedIndex ? 'bg-primary w-6' : 'bg-gray-700 w-6 hover:bg-gray-800'
                   }`}
                 aria-label={`Go to slide ${index + 1}`}
               />

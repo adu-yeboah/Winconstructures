@@ -64,14 +64,6 @@ const ContactPage = () => {
           }}
         />
         <div className="absolute inset-0 bg-primary-dark/75" />
-        <div
-          className="absolute inset-0 opacity-[0.03] pointer-events-none"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)",
-            backgroundSize: "56px 56px",
-          }}
-        />
 
         <div className="relative z-10 max-w-4xl px-6 lg:px-12">
           <div className="flex items-center gap-3 mb-5">
@@ -185,14 +177,7 @@ const ContactPage = () => {
 
           {/* Contact Info */}
           <div className="relative bg-primary-dark rounded-sm p-8 md:p-10 text-white overflow-hidden">
-            <div
-              className="absolute inset-0 opacity-[0.02] pointer-events-none"
-              style={{
-                backgroundImage:
-                  "linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)",
-                backgroundSize: "48px 48px",
-              }}
-            />
+           
             <CornerMarks className="border-white/30" />
 
             <p className="relative text-secondary text-xs tracking-[0.18em] uppercase mb-4">

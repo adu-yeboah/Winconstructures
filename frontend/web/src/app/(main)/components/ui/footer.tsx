@@ -17,16 +17,6 @@ import Image from "next/image";
 const Footer: React.FC = () => {
   return (
     <footer className="relative bg-primary-dark text-white overflow-hidden">
-      {/* Top edge — quiet nod to the blueprint motif used elsewhere on the site */}
-      <div className="absolute inset-x-0 top-0 h-px bg-white/10" />
-      <div
-        className="absolute inset-0 opacity-[0.004] pointer-events-none"
-        style={{
-          backgroundImage:
-            'linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)',
-          backgroundSize: '64px 64px',
-        }}
-      />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
@@ -41,9 +31,9 @@ const Footer: React.FC = () => {
                 className="h-10 w-auto"
                 priority
               />
-              <h3 className="font-serif text-2xl font-light tracking-wide">
+              {/* <h3 className="font-serif text-2xl font-light tracking-wide">
                 Wincon Structures
-              </h3>
+              </h3> */}
             </div>
 
             <p className="text-white/55 leading-relaxed max-w-lg font-light mb-8">
