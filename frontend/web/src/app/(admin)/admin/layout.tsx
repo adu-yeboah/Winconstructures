@@ -54,7 +54,7 @@ export default function AppSidebar({
               src="/logo.png"
               alt="Wiscon Structures Logo"
               width={140}
-              height={60}
+              height={30}
               className="object-contain"
               priority
             />
@@ -79,7 +79,7 @@ export default function AppSidebar({
                         className={`flex items-center gap-2.5 px-3 py-5 rounded-lg text-[13px] transition-all duration-150 ${
                           isActive
                             ? "bg-primary-light text-primary font-medium"
-                            : "text-tertiary hover:bg-primary-light hover:text-primary"
+                            : "text-tertiary hover:bg-primary-light hover:text-white"
                         }`}
                       >
                         <item.icon className="w-[15px] h-[15px] shrink-0" />
@@ -110,7 +110,7 @@ export default function AppSidebar({
                         className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-[13px] transition-all duration-150 ${
                           isActive
                             ? "bg-primary-light text-primary font-medium"
-                            : "text-tertiary hover:bg-primary-light hover:text-primary"
+                            : "text-tertiary hover:bg-primary-light hover:text-white"
                         }`}
                       >
                         <item.icon className="w-[15px] h-[15px] shrink-0" />

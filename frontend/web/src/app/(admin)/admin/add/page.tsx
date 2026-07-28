@@ -160,7 +160,7 @@ const AddProperty: React.FC = () => {
   const labelClass = "block text-[10px] font-medium uppercase tracking-[0.07em] text-tertiary mb-1.5";
 
   return (
-    <div className="max-w-5xl mx-auto space-y-5">
+    <div className="max-w-full mx-auto space-y-5">
 
       {/* Header */}
       <div>

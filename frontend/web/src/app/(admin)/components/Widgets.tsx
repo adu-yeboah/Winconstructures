@@ -14,7 +14,7 @@ interface WidgetCardProps {
 
 export function WidgetCard({ icon: Icon, title, figure, link, linkText }: WidgetCardProps) {
   return (
-    <Card className="md:w-[30%] hover:shadow-lg transition-shadow">
+    <Card className="md:w-[23%]! hover:shadow-lg transition-shadow">
       <CardHeader>
         <div className="text-sm font-semibold uppercase text-gray-500">{title}</div>
       </CardHeader>

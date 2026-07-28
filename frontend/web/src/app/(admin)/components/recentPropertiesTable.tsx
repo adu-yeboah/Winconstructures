@@ -60,11 +60,13 @@ export function RecentPropertiesTable() {
               <Image
                 src={row.images[0].img}
                 alt={row.title}
+                width={64}
+                height={48}
                 className="w-full h-full object-cover"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
-                <span className="text-xs text-primary">🏠</span>
+                <span className="text-xs text-primary"></span>
               </div>
             )}
           </div>
